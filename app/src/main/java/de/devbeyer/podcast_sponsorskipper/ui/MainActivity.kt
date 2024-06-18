@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper
+package de.devbeyer.podcast_sponsorskipper.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,37 +11,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
+import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuide
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         enableEdgeToEdge()
+
+
+
         setContent {
             PodcastSponsorSkipperTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                TourGuide()
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PodcastSponsorSkipperTheme {
-        Greeting("Android")
     }
 }
