@@ -27,12 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import de.devbeyer.podcast_sponsorskipper.ui.Dimensions
+import de.devbeyer.podcast_sponsorskipper.ui.tourguide.TourGuideEvent
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.pages
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TourGuide() {
+fun TourGuide(
+    onEvent: (TourGuideEvent) -> Unit
+) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -74,6 +77,8 @@ fun TourGuide() {
                         scope.launch {
                             pagerState.animateScrollToPage(page = pagerState.currentPage + 1)
                         }
+                    } else {
+                        onEvent(TourGuideEvent.completedTourGuide)
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
