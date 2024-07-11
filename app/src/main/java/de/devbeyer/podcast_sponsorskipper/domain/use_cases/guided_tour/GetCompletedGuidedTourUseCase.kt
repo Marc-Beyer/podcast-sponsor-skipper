@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.domain.use_cases
+package de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour
 
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
 import kotlinx.coroutines.flow.Flow

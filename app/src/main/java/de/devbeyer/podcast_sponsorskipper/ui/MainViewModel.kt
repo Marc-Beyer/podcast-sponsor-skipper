@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.devbeyer.podcast_sponsorskipper.domain.use_cases.CompletedGuidedTourUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.CompletedGuidedTourUseCases
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn

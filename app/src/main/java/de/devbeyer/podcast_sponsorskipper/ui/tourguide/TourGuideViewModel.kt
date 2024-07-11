@@ -3,7 +3,7 @@ package de.devbeyer.podcast_sponsorskipper.ui.tourguide
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.devbeyer.podcast_sponsorskipper.domain.use_cases.CompletedGuidedTourUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.CompletedGuidedTourUseCases
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class TourGuideViewModel @Inject constructor(
 
     private fun setCompletedTourGuide() {
         viewModelScope.launch {
-            completedGuidedTourUseCases.setCompletedGuidedTourUseCaseval()
+            completedGuidedTourUseCases.setCompletedGuidedTourUseCase()
         }
     }
 }
