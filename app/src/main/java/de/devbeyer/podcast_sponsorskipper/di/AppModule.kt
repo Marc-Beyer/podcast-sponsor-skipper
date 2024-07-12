@@ -15,6 +15,10 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.backend.PodcastsUseCa
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.CompletedGuidedTourUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.SetCompletedGuidedTourUseCase
+import de.devbeyer.podcast_sponsorskipper.util.Constants
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -38,17 +42,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBackendAPI():BackendAPI{
-        return BackendAPI()
+    fun provideBackendAPI(): BackendAPI {
+        return Retrofit.Builder().baseUrl(Constants.API_URL)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+            .create(BackendAPI::class.java)
     }
 
     @Provides
     @Singleton
-    fun providePodcastRepository():PodcastRepository = PodcastRepositoryImpl()
+    fun providePodcastRepository(backendAPI: BackendAPI): PodcastRepository =
+        PodcastRepositoryImpl(backendAPI)
 
     @Provides
     @Singleton
-    fun providePodcastUseCases():PodcastsUseCases{
-        return PodcastsUseCases(GetPodcastsUseCase())
+    fun providePodcastUseCases(podcastRepository: PodcastRepository): PodcastsUseCases {
+        return PodcastsUseCases(GetPodcastsUseCase(podcastRepository))
     }
 }

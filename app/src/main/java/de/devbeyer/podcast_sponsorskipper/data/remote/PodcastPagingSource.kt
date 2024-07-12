@@ -6,7 +6,6 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
 
 class PodcastPagingSource(
     private val backendAPI: BackendAPI,
-    private val sources: String,
 ) : PagingSource<Int, Podcast>() {
 
     private var nrOfPages = 0

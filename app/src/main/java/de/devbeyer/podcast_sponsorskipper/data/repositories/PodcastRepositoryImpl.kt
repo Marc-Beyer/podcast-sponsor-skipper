@@ -13,14 +13,11 @@ import kotlinx.coroutines.flow.asFlow
 class PodcastRepositoryImpl(
     private val backendAPI: BackendAPI
 ): PodcastRepository {
-    override fun getPodcasts(sources: List<String>): Flow<PagingData<Podcast>> {
+    override fun getPodcasts(): Flow<PagingData<Podcast>> {
         return Pager(
             config = PagingConfig(pageSize = 12),
             pagingSourceFactory = {
-                PodcastPagingSource(
-                    backendAPI,
-                    sources = sources.joinToString(separator = ","),
-                )
+                PodcastPagingSource(backendAPI)
             }
         ).flow
     }

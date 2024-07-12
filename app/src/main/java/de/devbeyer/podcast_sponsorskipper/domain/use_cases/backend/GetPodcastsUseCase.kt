@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetPodcastsUseCase(
     private val podcastRepository: PodcastRepository
 ) {
-    operator fun invoke(sources: List<String>): Flow<PagingData<Podcast>> {
-        return podcastRepository.getPodcasts(sources)
+    operator fun invoke(): Flow<PagingData<Podcast>> {
+        return podcastRepository.getPodcasts()
     }
 }
