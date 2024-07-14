@@ -1,14 +1,14 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation
 
-import androidx.activity.viewModels
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
+import de.devbeyer.podcast_sponsorskipper.ui.home.HomeScreen
+import de.devbeyer.podcast_sponsorskipper.ui.home.HomeViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.TourGuideViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuide
 
@@ -39,7 +39,12 @@ fun NavGraph(
             composable(
                 route = Screen.Home.route,
             ){
-                Text(text = "Home")
+                val viewModel: HomeViewModel = hiltViewModel()
+                val podcasts = viewModel.podcasts.collectAsLazyPagingItems()
+                HomeScreen(
+                    podcasts = podcasts,
+                    navigate = {}
+                )
             }
         }
     }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
@@ -75,7 +76,8 @@ fun PodcastItem(podcast: Podcast, onClick: () -> Unit) {
                 text = podcast.title,
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -84,7 +86,8 @@ fun PodcastItem(podcast: Podcast, onClick: () -> Unit) {
                 text = podcast.description,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -114,15 +117,25 @@ fun PodcastItemLoading() {
             Box(
                 modifier = Modifier
                     .height(16.dp)
-                    .fillMaxWidth()
+                    .width(120.dp)
                     .loadingEffect(),
             )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Box(
                 modifier = Modifier
-                    .height(40.dp)
+                    .height(16.dp)
                     .fillMaxWidth()
+                    .loadingEffect(),
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(16.dp)
+                    .width(150.dp)
                     .loadingEffect(),
             )
 
