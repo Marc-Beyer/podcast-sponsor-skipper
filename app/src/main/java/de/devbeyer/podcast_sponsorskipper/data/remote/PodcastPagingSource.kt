@@ -6,6 +6,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
 
 class PodcastPagingSource(
     private val backendAPI: BackendAPI,
+    private val search: String,
 ) : PagingSource<Int, Podcast>() {
 
     private var nrOfPages = 0
@@ -20,7 +21,7 @@ class PodcastPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Podcast> {
         return try {
             val curPage = params.key ?: 0
-            val response = backendAPI.getPodcasts(curPage)
+            val response = backendAPI.searchPodcasts(page = curPage, search = search)
             nrOfPages += response.podcasts.size
             LoadResult.Page(
                 data = response.podcasts,

@@ -1,5 +1,9 @@
 package de.devbeyer.podcast_sponsorskipper.ui.home
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -11,5 +15,30 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val podcastsUseCases: PodcastsUseCases
 ) : ViewModel() {
-    val podcasts = podcastsUseCases.getPodcastsUseCase().cachedIn(viewModelScope)
+    private val _state = mutableStateOf(
+        SearchState(
+            podcasts = podcastsUseCases.getPodcastsUseCase("")
+                .cachedIn(viewModelScope)
+        )
+    )
+    val state: State<SearchState> = _state
+
+    fun onEvent(event: SearchEvent) {
+        when (event) {
+            is SearchEvent.changeSearch -> {
+                _state.value = state.value.copy(search = event.search)
+            }
+
+            is SearchEvent.SearchPodcast -> {
+                searchPodcast()
+            }
+        }
+
+    }
+
+    private fun searchPodcast() {
+        val podcasts =
+            podcastsUseCases.getPodcastsUseCase(state.value.search).cachedIn(viewModelScope)
+        _state.value = state.value.copy(podcasts = podcasts)
+    }
 }

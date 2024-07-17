@@ -1,11 +1,18 @@
 package de.devbeyer.podcast_sponsorskipper.ui.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
@@ -16,13 +23,25 @@ fun PodcastList(
     onClick: (Podcast) -> Unit,
     modifier: Modifier,
 ) {
-    val hasNoError = HandelPagingResults(podcasts)
-    if(hasNoError){
-        LazyColumn(modifier = modifier) {
-            items(count = podcasts.itemCount){
-                podcasts[it]?.let { podcast ->
-                    PodcastItem(podcast = podcast) {
-                        onClick(podcast)
+    val hasNoError = handelPagingResults(podcasts)
+    if (hasNoError) {
+        if (podcasts.itemCount == 0) {
+            Text(
+                text = "No Podcasts found!",
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+        } else {
+            LazyColumn(modifier = modifier) {
+
+                items(count = podcasts.itemCount) {
+                    podcasts[it]?.let { podcast ->
+                        PodcastItem(podcast = podcast) {
+                            onClick(podcast)
+                        }
                     }
                 }
             }
@@ -31,7 +50,7 @@ fun PodcastList(
 }
 
 @Composable
-fun HandelPagingResults(podcasts: LazyPagingItems<Podcast>): Boolean {
+fun handelPagingResults(podcasts: LazyPagingItems<Podcast>): Boolean {
     val loadState = podcasts.loadState
     val error = when {
         loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
@@ -40,23 +59,36 @@ fun HandelPagingResults(podcasts: LazyPagingItems<Podcast>): Boolean {
         else -> null
     }
 
-    return when{
+    return when {
         loadState.refresh is LoadState.Loading -> {
             LoadingPodcastList()
             false
         }
-        error != null ->{
-            Text(text = "An error occurred!" + error.toString(), color = MaterialTheme.colorScheme.onBackground)
+
+        error != null -> {
+            Text(
+                text = "An error occurred!",
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
             false
         }
+
         else -> true
     }
 }
 
 @Composable
 private fun LoadingPodcastList() {
-    Column {
-        repeat(10){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        repeat(7) {
             PodcastItemLoading()
         }
     }

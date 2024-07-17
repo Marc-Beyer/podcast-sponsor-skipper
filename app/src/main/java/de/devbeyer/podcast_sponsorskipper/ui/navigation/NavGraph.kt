@@ -9,6 +9,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import de.devbeyer.podcast_sponsorskipper.ui.home.HomeScreen
 import de.devbeyer.podcast_sponsorskipper.ui.home.HomeViewModel
+import de.devbeyer.podcast_sponsorskipper.ui.home.SearchEvent
+import de.devbeyer.podcast_sponsorskipper.ui.home.SearchState
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.TourGuideViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuide
 
@@ -40,9 +42,9 @@ fun NavGraph(
                 route = Screen.Home.route,
             ){
                 val viewModel: HomeViewModel = hiltViewModel()
-                val podcasts = viewModel.podcasts.collectAsLazyPagingItems()
                 HomeScreen(
-                    podcasts = podcasts,
+                    state = viewModel.state.value,
+                    onEvent = viewModel::onEvent,
                     navigate = {}
                 )
             }

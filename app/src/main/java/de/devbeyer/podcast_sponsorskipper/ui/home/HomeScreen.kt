@@ -2,30 +2,34 @@ package de.devbeyer.podcast_sponsorskipper.ui.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    podcasts: LazyPagingItems<Podcast>,
+    state: SearchState,
+    onEvent: (SearchEvent) -> Unit,
     navigate: (String) -> Unit
 ) {
     Scaffold(
@@ -58,11 +62,35 @@ fun HomeScreen(
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            PodcastList(
-                modifier = Modifier.padding(0.dp),
-                podcasts = podcasts,
-                onClick = { navigate(Screen.Podcast.route) }
-            )
+            SearchBar(
+                query = state.search,
+                onQueryChange = { onEvent(SearchEvent.changeSearch(it)) },
+                onSearch = { onEvent(SearchEvent.SearchPodcast) },
+                active = false,
+                onActiveChange = {},
+                placeholder = {
+                    Text(text = "Search Podcast")
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        contentDescription = null
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(6.dp),
+            ) {
+
+            }
+            state.podcasts?.let {
+                PodcastList(
+                    modifier = Modifier.padding(0.dp),
+                    podcasts = state.podcasts.collectAsLazyPagingItems(),
+                    onClick = { navigate(Screen.Podcast.route) }
+                )
+            }
         }
     }
 }

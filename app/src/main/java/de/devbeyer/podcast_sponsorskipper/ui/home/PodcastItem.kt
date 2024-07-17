@@ -106,10 +106,10 @@ fun PodcastItemLoading() {
         Box(
             modifier = Modifier
                 .height(64.dp)
+                .width(64.dp)
                 .aspectRatio(1f)
                 .loadingEffect(),
-        ) {
-        }
+        )
         Column(
             modifier = Modifier.padding(start = 16.dp),
             verticalArrangement = Arrangement.Center,
