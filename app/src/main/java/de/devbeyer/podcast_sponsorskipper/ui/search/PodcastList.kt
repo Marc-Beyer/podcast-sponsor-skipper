@@ -1,6 +1,5 @@
-package de.devbeyer.podcast_sponsorskipper.ui.home
+package de.devbeyer.podcast_sponsorskipper.ui.search
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth

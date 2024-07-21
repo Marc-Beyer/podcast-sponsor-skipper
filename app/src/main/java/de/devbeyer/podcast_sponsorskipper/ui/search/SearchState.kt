@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.ui.home
+package de.devbeyer.podcast_sponsorskipper.ui.search
 
 import androidx.paging.PagingData
 import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast

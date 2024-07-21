@@ -1,9 +1,7 @@
-package de.devbeyer.podcast_sponsorskipper.ui.home
+package de.devbeyer.podcast_sponsorskipper.ui.search
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -12,7 +10,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.backend.PodcastsUseCa
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class SearchViewModel @Inject constructor(
     private val podcastsUseCases: PodcastsUseCases
 ) : ViewModel() {
     private val _state = mutableStateOf(

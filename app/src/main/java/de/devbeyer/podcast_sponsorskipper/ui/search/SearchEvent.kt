@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.ui.home
+package de.devbeyer.podcast_sponsorskipper.ui.search
 
 sealed class SearchEvent(){
     data class changeSearch(val search: String): SearchEvent()

@@ -6,11 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.paging.compose.collectAsLazyPagingItems
-import de.devbeyer.podcast_sponsorskipper.ui.home.HomeScreen
-import de.devbeyer.podcast_sponsorskipper.ui.home.HomeViewModel
-import de.devbeyer.podcast_sponsorskipper.ui.home.SearchEvent
-import de.devbeyer.podcast_sponsorskipper.ui.home.SearchState
+import de.devbeyer.podcast_sponsorskipper.ui.search.SearchView
+import de.devbeyer.podcast_sponsorskipper.ui.search.SearchViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.TourGuideViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuide
 
@@ -41,8 +38,8 @@ fun NavGraph(
             composable(
                 route = Screen.Home.route,
             ){
-                val viewModel: HomeViewModel = hiltViewModel()
-                HomeScreen(
+                val viewModel: SearchViewModel = hiltViewModel()
+                SearchView(
                     state = viewModel.state.value,
                     onEvent = viewModel::onEvent,
                     navigate = {}

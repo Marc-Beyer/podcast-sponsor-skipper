@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.ui.home
+package de.devbeyer.podcast_sponsorskipper.ui.search
 
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -7,10 +7,8 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.graphics.graphicsLayer
 
 fun Modifier.loadingEffect() = composed {
     val transition = rememberInfiniteTransition(label = "")

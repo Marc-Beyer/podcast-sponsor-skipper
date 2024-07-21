@@ -17,6 +17,9 @@
       <SelectionState runConfigName="PodcastItemLoadingPreviewDark">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="PodcastInfoPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

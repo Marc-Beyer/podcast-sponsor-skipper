@@ -1,7 +1,8 @@
-package de.devbeyer.podcast_sponsorskipper.ui.home
+package de.devbeyer.podcast_sponsorskipper.ui.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -16,22 +17,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+fun SearchView(
     state: SearchState,
     onEvent: (SearchEvent) -> Unit,
     navigate: (String) -> Unit
 ) {
+    var isSearchBarActive by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,9 +69,12 @@ fun HomeScreen(
             SearchBar(
                 query = state.search,
                 onQueryChange = { onEvent(SearchEvent.changeSearch(it)) },
-                onSearch = { onEvent(SearchEvent.SearchPodcast) },
-                active = false,
-                onActiveChange = {},
+                onSearch = {
+                    isSearchBarActive = false
+                    onEvent(SearchEvent.SearchPodcast)
+                },
+                active = isSearchBarActive,
+                onActiveChange = { isSearchBarActive = it },
                 placeholder = {
                     Text(text = "Search Podcast")
                 },
@@ -78,6 +85,7 @@ fun HomeScreen(
                         contentDescription = null
                     )
                 },
+                windowInsets = WindowInsets(top = 0.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(6.dp),
