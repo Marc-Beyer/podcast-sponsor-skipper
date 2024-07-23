@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.PodcastPagingSource
 import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.asFlow
 class PodcastRepositoryImpl(
     private val backendAPI: BackendAPI
 ): PodcastRepository {
-    override fun getPodcasts(search: String): Flow<PagingData<Podcast>> {
+    override fun getPodcasts(search: String): Flow<PagingData<PodcastWithRelations>> {
         return Pager(
             config = PagingConfig(pageSize = 12),
             pagingSourceFactory = {
@@ -22,7 +23,7 @@ class PodcastRepositoryImpl(
         ).flow
     }
 
-    override fun searchPodcasts(search: String): Flow<PagingData<Podcast>> {
+    override fun searchPodcasts(search: String): Flow<PagingData<PodcastWithRelations>> {
         return Pager(
             config = PagingConfig(pageSize = 12),
             pagingSourceFactory = {

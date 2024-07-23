@@ -28,13 +28,15 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.domain.models.Category
 import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PodcastItem(podcast: Podcast, onClick: () -> Unit) {
+fun PodcastItem(podcastWithRelations: PodcastWithRelations, onClick: () -> Unit) {
     val context = LocalContext.current
+    val podcast = podcastWithRelations.podcast
 
     Row(
         modifier = Modifier
@@ -144,23 +146,25 @@ fun PodcastItemLoading() {
 fun PodcastItemPreview() {
     PodcastSponsorSkipperTheme {
         PodcastItem(
-            podcast = Podcast(
-                id = 1,
-                url = "String",
-                title = "String",
-                description = "String",
-                link = "String",
-                language = "String",
-                imageUrl = "https://cdn.changelog.com/uploads/covers/js-party-original.png?v=63725770332",
-                explicit = false,
-                locked = false,
-                complete = false,
-                lastUpdate = "String",
-                nrOdEpisodes = 42,
-                copyright = "",
-                author = "String",
-                fundingText = "String",
-                fundingUrl = "",
+            podcastWithRelations = PodcastWithRelations(
+                podcast = Podcast(
+                    id = 1,
+                    url = "String",
+                    title = "String",
+                    description = "String",
+                    link = "String",
+                    language = "String",
+                    imageUrl = "https://cdn.changelog.com/uploads/covers/js-party-original.png?v=63725770332",
+                    explicit = false,
+                    locked = false,
+                    complete = false,
+                    lastUpdate = "String",
+                    nrOdEpisodes = 42,
+                    copyright = "",
+                    author = "String",
+                    fundingText = "String",
+                    fundingUrl = "",
+                ),
                 categories = listOf(Category(1, "Test")),
             )
         ) {
@@ -174,23 +178,25 @@ fun PodcastItemPreview() {
 fun PodcastItemPreviewDark() {
     PodcastSponsorSkipperTheme {
         PodcastItem(
-            podcast = Podcast(
-                id = 1,
-                url = "String",
-                title = "String",
-                description = "String",
-                link = "String",
-                language = "String",
-                imageUrl = "https://cdn.changelog.com/uploads/covers/js-party-original.png?v=63725770332",
-                explicit = false,
-                locked = false,
-                complete = false,
-                lastUpdate = "String",
-                nrOdEpisodes = 42,
-                copyright = "",
-                author = "String",
-                fundingText = "String",
-                fundingUrl = "",
+            podcastWithRelations = PodcastWithRelations(
+                podcast = Podcast(
+                    id = 1,
+                    url = "String",
+                    title = "String",
+                    description = "String",
+                    link = "String",
+                    language = "String",
+                    imageUrl = "https://cdn.changelog.com/uploads/covers/js-party-original.png?v=63725770332",
+                    explicit = false,
+                    locked = false,
+                    complete = false,
+                    lastUpdate = "String",
+                    nrOdEpisodes = 42,
+                    copyright = "",
+                    author = "String",
+                    fundingText = "String",
+                    fundingUrl = "",
+                ),
                 categories = listOf(Category(1, "Test")),
             )
         ) {

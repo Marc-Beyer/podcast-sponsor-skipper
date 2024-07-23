@@ -6,8 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import de.devbeyer.podcast_sponsorskipper.ui.search.SearchView
-import de.devbeyer.podcast_sponsorskipper.ui.search.SearchViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.TourGuideViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuide
 
@@ -16,13 +14,16 @@ fun NavGraph(
     startDestination: String
 ) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = startDestination){
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ){
         navigation(
-            route = Screen.Start.route,
-            startDestination = Screen.TourGuide.route
+            route = NavRoute.Start.path,
+            startDestination = NavRoute.TourGuide.path
         ){
             composable(
-                route = Screen.TourGuide.route,
+                route = NavRoute.TourGuide.path,
             ){
                 val viewModel: TourGuideViewModel = hiltViewModel()
                 TourGuide(
@@ -32,18 +33,13 @@ fun NavGraph(
         }
 
         navigation(
-            route = Screen.Main.route,
-            startDestination = Screen.Home.route
+            route = NavRoute.Main.path,
+            startDestination = NavRoute.Home.path
         ){
             composable(
-                route = Screen.Home.route,
+                route = NavRoute.Home.path,
             ){
-                val viewModel: SearchViewModel = hiltViewModel()
-                SearchView(
-                    state = viewModel.state.value,
-                    onEvent = viewModel::onEvent,
-                    navigate = {}
-                )
+                Navigation()
             }
         }
     }

@@ -15,16 +15,17 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
 
 @Composable
 fun PodcastList(
-    podcasts: LazyPagingItems<Podcast>,
-    onClick: (Podcast) -> Unit,
+    podcastsWithRelations: LazyPagingItems<PodcastWithRelations>,
+    onClick: (PodcastWithRelations) -> Unit,
     modifier: Modifier,
 ) {
-    val hasNoError = handelPagingResults(podcasts)
+    val hasNoError = handelPagingResults(podcastsWithRelations)
     if (hasNoError) {
-        if (podcasts.itemCount == 0) {
+        if (podcastsWithRelations.itemCount == 0) {
             Text(
                 text = "No Podcasts found!",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -36,10 +37,10 @@ fun PodcastList(
         } else {
             LazyColumn(modifier = modifier) {
 
-                items(count = podcasts.itemCount) {
-                    podcasts[it]?.let { podcast ->
-                        PodcastItem(podcast = podcast) {
-                            onClick(podcast)
+                items(count = podcastsWithRelations.itemCount) {
+                    podcastsWithRelations[it]?.let { podcastWithRelations ->
+                        PodcastItem(podcastWithRelations = podcastWithRelations) {
+                            onClick(podcastWithRelations)
                         }
                     }
                 }
@@ -49,8 +50,8 @@ fun PodcastList(
 }
 
 @Composable
-fun handelPagingResults(podcasts: LazyPagingItems<Podcast>): Boolean {
-    val loadState = podcasts.loadState
+fun handelPagingResults(podcastsWithRelations: LazyPagingItems<PodcastWithRelations>): Boolean {
+    val loadState = podcastsWithRelations.loadState
     val error = when {
         loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
         loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error

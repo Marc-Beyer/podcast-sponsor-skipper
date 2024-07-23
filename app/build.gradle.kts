@@ -4,6 +4,8 @@ plugins {
 
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -53,6 +55,17 @@ android {
 }
 
 dependencies {
+    // To use Kotlin Symbol Processing (KSP)
+    ksp(libs.androidx.room.compiler)
+
+    // Room for database management
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    // Desugaring library for LocalDate
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
 
@@ -78,12 +91,13 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
-
     // Image handling
     implementation(libs.coil.compose)
 
     // More material icons
     implementation(libs.androidx.material.icons.extended)
+
+    implementation(libs.androidx.foundation)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

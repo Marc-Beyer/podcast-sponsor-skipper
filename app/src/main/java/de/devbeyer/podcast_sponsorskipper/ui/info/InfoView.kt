@@ -1,7 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.info
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,91 +10,48 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.domain.models.Category
 import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PodcastInfoView(
-    podcast: Podcast,
+fun InfoView(
+    state: InfoState,
     onEvent: (InfoEvent) -> Unit,
-    navigate: (String)->Unit,
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Podcasts",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-                actions = {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Update",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .clickable {
-
-                            }
-                    )
-                }
-            )
-        }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-        ) {
-            item {
-                PodcastInfo(podcast)
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+        item {
+            if (state.podcastWithRelations != null) {
+                PodcastInfo(state.podcastWithRelations)
+            } else {
+                Text(text = "An error occurred", textAlign = TextAlign.Center)
             }
         }
     }
@@ -103,9 +59,10 @@ fun PodcastInfoView(
 
 @Composable
 private fun PodcastInfo(
-    podcast: Podcast,
+    podcastWithRelations: PodcastWithRelations,
 ) {
     val context = LocalContext.current
+    val podcast = podcastWithRelations.podcast
 
     Text(
         text = podcast.title,
@@ -149,7 +106,7 @@ private fun PodcastInfo(
             IconWithText(
                 imageVector = Icons.Filled.Category,
                 contentDescription = "Categories",
-                text = podcast.categories.joinToString { it.name },
+                text = podcastWithRelations.categories.joinToString { it.name },
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -219,23 +176,25 @@ fun PodcastInfoPreview() {
         ) {
             item {
                 PodcastInfo(
-                    podcast = Podcast(
-                        id = 1,
-                        url = "https://changelog.com/jsparty/feed",
-                        title = "JS Party: JavaScript, CSS, Web Development",
-                        description = "Your weekly celebration of JavaScript and the web. Panelists include Jerod Santo, Feross Aboukhadijeh, Kevin Ball, Amelia Wattenberger, Nick Nisi, Divya Sasidharan, Mikeal Rogers, Chris Hiller, and Amal Hussein. Topics discussed include the web platform (Chrome, Safari, Edge, Firefox, Brave, etc), front-end frameworks (React, Solid, Svelte, Vue, Angular, etc), JavaScript and TypeScript runtimes (Node, Deno, Bun), web animation, SVG, robotics, IoT, and much more. If JavaScript and/or the web touch your life, this show’s for you. Some people search for JSParty and can’t find the show, so now the string JSParty is in our description too.",
-                        link = "https://changelog.com/jsparty",
-                        language = "en-us",
-                        imageUrl = "https://cdn.changelog.com/uploads/covers/js-party-original.png?v=63725770332",
-                        explicit = false,
-                        locked = false,
-                        complete = false,
-                        lastUpdate = "String",
-                        nrOdEpisodes = 42,
-                        copyright = "All rights reserved",
-                        author = "Changelog Media",
-                        fundingText = "Support our work by joining Changelog++",
-                        fundingUrl = "https://changelog.com/++",
+                    PodcastWithRelations(
+                        podcast = Podcast(
+                            id = 1,
+                            url = "https://changelog.com/jsparty/feed",
+                            title = "JS Party: JavaScript, CSS, Web Development",
+                            description = "Your weekly celebration of JavaScript and the web. Panelists include Jerod Santo, Feross Aboukhadijeh, Kevin Ball, Amelia Wattenberger, Nick Nisi, Divya Sasidharan, Mikeal Rogers, Chris Hiller, and Amal Hussein. Topics discussed include the web platform (Chrome, Safari, Edge, Firefox, Brave, etc), front-end frameworks (React, Solid, Svelte, Vue, Angular, etc), JavaScript and TypeScript runtimes (Node, Deno, Bun), web animation, SVG, robotics, IoT, and much more. If JavaScript and/or the web touch your life, this show’s for you. Some people search for JSParty and can’t find the show, so now the string JSParty is in our description too.",
+                            link = "https://changelog.com/jsparty",
+                            language = "en-us",
+                            imageUrl = "https://cdn.changelog.com/uploads/covers/js-party-original.png?v=63725770332",
+                            explicit = false,
+                            locked = false,
+                            complete = false,
+                            lastUpdate = "String",
+                            nrOdEpisodes = 42,
+                            copyright = "All rights reserved",
+                            author = "Changelog Media",
+                            fundingText = "Support our work by joining Changelog++",
+                            fundingUrl = "https://changelog.com/++",
+                        ),
                         categories = listOf(
                             Category(1, "Technology"),
                             Category(2, "Software How-To"),

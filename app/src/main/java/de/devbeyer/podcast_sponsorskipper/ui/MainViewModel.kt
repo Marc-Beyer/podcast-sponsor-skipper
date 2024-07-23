@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.CompletedGuidedTourUseCases
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.Screen
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavRoute
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,15 +20,15 @@ class MainViewModel @Inject constructor(
     var isSplashScreenActive by mutableStateOf(true)
         private set
 
-    var startDestination by mutableStateOf(Screen.Start.route)
+    var startDestination by mutableStateOf(NavRoute.Start.path)
         private set
 
     init{
         completedGuidedTourUseCases.getCompletedGuidedTourUseCase().onEach {
             if(it){
-                startDestination = Screen.Main.route
+                startDestination = NavRoute.Main.path
             }else{
-                startDestination = Screen.Start.route
+                startDestination = NavRoute.Start.path
             }
             delay(300)
             isSplashScreenActive = false

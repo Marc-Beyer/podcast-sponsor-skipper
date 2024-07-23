@@ -25,80 +25,53 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.Screen
+import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchView(
     state: SearchState,
     onEvent: (SearchEvent) -> Unit,
-    navigate: (String) -> Unit
+    navigateToInfo: (PodcastWithRelations) -> Unit
 ) {
     var isSearchBarActive by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Podcasts",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-                actions = {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Update",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .clickable {
+    Column() {
+        SearchBar(
+            query = state.search,
+            onQueryChange = { onEvent(SearchEvent.changeSearch(it)) },
+            onSearch = {
+                isSearchBarActive = false
+                onEvent(SearchEvent.SearchPodcast)
+            },
+            active = isSearchBarActive,
+            onActiveChange = { isSearchBarActive = it },
+            placeholder = {
+                Text(text = "Search Podcast")
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = null
+                )
+            },
+            windowInsets = WindowInsets(top = 0.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(6.dp),
+        ) {
 
-                            }
-                    )
+        }
+        state.podcastsWithRelations?.let {
+            PodcastList(
+                modifier = Modifier.padding(0.dp),
+                podcastsWithRelations = state.podcastsWithRelations.collectAsLazyPagingItems(),
+                onClick = {
+                    navigateToInfo(it)
                 }
             )
-        }
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            SearchBar(
-                query = state.search,
-                onQueryChange = { onEvent(SearchEvent.changeSearch(it)) },
-                onSearch = {
-                    isSearchBarActive = false
-                    onEvent(SearchEvent.SearchPodcast)
-                },
-                active = isSearchBarActive,
-                onActiveChange = { isSearchBarActive = it },
-                placeholder = {
-                    Text(text = "Search Podcast")
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null
-                    )
-                },
-                windowInsets = WindowInsets(top = 0.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(6.dp),
-            ) {
-
-            }
-            state.podcasts?.let {
-                PodcastList(
-                    modifier = Modifier.padding(0.dp),
-                    podcasts = state.podcasts.collectAsLazyPagingItems(),
-                    onClick = { navigate(Screen.Podcast.route) }
-                )
-            }
         }
     }
 }
