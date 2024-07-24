@@ -4,5 +4,6 @@ data class PodcastsUseCases(
     val getRemotePodcastsUseCase: GetRemotePodcastsUseCase,
     val getLocalPodcastsUseCase: GetLocalPodcastsUseCase,
     val insertPodcastUseCase: InsertPodcastUseCase,
+    val deleteLocalPodcastUseCase: DeleteLocalPodcastUseCase,
     val getLocalPodcastByUrl: GetLocalPodcastByUrl,
 )

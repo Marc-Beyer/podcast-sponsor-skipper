@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -141,14 +142,25 @@ private fun PodcastInfo(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    Button(
-        onClick = {
-            onEvent(InfoEvent.subscribeToPodcast(podcastWithRelations))
-        },
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    if (isSubscribed) {
+        OutlinedButton(
+            onClick = {
+                onEvent(InfoEvent.UnsubscribeFromPodcast(podcastWithRelations))
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text =  "Unsubscribe", color = MaterialTheme.colorScheme.onSurface)
 
-        Text(text = if (isSubscribed) "Unsubscribe" else "Subscribe")
+        }
+    } else {
+        Button(
+            onClick = {
+                onEvent(InfoEvent.SubscribeToPodcast(podcastWithRelations))
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Subscribe")
+        }
     }
 }
 

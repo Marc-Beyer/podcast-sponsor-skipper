@@ -20,9 +20,14 @@ class InfoViewModel @Inject constructor(
 
     fun onEvent(event: InfoEvent) {
         when (event) {
-            is InfoEvent.subscribeToPodcast -> {
+            is InfoEvent.SubscribeToPodcast -> {
                 viewModelScope.launch {
                     podcastsUseCases.insertPodcastUseCase(event.podcastWithRelations)
+                }
+            }
+            is InfoEvent.UnsubscribeFromPodcast -> {
+                viewModelScope.launch {
+                    podcastsUseCases.deleteLocalPodcastUseCase(event.podcastWithRelations.podcast)
                 }
             }
         }
@@ -32,10 +37,10 @@ class InfoViewModel @Inject constructor(
     fun setPodcast(podcastWithRelations: PodcastWithRelations) {
         viewModelScope.launch {
             podcastsUseCases.getLocalPodcastByUrl(podcastWithRelations.podcast.url)
-                .collect { podcast ->
+                .collect { localePodcastWithRelations ->
                     _state.value = state.value.copy(
-                        podcastWithRelations = podcastWithRelations,
-                        subscribedToPodcast = podcast != null
+                        podcastWithRelations = localePodcastWithRelations ?: podcastWithRelations,
+                        subscribedToPodcast = localePodcastWithRelations != null
                     )
                 }
         }
