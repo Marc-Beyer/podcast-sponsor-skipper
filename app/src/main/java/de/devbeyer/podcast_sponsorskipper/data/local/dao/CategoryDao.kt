@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import de.devbeyer.podcast_sponsorskipper.domain.models.Category
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface  CategoryDao {
@@ -13,11 +14,8 @@ interface  CategoryDao {
     suspend fun insert(category: Category)
 
     @Query("SELECT * FROM category")
-    fun getAllLive(): LiveData<List<Category>>
+    fun getAll(): Flow<List<Category>>
 
     @Query("SELECT * FROM category WHERE categoryId = :categoryId")
-    fun getCategoryLive(categoryId: String): LiveData<Category>
-
-    @Query("SELECT * FROM category WHERE categoryId = :categoryId")
-    fun getCategory(categoryId: String): Category?
+    fun getCategory(categoryId: String): Flow<Category?>
 }

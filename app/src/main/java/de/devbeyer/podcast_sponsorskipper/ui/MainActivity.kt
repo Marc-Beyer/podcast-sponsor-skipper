@@ -38,29 +38,6 @@ class MainActivity : ComponentActivity() {
 
         actionBar?.hide()
 
-        lifecycleScope.launch {
-            podcastDao.insert(
-                podcast = Podcast(
-                    id = 1,
-                    url = "https://changelog.com/jsparty/feed",
-                    title = "JS Party: JavaScript, CSS, Web Development",
-                    description = "Your weekly celebration of JavaScript and the web. Panelists include Jerod Santo, Feross Aboukhadijeh, Kevin Ball, Amelia Wattenberger, Nick Nisi, Divya Sasidharan, Mikeal Rogers, Chris Hiller, and Amal Hussein. Topics discussed include the web platform (Chrome, Safari, Edge, Firefox, Brave, etc), front-end frameworks (React, Solid, Svelte, Vue, Angular, etc), JavaScript and TypeScript runtimes (Node, Deno, Bun), web animation, SVG, robotics, IoT, and much more. If JavaScript and/or the web touch your life, this show’s for you. Some people search for JSParty and can’t find the show, so now the string JSParty is in our description too.",
-                    link = "https://changelog.com/jsparty",
-                    language = "en-us",
-                    imageUrl = "https://cdn.changelog.com/uploads/covers/js-party-original.png?v=63725770332",
-                    explicit = false,
-                    locked = false,
-                    complete = false,
-                    lastUpdate = "String",
-                    nrOdEpisodes = 42,
-                    copyright = "All rights reserved",
-                    author = "Changelog Media",
-                    fundingText = "Support our work by joining Changelog++",
-                    fundingUrl = "https://changelog.com/++",
-                ),
-            )
-        }
-
         setContent {
             val startDestination = viewModel.startDestination
 

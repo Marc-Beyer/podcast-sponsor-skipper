@@ -49,7 +49,7 @@ fun InfoView(
     ) {
         item {
             if (state.podcastWithRelations != null) {
-                PodcastInfo(state.podcastWithRelations)
+                PodcastInfo(state.podcastWithRelations, state.subscribedToPodcast, onEvent)
             } else {
                 Text(text = "An error occurred", textAlign = TextAlign.Center)
             }
@@ -60,6 +60,8 @@ fun InfoView(
 @Composable
 private fun PodcastInfo(
     podcastWithRelations: PodcastWithRelations,
+    isSubscribed: Boolean,
+    onEvent: (InfoEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val podcast = podcastWithRelations.podcast
@@ -139,8 +141,14 @@ private fun PodcastInfo(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
-        Text(text = "Subscribe")
+    Button(
+        onClick = {
+            onEvent(InfoEvent.subscribeToPodcast(podcastWithRelations))
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+
+        Text(text = if (isSubscribed) "Unsubscribe" else "Subscribe")
     }
 }
 
@@ -200,8 +208,9 @@ fun PodcastInfoPreview() {
                             Category(2, "Software How-To"),
                             Category(3, "Tech News")
                         ),
-                    )
-                )
+                    ),
+                    false
+                ) {}
             }
         }
     }

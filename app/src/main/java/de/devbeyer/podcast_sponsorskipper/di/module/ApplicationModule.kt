@@ -22,6 +22,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCa
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.CompletedGuidedTourUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.SetCompletedGuidedTourUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastByUrl
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -64,11 +65,13 @@ object ApplicationModule {
     fun providePodcastUseCases(
         podcastRepository: PodcastRepository,
         podcastDao: PodcastDao,
+        categoryDao: CategoryDao,
     ): PodcastsUseCases {
         return PodcastsUseCases(
             getRemotePodcastsUseCase = GetRemotePodcastsUseCase(podcastRepository),
             getLocalPodcastsUseCase = GetLocalPodcastsUseCase(podcastDao),
-            insertPodcastUseCase = InsertPodcastUseCase(podcastDao),
+            insertPodcastUseCase = InsertPodcastUseCase(podcastDao, categoryDao),
+            getLocalPodcastByUrl = GetLocalPodcastByUrl(podcastDao),
         )
     }
 

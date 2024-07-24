@@ -12,9 +12,9 @@ import kotlinx.parcelize.Parcelize
     tableName = "podcast",
 )
 data class Podcast(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "podcastId")
-    val id: Int,
+    val id: Int = 0,
 
     val url: String,
     val title: String,
