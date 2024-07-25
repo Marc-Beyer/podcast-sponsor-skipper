@@ -45,6 +45,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.episodes.EpisodesView
+import de.devbeyer.podcast_sponsorskipper.ui.episodes.EpisodesViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedView
 import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.info.InfoViewModel
@@ -73,6 +75,8 @@ fun Navigation() {
                 backStackState?.destination?.route == NavRoute.Episodes.path
     }
 
+    var isAddRSSFeedDialogOpen by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -82,6 +86,12 @@ fun Navigation() {
                             NavRoute.Feed.path -> "Podcasts"
                             NavRoute.Search.path -> "Add podcast"
                             NavRoute.Info.path -> "Podcast"
+                            NavRoute.Episodes.path -> navController
+                                .previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.get<PodcastWithRelations?>(
+                                    "podcastWithRelations"
+                                )?.podcast?.title ?: "Podcast"
                             else -> ""
                         },
                         maxLines = 1,
@@ -140,7 +150,7 @@ fun Navigation() {
         floatingActionButton = {
             when (backStackState?.destination?.route) {
                 NavRoute.Search.path -> {
-                    FloatingActionButton(onClick = { }) {
+                    FloatingActionButton(onClick = { isAddRSSFeedDialogOpen = true }) {
                         Row(
                             modifier = Modifier.padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically,
@@ -154,11 +164,12 @@ fun Navigation() {
             }
         },
         bottomBar = {
-            Column(modifier = Modifier
-                .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .padding(16.dp)
-                .fillMaxWidth()
-                .navigationBarsPadding()
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.inverseOnSurface)
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
             ) {
                 Text(text = "Playing")
                 Spacer(modifier = Modifier.height(16.dp))
@@ -187,13 +198,22 @@ fun Navigation() {
         ) {
             composable(route = NavRoute.Feed.path) {
                 val viewModel: FeedViewModel = hiltViewModel()
-                FeedView(state = viewModel.state.value, navigateToEpisodes = {})
+                FeedView(
+                    state = viewModel.state.value,
+                    navigateToEpisodes = { podcastWithRelations ->
+                        navigateToEpisodes(
+                            navController = navController,
+                            podcastWithRelations = podcastWithRelations
+                        )
+                    })
             }
             composable(route = NavRoute.Search.path) { backStackEntry ->
                 val viewModel: SearchViewModel = hiltViewModel()
                 SearchView(
                     state = viewModel.state.value,
                     onEvent = viewModel::onEvent,
+                    isAddRSSFeedDialogOpen = isAddRSSFeedDialogOpen,
+                    closeAddRSSFeedDialog = { isAddRSSFeedDialogOpen = false },
                     navigateToInfo = { podcastWithRelations ->
                         navigateToInfo(
                             navController = navController,
@@ -217,6 +237,20 @@ fun Navigation() {
                     }
 
             }
+            composable(route = NavRoute.Episodes.path) {
+                val viewModel: EpisodesViewModel = hiltViewModel()
+                navController.previousBackStackEntry?.savedStateHandle?.get<PodcastWithRelations?>(
+                    "podcastWithRelations"
+                )
+                    ?.let { podcastWithRelations ->
+                        viewModel.setPodcast(podcastWithRelations)
+                        EpisodesView(
+                            state = viewModel.state.value,
+                            onEvent = viewModel::onEvent,
+                        )
+                    }
+
+            }
         }
     }
 }
@@ -230,6 +264,17 @@ private fun navigateToInfo(
         podcastWithRelations
     )
     navController.navigate(route = NavRoute.Info.path)
+}
+
+private fun navigateToEpisodes(
+    navController: NavController,
+    podcastWithRelations: PodcastWithRelations
+) {
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        "podcastWithRelations",
+        podcastWithRelations
+    )
+    navController.navigate(route = NavRoute.Episodes.path)
 }
 
 private fun navigateToSearch(

@@ -7,5 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 data class SearchState(
     val search: String = "",
+    val rssFeedUrl: String = "",
     val podcastsWithRelations: Flow<PagingData<PodcastWithRelations>>? = null
 )

@@ -24,10 +24,9 @@ class InfoViewModel @Inject constructor(
         when (event) {
             is InfoEvent.SubscribeToPodcast -> {
                 viewModelScope.launch {
-                    podcastsUseCases.insertPodcastUseCase(event.podcastWithRelations)
-
-                    val p = podcastsUseCases.getRSSFeed(event.podcastWithRelations.podcast.url).firstOrNull()
-                    Log.i("AAA", p.toString())
+                    podcastsUseCases.getRSSFeed(event.podcastWithRelations.podcast.url).firstOrNull()?.let {
+                        podcastsUseCases.insertPodcastUseCase(it)
+                    }
                 }
             }
             is InfoEvent.UnsubscribeFromPodcast -> {

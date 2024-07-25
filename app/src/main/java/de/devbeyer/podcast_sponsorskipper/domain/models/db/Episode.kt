@@ -25,7 +25,7 @@ data class Episode(
     @PrimaryKey
     val episodeUrl: String,
 
-    val podcastId: String,
+    val podcastId: Int,
 
     var episodePath: String?,
     var episodeLength: Int,

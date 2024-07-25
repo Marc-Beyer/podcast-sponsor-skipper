@@ -36,6 +36,7 @@ import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,11 +86,10 @@ private fun PodcastInfo(
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            val imagePath = podcast.imageUrl
-            AsyncImage(
-                model = ImageRequest.Builder(context).data(imagePath).build(),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize()
+            val imagePath = podcast.imagePath ?: podcast.imageUrl
+            CoverImage(
+                context = context,
+                imagePath = imagePath,
             )
         }
 

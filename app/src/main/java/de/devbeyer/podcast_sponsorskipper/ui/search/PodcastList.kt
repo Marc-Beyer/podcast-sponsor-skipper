@@ -1,5 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.search
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.paging.compose.LazyPagingItems
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.PodcastItem
 import de.devbeyer.podcast_sponsorskipper.ui.common.PodcastItemLoading
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @Composable
 fun PodcastList(
@@ -36,7 +38,10 @@ fun PodcastList(
                     .padding(16.dp),
             )
         } else {
-            LazyColumn(modifier = modifier) {
+            LazyColumn(
+                modifier = modifier,
+                verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.SMALL),
+            ) {
 
                 items(count = podcastsWithRelations.itemCount) {
                     podcastsWithRelations[it]?.let { podcastWithRelations ->
@@ -87,7 +92,8 @@ private fun LoadingPodcastList() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.SMALL),
     ) {
         repeat(7) {
             PodcastItemLoading()

@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.ui.search
+package de.devbeyer.podcast_sponsorskipper.ui.common
 
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat

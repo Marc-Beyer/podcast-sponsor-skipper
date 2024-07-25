@@ -1,6 +1,7 @@
 package de.devbeyer.podcast_sponsorskipper.di.module
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -12,10 +13,15 @@ import de.devbeyer.podcast_sponsorskipper.data.local.PodcastDatabase
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.CategoryDao
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.EpisodeDao
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
+import de.devbeyer.podcast_sponsorskipper.data.remote.FileAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
+import de.devbeyer.podcast_sponsorskipper.data.repositories.FileRepositoryImpl
 import de.devbeyer.podcast_sponsorskipper.data.repositories.PodcastRepositoryImpl
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
+import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DownloadFileUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRemotePodcastsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.InsertPodcastUseCase
@@ -24,6 +30,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.Completed
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.SetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.DeleteLocalPodcastUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetEpisodesOfPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastByUrl
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRSSFeed
 import de.devbeyer.podcast_sponsorskipper.util.Constants
@@ -69,6 +76,29 @@ object ApplicationModule {
             .create(RSSAPI::class.java)
     }
 
+
+    @Provides
+    @Singleton
+    fun provideFileAPI(): FileAPI {
+        return Retrofit.Builder()
+            .baseUrl("https://placeholder.com/")
+            .build()
+            .create(FileAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFileRepository(fileAPI: FileAPI, context: Context): FileRepository =
+        FileRepositoryImpl(fileAPI, context)
+
+    @Provides
+    @Singleton
+    fun provideFileUseCases(
+        fileRepository: FileRepository,
+    ): FileUseCases {
+        return FileUseCases(downloadFileUseCase = DownloadFileUseCase(fileRepository))
+    }
+
     @Provides
     @Singleton
     fun providePodcastRepository(backendAPI: BackendAPI, rssAPI: RSSAPI): PodcastRepository =
@@ -80,14 +110,20 @@ object ApplicationModule {
         podcastRepository: PodcastRepository,
         podcastDao: PodcastDao,
         categoryDao: CategoryDao,
+        episodeDao: EpisodeDao,
     ): PodcastsUseCases {
         return PodcastsUseCases(
             getRemotePodcastsUseCase = GetRemotePodcastsUseCase(podcastRepository),
             getLocalPodcastsUseCase = GetLocalPodcastsUseCase(podcastDao),
-            insertPodcastUseCase = InsertPodcastUseCase(podcastDao, categoryDao),
+            insertPodcastUseCase = InsertPodcastUseCase(
+                podcastDao = podcastDao,
+                categoryDao = categoryDao,
+                episodeDao = episodeDao
+            ),
             deleteLocalPodcastUseCase = DeleteLocalPodcastUseCase(podcastDao),
             getLocalPodcastByUrl = GetLocalPodcastByUrl(podcastDao),
-            getRSSFeed = GetRSSFeed(podcastRepository)
+            getRSSFeed = GetRSSFeed(podcastRepository),
+            getEpisodesOfPodcastUseCase = GetEpisodesOfPodcastUseCase(episodeDao),
         )
     }
 

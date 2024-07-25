@@ -10,6 +10,7 @@ import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastAndEpisodes
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
 import de.devbeyer.podcast_sponsorskipper.util.getCurrentISO8601Time
@@ -17,8 +18,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.Node
 import org.xml.sax.InputSource
 import java.io.StringReader
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import javax.xml.parsers.DocumentBuilderFactory
 
 class PodcastRepositoryImpl(
@@ -43,7 +49,7 @@ class PodcastRepositoryImpl(
         ).flow
     }
 
-    override fun getRSSFeed(rssUrl: String): Flow<PodcastWithRelations> = flow {
+    override fun getRSSFeed(rssUrl: String): Flow<PodcastAndEpisodes?> = flow {
         val response = rssAPI.getRSSFeed(rssUrl)
 
         if (response.isSuccessful) {
@@ -52,11 +58,11 @@ class PodcastRepositoryImpl(
             val rssFeed = parseRSS(url = rssUrl, xml = rawResponse ?: "")
             emit(rssFeed)
         } else {
-            throw Exception("Failed to fetch RSS feed: ${response.message()}")
+            emit(null)
         }
     }
 
-    private fun parseRSS(url: String, xml: String): PodcastWithRelations {
+    private fun parseRSS(url: String, xml: String): PodcastAndEpisodes {
         var title = ""
         var description = ""
         var link = ""
@@ -69,7 +75,6 @@ class PodcastRepositoryImpl(
         var author = ""
         var fundingText = ""
         var fundingUrl = ""
-        var nrOdEpisodes = 0
 
         val categories: MutableSet<String> = mutableSetOf()
         val episodes = mutableListOf<Episode>()
@@ -109,16 +114,14 @@ class PodcastRepositoryImpl(
                     }
                 }
                 "item" -> {
-                    nrOdEpisodes++;
-                    //episodes.add(Episode.parseXml(url, node){})
+                    episodes.add(parseRSSItem(node))
                 }
             }
         }
 
         Log.i("AAA", categories.joinToString(", "))
 
-        //return PodcastAndEpisodes(podcastWithRelations =
-        return PodcastWithRelations(
+        return PodcastAndEpisodes(podcastWithRelations = PodcastWithRelations(
                 podcast = Podcast(
                     url = url,
                     title = title,
@@ -130,7 +133,7 @@ class PodcastRepositoryImpl(
                     locked = locked,
                     complete = complete,
                     lastUpdate = getCurrentISO8601Time(),
-                    nrOdEpisodes = nrOdEpisodes,
+                    nrOdEpisodes = episodes.size,
                     copyright = copyright,
                     author = author,
                     fundingText = fundingText,
@@ -138,8 +141,76 @@ class PodcastRepositoryImpl(
                     imagePath = null,
                 ),
                 categories = categories.map { Category(name = it) },
-            )//,
-        //    episodes = episodes,
-        //)
+            ),
+            episodes = episodes,
+        )
+    }
+
+    private fun parseRSSItem(node: Node): Episode {
+        var episodeUrl = ""
+        var episodeLength = -1
+        var episodeType = ""
+        var title = ""
+        var guid = ""
+        var link = ""
+        var pubDate: LocalDateTime? = null
+        var description = ""
+        var duration = ""
+        var imageUrl = ""
+        var imagePath = null
+        var explicit = true
+        var block = false
+
+        val childNodes = node.childNodes
+        for (i in 0 until (childNodes?.length ?: 0)) {
+            val node = childNodes?.item(i)
+            when (node?.nodeName) {
+                "title" -> title = node.textContent
+                "link" -> link = node.textContent
+                "guid" -> guid = node.textContent
+                "description" -> description = node.textContent
+                "itunes:explicit" -> explicit = node.textContent != "false"
+                "itunes:block" -> block = node.textContent == "yes"
+                "itunes:duration" -> duration = node.textContent
+                "pubDate" -> {
+                    val dateString = node.textContent
+                    val formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z")
+                    val zonedDateTime = ZonedDateTime.parse(dateString, formatter)
+                    pubDate = zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+
+                }
+                "enclosure" -> {
+                    if (node is Element) {
+                        episodeUrl = node.getAttribute("url")
+                        episodeType = node.getAttribute("type")
+                        episodeLength = node.getAttribute("length").toInt()
+                    }
+                }
+
+                "itunes:image" -> {
+                    if (node is Element) {
+                        imageUrl = node.getAttribute("href")
+                    }
+                }
+            }
+        }
+
+        return Episode(
+            episodeUrl = episodeUrl,
+            podcastId = 0,
+            episodeLength = episodeLength,
+            episodeType = episodeType,
+            title = title,
+            guid = guid,
+            link = link,
+            pubDate = pubDate ?: LocalDateTime.now(),
+            description = description,
+            duration = duration,
+            imageUrl = imageUrl,
+            imagePath = null,
+            explicit = explicit,
+            block = block,
+            episodePath = null,
+        )
     }
 }

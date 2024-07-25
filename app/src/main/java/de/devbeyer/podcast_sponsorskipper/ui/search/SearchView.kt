@@ -26,14 +26,22 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 fun SearchView(
     state: SearchState,
     onEvent: (SearchEvent) -> Unit,
-    navigateToInfo: (PodcastWithRelations) -> Unit
+    isAddRSSFeedDialogOpen: Boolean,
+    closeAddRSSFeedDialog: () -> Unit,
+    navigateToInfo: (PodcastWithRelations) -> Unit,
 ) {
     var isSearchBarActive by remember { mutableStateOf(false) }
 
+    AddRSSFeedDialog(
+        isAddRSSFeedDialogOpen = isAddRSSFeedDialogOpen,
+        closeAddRSSFeedDialog = closeAddRSSFeedDialog,
+        onEvent = onEvent,
+        state = state
+    )
     Column() {
         SearchBar(
             query = state.search,
-            onQueryChange = { onEvent(SearchEvent.changeSearch(it)) },
+            onQueryChange = { onEvent(SearchEvent.ChangeSearch(it)) },
             onSearch = {
                 isSearchBarActive = false
                 onEvent(SearchEvent.SearchPodcast)
