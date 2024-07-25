@@ -2,8 +2,8 @@ package de.devbeyer.podcast_sponsorskipper.data.remote
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 
 class PodcastPagingSource(
     private val backendAPI: BackendAPI,
@@ -44,6 +44,7 @@ class PodcastPagingSource(
                             author = it.author,
                             fundingText = it.fundingText,
                             fundingUrl = it.fundingUrl,
+                            imagePath = null,
                         ),
                         categories = it.categories
                     )

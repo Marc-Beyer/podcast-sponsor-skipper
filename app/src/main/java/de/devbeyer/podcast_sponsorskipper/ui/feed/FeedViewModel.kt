@@ -23,7 +23,7 @@ class FeedViewModel @Inject constructor(
 
     private fun getPodcasts() {
         podcastsUseCases.getLocalPodcastsUseCase().onEach {
-            _state.value = state.value.copy(podcasts = it)
+            _state.value = state.value.copy(podcastsWithRelations = it)
         }.launchIn(viewModelScope)
     }
 }

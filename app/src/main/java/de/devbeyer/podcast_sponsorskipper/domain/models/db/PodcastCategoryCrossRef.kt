@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.domain.models
+package de.devbeyer.podcast_sponsorskipper.domain.models.db
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

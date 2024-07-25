@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.domain.models
+package de.devbeyer.podcast_sponsorskipper.domain.models.db
 
 import android.os.Parcelable
 import androidx.room.Entity

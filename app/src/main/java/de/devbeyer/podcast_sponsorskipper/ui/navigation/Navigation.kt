@@ -1,11 +1,28 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.RssFeed
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -14,8 +31,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -25,7 +44,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedView
+import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.info.InfoViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.info.InfoView
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchView
@@ -46,12 +67,23 @@ fun Navigation() {
         else -> 0
     }
 
+    val isBackArrowVisible = remember(key1 = backStackState) {
+        backStackState?.destination?.route == NavRoute.Search.path ||
+                backStackState?.destination?.route == NavRoute.Info.path ||
+                backStackState?.destination?.route == NavRoute.Episodes.path
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "Podcasts",
+                        text = when (backStackState?.destination?.route) {
+                            NavRoute.Feed.path -> "Podcasts"
+                            NavRoute.Search.path -> "Add podcast"
+                            NavRoute.Info.path -> "Podcast"
+                            else -> ""
+                        },
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -61,26 +93,103 @@ fun Navigation() {
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
                 ),
                 actions = {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Update",
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .clickable {
+                    when (backStackState?.destination?.route) {
+                        NavRoute.Feed.path -> {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = "Add Podcast",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable {
+                                        navigateToSearch(navController)
+                                    }
+                            )
+                        }
 
-                            }
-                    )
+                        NavRoute.Feed.path -> {
+                            Icon(
+                                imageVector = Icons.Filled.Home,
+                                contentDescription = "Update",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable {
+
+                                    }
+                            )
+                        }
+                    }
+                },
+                navigationIcon = {
+                    if (isBackArrowVisible) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .clickable {
+                                    navController.navigateUp()
+                                }
+                        )
+                    }
                 }
             )
+        },
+        floatingActionButton = {
+            when (backStackState?.destination?.route) {
+                NavRoute.Search.path -> {
+                    FloatingActionButton(onClick = { }) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(Icons.Default.RssFeed, contentDescription = "Add RSS Feed")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "Add RSS Feed")
+                        }
+                    }
+                }
+            }
+        },
+        bottomBar = {
+            Column(modifier = Modifier
+                .background(MaterialTheme.colorScheme.inverseOnSurface)
+                .padding(16.dp)
+                .fillMaxWidth()
+                .navigationBarsPadding()
+            ) {
+                Text(text = "Playing")
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
+                ) {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(imageVector = Icons.Filled.SkipPrevious, contentDescription = null)
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null)
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(imageVector = Icons.Filled.SkipNext, contentDescription = null)
+                    }
+                }
+            }
         }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavRoute.Home.path,
-            modifier = Modifier.padding(innerPadding)
+            startDestination = NavRoute.Feed.path,
+            modifier = Modifier.padding(innerPadding),
         ) {
-            composable(route = NavRoute.Home.path) { backStackEntry ->
+            composable(route = NavRoute.Feed.path) {
+                val viewModel: FeedViewModel = hiltViewModel()
+                FeedView(state = viewModel.state.value, navigateToEpisodes = {})
+            }
+            composable(route = NavRoute.Search.path) { backStackEntry ->
                 val viewModel: SearchViewModel = hiltViewModel()
                 SearchView(
                     state = viewModel.state.value,
@@ -95,7 +204,9 @@ fun Navigation() {
             }
             composable(route = NavRoute.Info.path) {
                 val viewModel: InfoViewModel = hiltViewModel()
-                navController.previousBackStackEntry?.savedStateHandle?.get<PodcastWithRelations?>("podcastWithRelations")
+                navController.previousBackStackEntry?.savedStateHandle?.get<PodcastWithRelations?>(
+                    "podcastWithRelations"
+                )
                     ?.let { podcastWithRelations ->
                         viewModel.setPodcast(podcastWithRelations)
                         InfoView(
@@ -119,4 +230,10 @@ private fun navigateToInfo(
         podcastWithRelations
     )
     navController.navigate(route = NavRoute.Info.path)
+}
+
+private fun navigateToSearch(
+    navController: NavController,
+) {
+    navController.navigate(route = NavRoute.Search.path)
 }

@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import de.devbeyer.podcast_sponsorskipper.domain.models.Category
-import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -214,6 +214,7 @@ fun PodcastInfoPreview() {
                             author = "Changelog Media",
                             fundingText = "Support our work by joining Changelog++",
                             fundingUrl = "https://changelog.com/++",
+                            imagePath = null,
                         ),
                         categories = listOf(
                             Category(1, "Technology"),

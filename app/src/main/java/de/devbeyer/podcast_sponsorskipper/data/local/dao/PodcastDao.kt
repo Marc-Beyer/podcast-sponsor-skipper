@@ -6,9 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastCategoryCrossRef
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastCategoryCrossRef
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import kotlinx.coroutines.flow.Flow
 
 @Dao

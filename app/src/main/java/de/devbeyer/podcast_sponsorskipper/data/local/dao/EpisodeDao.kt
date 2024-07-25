@@ -1,12 +1,11 @@
 package de.devbeyer.podcast_sponsorskipper.data.local.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import de.devbeyer.podcast_sponsorskipper.domain.models.Episode
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import kotlinx.coroutines.flow.Flow
 
 @Dao

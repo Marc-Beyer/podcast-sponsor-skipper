@@ -34,10 +34,10 @@ fun NavGraph(
 
         navigation(
             route = NavRoute.Main.path,
-            startDestination = NavRoute.Home.path
+            startDestination = NavRoute.Feed.path
         ){
             composable(
-                route = NavRoute.Home.path,
+                route = NavRoute.Feed.path,
             ){
                 Navigation()
             }

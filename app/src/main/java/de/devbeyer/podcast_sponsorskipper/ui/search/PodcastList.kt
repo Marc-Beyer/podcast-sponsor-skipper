@@ -14,8 +14,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.common.PodcastItem
+import de.devbeyer.podcast_sponsorskipper.ui.common.PodcastItemLoading
 
 @Composable
 fun PodcastList(

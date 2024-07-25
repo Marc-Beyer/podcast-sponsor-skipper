@@ -90,6 +90,7 @@ dependencies {
     //Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.converter.scalars)
 
     // Image handling
     implementation(libs.coil.compose)

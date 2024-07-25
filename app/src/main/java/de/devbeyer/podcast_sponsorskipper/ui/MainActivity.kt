@@ -10,13 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.PodcastDao
-import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavGraph
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint

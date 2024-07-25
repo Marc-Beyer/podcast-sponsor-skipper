@@ -1,10 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.data.remote.dto
 
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
-import de.devbeyer.podcast_sponsorskipper.domain.models.Category
-import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 
 data class PodcastResponse(
     val podcasts: List<PodcastsResponse>,

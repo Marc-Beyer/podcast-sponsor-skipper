@@ -1,12 +1,14 @@
 package de.devbeyer.podcast_sponsorskipper.ui.info
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,6 +25,9 @@ class InfoViewModel @Inject constructor(
             is InfoEvent.SubscribeToPodcast -> {
                 viewModelScope.launch {
                     podcastsUseCases.insertPodcastUseCase(event.podcastWithRelations)
+
+                    val p = podcastsUseCases.getRSSFeed(event.podcastWithRelations.podcast.url).firstOrNull()
+                    Log.i("AAA", p.toString())
                 }
             }
             is InfoEvent.UnsubscribeFromPodcast -> {

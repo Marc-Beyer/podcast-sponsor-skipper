@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.ui.search
+package de.devbeyer.podcast_sponsorskipper.ui.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -26,9 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import de.devbeyer.podcast_sponsorskipper.domain.models.Category
-import de.devbeyer.podcast_sponsorskipper.domain.models.Podcast
-import de.devbeyer.podcast_sponsorskipper.domain.models.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.search.loadingEffect
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 
 
@@ -164,6 +165,7 @@ fun PodcastItemPreview() {
                     author = "String",
                     fundingText = "String",
                     fundingUrl = "",
+                    imagePath = null,
                 ),
                 categories = listOf(Category(1, "Test")),
             )
@@ -196,6 +198,7 @@ fun PodcastItemPreviewDark() {
                     author = "String",
                     fundingText = "String",
                     fundingUrl = "",
+                    imagePath = null,
                 ),
                 categories = listOf(Category(1, "Test")),
             )

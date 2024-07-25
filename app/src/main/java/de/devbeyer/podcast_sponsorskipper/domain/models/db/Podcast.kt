@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.domain.models
+package de.devbeyer.podcast_sponsorskipper.domain.models.db
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
@@ -31,7 +31,7 @@ data class Podcast(
     val author: String?,
     val fundingText: String?,
     val fundingUrl: String?,
-    //val categories: List<Category>
+    val imagePath: String?,
 ) : Parcelable
 
 //data class PodcastAndEpisodes(

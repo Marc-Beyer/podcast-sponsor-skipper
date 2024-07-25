@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import de.devbeyer.podcast_sponsorskipper.domain.models.Category
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao

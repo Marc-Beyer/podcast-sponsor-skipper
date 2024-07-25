@@ -12,6 +12,7 @@ import de.devbeyer.podcast_sponsorskipper.data.local.PodcastDatabase
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.CategoryDao
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.EpisodeDao
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
+import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
 import de.devbeyer.podcast_sponsorskipper.data.repositories.PodcastRepositoryImpl
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
@@ -24,9 +25,11 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetComple
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.SetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.DeleteLocalPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastByUrl
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRSSFeed
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -58,8 +61,18 @@ object ApplicationModule {
 
     @Provides
     @Singleton
-    fun providePodcastRepository(backendAPI: BackendAPI): PodcastRepository =
-        PodcastRepositoryImpl(backendAPI)
+    fun provideRSSAPI(): RSSAPI {
+        return Retrofit.Builder()
+            .baseUrl("https://placeholder.com/")
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+            .create(RSSAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePodcastRepository(backendAPI: BackendAPI, rssAPI: RSSAPI): PodcastRepository =
+        PodcastRepositoryImpl(backendAPI, rssAPI)
 
     @Provides
     @Singleton
@@ -74,6 +87,7 @@ object ApplicationModule {
             insertPodcastUseCase = InsertPodcastUseCase(podcastDao, categoryDao),
             deleteLocalPodcastUseCase = DeleteLocalPodcastUseCase(podcastDao),
             getLocalPodcastByUrl = GetLocalPodcastByUrl(podcastDao),
+            getRSSFeed = GetRSSFeed(podcastRepository)
         )
     }
 
