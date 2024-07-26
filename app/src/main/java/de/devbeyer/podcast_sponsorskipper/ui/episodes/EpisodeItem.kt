@@ -1,7 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.episodes
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -11,36 +10,31 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.outlined.Downloading
-import androidx.compose.material.icons.outlined.Headphones
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
+import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -49,6 +43,10 @@ fun EpisodeItem(
     context: Context,
     startAudio: () -> Unit
 ) {
+    var isDownloading by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     Row(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.inverseOnSurface)
@@ -108,17 +106,19 @@ fun EpisodeItem(
         }
         val episodePath = episode.episodePath
         if (episodePath == null) {
-            if (false) {
+            if (isDownloading) {
                 TextButton(onClick = {}) {
                     Icon(
-                        imageVector = Icons.Outlined.Downloading,
+                        imageVector = Icons.Outlined.Sync,
                         contentDescription = "Episode",
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.padding(8.dp).rotationEffect(),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             } else {
-                TextButton(onClick = {}) {
+                TextButton(onClick = {
+                    isDownloading = true
+                }) {
                     Icon(
                         imageVector = Icons.Filled.Download,
                         contentDescription = "Episode",

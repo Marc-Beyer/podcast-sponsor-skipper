@@ -26,6 +26,8 @@ class InfoViewModel @Inject constructor(
     fun onEvent(event: InfoEvent) {
         when (event) {
             is InfoEvent.SubscribeToPodcast -> {
+                setLoading(true)
+
                 val workData = workDataOf("url" to event.podcastWithRelations.podcast.url)
                 val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadWorker>()
                     .setInputData(workData)
@@ -52,11 +54,19 @@ class InfoViewModel @Inject constructor(
         viewModelScope.launch {
             podcastsUseCases.getLocalPodcastByUrl(podcastWithRelations.podcast.url)
                 .collect { localePodcastWithRelations ->
+                    val subscribedToPodcast = localePodcastWithRelations != null
                     _state.value = state.value.copy(
                         podcastWithRelations = localePodcastWithRelations ?: podcastWithRelations,
-                        subscribedToPodcast = localePodcastWithRelations != null
+                        subscribedToPodcast = subscribedToPodcast,
                     )
+                    if(subscribedToPodcast)setLoading(false)
                 }
         }
+    }
+
+    fun setLoading(value: Boolean){
+        _state.value = state.value.copy(
+            isLoading = value
+        )
     }
 }

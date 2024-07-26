@@ -1,6 +1,7 @@
 package de.devbeyer.podcast_sponsorskipper.data.repositories
 
 import android.content.Context
+import android.util.Log
 import de.devbeyer.podcast_sponsorskipper.data.remote.FileAPI
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,29 @@ class FileRepositoryImpl(
     private val fileAPI: FileAPI,
     private val context: Context,
 ) : FileRepository {
+
+    override fun deleteFile(filePath: String): Flow<String?> = flow {
+        Log.i("AAA", "deleteFile wtf----- $filePath")
+        try {
+            val file = File(filePath)
+            Log.i("AAA", "filePath $filePath")
+            if (file.exists()) {
+                Log.i("AAA", "exists $filePath")
+                val deleted = file.delete()
+                Log.i("AAA" ,"delete $deleted $filePath")
+                if (deleted) {
+                    emit(filePath)
+                } else {
+                    emit(null)
+                }
+            } else {
+                emit(null)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun downloadFile(extension: String, url: String): Flow<String?> = flow {
         try {
             val response = fileAPI.downloadFile(url)

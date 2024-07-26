@@ -1,6 +1,7 @@
 package de.devbeyer.podcast_sponsorskipper.ui.info
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,12 +33,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
+import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +52,12 @@ fun InfoView(
     ) {
         item {
             if (state.podcastWithRelations != null) {
-                PodcastInfo(state.podcastWithRelations, state.subscribedToPodcast, onEvent)
+                PodcastInfo(
+                    podcastWithRelations = state.podcastWithRelations,
+                    isSubscribed = state.subscribedToPodcast,
+                    isLoading = state.isLoading,
+                    onEvent = onEvent,
+                )
             } else {
                 Text(text = "An error occurred", textAlign = TextAlign.Center)
             }
@@ -63,6 +69,7 @@ fun InfoView(
 private fun PodcastInfo(
     podcastWithRelations: PodcastWithRelations,
     isSubscribed: Boolean,
+    isLoading: Boolean,
     onEvent: (InfoEvent) -> Unit,
 ) {
     val context = LocalContext.current
@@ -149,17 +156,33 @@ private fun PodcastInfo(
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text =  "Unsubscribe", color = MaterialTheme.colorScheme.onSurface)
+            Text(text = "Unsubscribe", color = MaterialTheme.colorScheme.onSurface)
 
         }
     } else {
-        Button(
-            onClick = {
-                onEvent(InfoEvent.SubscribeToPodcast(podcastWithRelations))
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Subscribe")
+        if (isLoading) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Sync,
+                    contentDescription = "Episode",
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .rotationEffect(),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        } else {
+            Button(
+                onClick = {
+                    onEvent(InfoEvent.SubscribeToPodcast(podcastWithRelations))
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Subscribe")
+            }
         }
     }
 }
@@ -222,6 +245,7 @@ fun PodcastInfoPreview() {
                             Category(3, "Tech News")
                         ),
                     ),
+                    false,
                     false
                 ) {}
             }

@@ -1,0 +1,6 @@
+fun Context.openLink(url: String) {
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse(url)
+    }
+    startActivity(intent)
+}

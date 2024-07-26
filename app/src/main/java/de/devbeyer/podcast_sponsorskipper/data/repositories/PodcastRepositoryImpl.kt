@@ -30,7 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 class PodcastRepositoryImpl(
     private val backendAPI: BackendAPI,
     private val rssAPI: RSSAPI,
-): PodcastRepository {
+) : PodcastRepository {
     override fun getPodcasts(search: String): Flow<PagingData<PodcastWithRelations>> {
         return Pager(
             config = PagingConfig(pageSize = 12),
@@ -54,7 +54,6 @@ class PodcastRepositoryImpl(
 
         if (response.isSuccessful) {
             val rawResponse = response.body()
-            Log.i("AAA","Raw Response: $rawResponse")
             val rssFeed = parseRSS(url = rssUrl, xml = rawResponse ?: "")
             emit(rssFeed)
         } else {
@@ -103,16 +102,19 @@ class PodcastRepositoryImpl(
                         fundingUrl = node.getAttribute("url")
                     }
                 }
+
                 "itunes:image" -> {
                     if (node is Element) {
                         imageUrl = node.getAttribute("href")
                     }
                 }
+
                 "itunes:category" -> {
                     if (node is Element) {
                         categories.add(node.getAttribute("text"))
                     }
                 }
+
                 "item" -> {
                     episodes.add(parseRSSItem(node))
                 }
@@ -121,7 +123,8 @@ class PodcastRepositoryImpl(
 
         Log.i("AAA", categories.joinToString(", "))
 
-        return PodcastAndEpisodes(podcastWithRelations = PodcastWithRelations(
+        return PodcastAndEpisodes(
+            podcastWithRelations = PodcastWithRelations(
                 podcast = Podcast(
                     url = url,
                     title = title,
@@ -173,12 +176,17 @@ class PodcastRepositoryImpl(
                 "itunes:block" -> block = node.textContent == "yes"
                 "itunes:duration" -> duration = node.textContent
                 "pubDate" -> {
-                    val dateString = node.textContent
+                    var dateString = node.textContent
+                    if (dateString.endsWith("GMT")){
+                        dateString = dateString.replace("GMT", "+0000")
+                    }
                     val formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z")
                     val zonedDateTime = ZonedDateTime.parse(dateString, formatter)
-                    pubDate = zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+                    pubDate =
+                        zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 
                 }
+
                 "enclosure" -> {
                     if (node is Element) {
                         episodeUrl = node.getAttribute("url")
