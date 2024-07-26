@@ -69,8 +69,10 @@ dependencies {
     // Splash Screen
     implementation(libs.androidx.core.splashscreen)
 
-    // Splash Screen
+    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.work.runtime.ktx)
+
 
     // Datastore
     implementation(libs.androidx.datastore.preferences)
@@ -78,7 +80,10 @@ dependencies {
     // Hilt (Dependency Injection)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.work)
+    //implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     // Compose navigation
     implementation(libs.androidx.navigation.compose)

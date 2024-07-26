@@ -3,9 +3,11 @@ package de.devbeyer.podcast_sponsorskipper.di.module
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import de.devbeyer.podcast_sponsorskipper.data.LocalDataManagerImpl
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.PodcastDao
@@ -88,15 +90,17 @@ object ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideFileRepository(fileAPI: FileAPI, context: Context): FileRepository =
-        FileRepositoryImpl(fileAPI, context)
+    fun provideFileRepository(fileAPI: FileAPI, applicationContext: Application): FileRepository =
+        FileRepositoryImpl(fileAPI, applicationContext)
 
     @Provides
     @Singleton
     fun provideFileUseCases(
         fileRepository: FileRepository,
     ): FileUseCases {
-        return FileUseCases(downloadFileUseCase = DownloadFileUseCase(fileRepository))
+        return FileUseCases(
+            downloadFileUseCase = DownloadFileUseCase(fileRepository)
+        )
     }
 
     @Provides
@@ -111,6 +115,7 @@ object ApplicationModule {
         podcastDao: PodcastDao,
         categoryDao: CategoryDao,
         episodeDao: EpisodeDao,
+        fileUseCases: FileUseCases,
     ): PodcastsUseCases {
         return PodcastsUseCases(
             getRemotePodcastsUseCase = GetRemotePodcastsUseCase(podcastRepository),
@@ -118,7 +123,8 @@ object ApplicationModule {
             insertPodcastUseCase = InsertPodcastUseCase(
                 podcastDao = podcastDao,
                 categoryDao = categoryDao,
-                episodeDao = episodeDao
+                episodeDao = episodeDao,
+                fileUseCases = fileUseCases,
             ),
             deleteLocalPodcastUseCase = DeleteLocalPodcastUseCase(podcastDao),
             getLocalPodcastByUrl = GetLocalPodcastByUrl(podcastDao),
@@ -156,4 +162,17 @@ object ApplicationModule {
     @Singleton
     fun provideEpisodeDao(podcastDatabase: PodcastDatabase): EpisodeDao =
         podcastDatabase.episodeDao()
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
+        return WorkManager.getInstance(context)
+    }
+
+    /*
+    @Provides
+    fun provideWorkerFactory(podcastUseCases: PodcastsUseCases): WorkerFactory {
+        return DownloadWorkerFactory(fileAPI)
+    }
+     */
 }

@@ -1,12 +1,8 @@
 package de.devbeyer.podcast_sponsorskipper.data.repositories
 
 import android.content.Context
-import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.FileAPI
-import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
-import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
-import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.File
@@ -17,7 +13,7 @@ import java.util.UUID
 class FileRepositoryImpl(
     private val fileAPI: FileAPI,
     private val context: Context,
-): FileRepository {
+) : FileRepository {
     override fun downloadFile(extension: String, url: String): Flow<String?> = flow {
         try {
             val response = fileAPI.downloadFile(url)
@@ -59,7 +55,6 @@ class FileRepositoryImpl(
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(null)
         }
     }
 }
