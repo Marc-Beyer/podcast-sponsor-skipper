@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.media.session.PlaybackState
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -16,8 +17,11 @@ import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.session.MediaController
+import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionResult
 import androidx.media3.session.SessionToken
 import androidx.work.WorkManager
+import androidx.work.await
 import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
@@ -25,10 +29,12 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import de.devbeyer.podcast_sponsorskipper.service.PlaybackService
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.max
 
 
 @HiltViewModel
@@ -42,6 +48,10 @@ class NavigationViewModel @Inject constructor(
     val state: State<NavigationState> = _state
 
     private var updatePositionJob: Job? = null
+
+    init {
+        initializeMediaController(context = application)
+    }
 
     fun onEvent(event: NavigationEvent) {
         when (event) {
@@ -73,21 +83,27 @@ class NavigationViewModel @Inject constructor(
                 state.value.mediaController?.play()
 
             }
-            is NavigationEvent.SeekTo ->{
+
+            is NavigationEvent.SeekTo -> {
                 state.value.mediaController?.seekTo(event.position)
             }
+
             is NavigationEvent.SkipBack -> {
                 state.value.mediaController?.seekBack()
             }
+
             is NavigationEvent.SkipForward -> {
                 state.value.mediaController?.seekForward()
             }
+
             is NavigationEvent.Play -> {
                 state.value.mediaController?.play()
             }
+
             is NavigationEvent.Stop -> {
                 state.value.mediaController?.stop()
             }
+
             is NavigationEvent.Close -> {
                 state.value.mediaController?.stop()
                 _state.value = state.value.copy(
@@ -96,6 +112,7 @@ class NavigationViewModel @Inject constructor(
                     isPlaying = false,
                 )
             }
+
             is NavigationEvent.Unsubscribe -> {
                 viewModelScope.launch {
                     event.podcastWithRelations?.let {
@@ -103,34 +120,76 @@ class NavigationViewModel @Inject constructor(
                     }
                 }
             }
+
+            is NavigationEvent.StartSponsorSection -> {
+                state.value.mediaController?.let { mediaController ->
+                    _state.value = state.value.copy(
+                        sponsorSectionStart = mediaController.currentPosition,
+                        duration = mediaController.duration,
+                    )
+                }
+            }
+
+            is NavigationEvent.EndSponsorSection -> {
+                state.value.mediaController?.let { mediaController ->
+                    val sponsorSectionEnd = mediaController.currentPosition
+                    _state.value = state.value.copy(
+                        sponsorSectionEnd = sponsorSectionEnd,
+                        duration = mediaController.duration,
+                    )
+                    state.value.sponsorSectionStart?.let {
+                        mediaController.seekTo(max(it - 3000, 0))
+                        mediaController.play()
+                        schedulePlaybackAction(
+                            startPositionMs = it,
+                            endPositionMs = sponsorSectionEnd
+                        )
+                    }
+                }
+            }
         }
 
     }
 
-    init {
-        initializeMediaController(context = application)
+    private fun schedulePlaybackAction(startPositionMs: Long, endPositionMs: Long) {
+        viewModelScope.launch {
+            val command = SessionCommand(Constants.COMMAND_SCHEDULE_EVENT, Bundle.EMPTY)
+            val args = Bundle().apply {
+                putLong("START_POSITION_MS", startPositionMs)
+                putLong("END_POSITION_MS", endPositionMs)
+            }
+            Log.i("AAA", "sendCustomCommand to mediaController!!!!!")
+            val result = state.value.mediaController?.sendCustomCommand(command, args)?.await()
+            Log.i("AAA", "result $result")
+            if (result != null && result.resultCode == SessionResult.RESULT_SUCCESS) {
+                Log.i("AAA", "SessionResult.RESULT_SUCCESS")
+            } else {
+                Log.i("AAA", "SessionResult.RESULT_failure")
+            }
+        }
     }
-    private fun setMediaController(mediaController: MediaController?){
+
+    private fun setMediaController(mediaController: MediaController?) {
         _state.value = state.value.copy(
             mediaController = mediaController,
         )
     }
 
-    private fun setIsPlaying(isPlaying:Boolean){
+    private fun setIsPlaying(isPlaying: Boolean) {
         if (isPlaying) startUpdatingPosition() else stopUpdatingPosition()
         _state.value = state.value.copy(
             isPlaying = isPlaying,
         )
     }
 
-    private fun setCurrentEpisodeAndPodcast(episode: Episode, podcast: PodcastWithRelations){
+    private fun setCurrentEpisodeAndPodcast(episode: Episode, podcast: PodcastWithRelations) {
         _state.value = state.value.copy(
             selectedEpisode = episode,
             selectedPodcast = podcast,
         )
     }
 
-    private fun updateCurrentPosition(){
+    private fun updateCurrentPosition() {
         state.value.mediaController?.let {
             _state.value = state.value.copy(
                 currentPosition = it.currentPosition,
@@ -176,7 +235,7 @@ class NavigationViewModel @Inject constructor(
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         Log.i("AAA", "playbackState changed to $playbackState")
                         updateCurrentPosition()
-                        when(playbackState){
+                        when (playbackState) {
                             PlaybackState.STATE_NONE -> setIsPlaying(false)
                             PlaybackState.STATE_STOPPED -> setIsPlaying(false)
                             PlaybackState.STATE_PAUSED -> setIsPlaying(false)
@@ -187,6 +246,7 @@ class NavigationViewModel @Inject constructor(
                     override fun onTimelineChanged(timeline: Timeline, reason: Int) {
                         updateDuration()
                     }
+
                     override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                         updateDuration()
                     }
@@ -198,6 +258,7 @@ class NavigationViewModel @Inject constructor(
                     override fun onPositionDiscontinuity(reason: Int) {
                         updateCurrentPosition()
                     }
+
                     override fun onPositionDiscontinuity(
                         oldPosition: Player.PositionInfo,
                         newPosition: Player.PositionInfo,

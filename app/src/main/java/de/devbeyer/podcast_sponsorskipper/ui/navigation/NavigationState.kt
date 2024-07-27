@@ -12,4 +12,6 @@ data class NavigationState (
     val isPlaying: Boolean = false,
     val currentPosition: Long = 0,
     val duration: Long = 0,
+    val sponsorSectionStart: Long? = null,
+    val sponsorSectionEnd: Long? = null,
 )

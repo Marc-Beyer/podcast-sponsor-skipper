@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +18,7 @@ private val DarkColorScheme = darkColorScheme(
     onPrimary = Color.White,
     onBackground = Color.White,
     error = StrongRed,
+    onError = Color.White,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -28,6 +28,7 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = Color.White,
     error = StrongRedDark,
     onBackground = Color.Black,
+    onError = Color.White,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

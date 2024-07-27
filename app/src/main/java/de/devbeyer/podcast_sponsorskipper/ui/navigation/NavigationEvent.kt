@@ -20,4 +20,6 @@ sealed class NavigationEvent {
     object SkipForward: NavigationEvent()
     object SkipBack: NavigationEvent()
     object Close: NavigationEvent()
+    object StartSponsorSection: NavigationEvent()
+    object EndSponsorSection: NavigationEvent()
 }
