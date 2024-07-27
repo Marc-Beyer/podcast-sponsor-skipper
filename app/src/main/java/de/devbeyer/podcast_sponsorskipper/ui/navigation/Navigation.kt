@@ -57,7 +57,10 @@ import de.devbeyer.podcast_sponsorskipper.ui.search.SearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Navigation() {
+fun Navigation(
+    state: NavigationState,
+    onEvent: (NavigationEvent) -> Unit,
+) {
     val navController = rememberNavController()
     val backStackState = navController.currentBackStackEntryAsState().value
     var selectedItem by rememberSaveable {
@@ -93,6 +96,7 @@ fun Navigation() {
                                 ?.get<PodcastWithRelations?>(
                                     "podcastWithRelations"
                                 )?.podcast?.title ?: "Podcast"
+
                             else -> ""
                         },
                         maxLines = 1,
@@ -117,6 +121,7 @@ fun Navigation() {
                                     }
                             )
                         }
+
                         NavRoute.Episodes.path -> {
                             Icon(
                                 imageVector = Icons.Filled.Refresh,
@@ -257,6 +262,7 @@ fun Navigation() {
                         EpisodesView(
                             state = viewModel.state.value,
                             onEvent = viewModel::onEvent,
+                            onNavigationEvent = onEvent,
                         )
                     }
 

@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 
@@ -41,7 +42,8 @@ import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 fun EpisodeItem(
     episode: Episode,
     context: Context,
-    onEvent: (EpisodesEvent) -> Unit
+    onEvent: (EpisodesEvent) -> Unit,
+    onNavigationEvent: (NavigationEvent) -> Unit,
 ) {
     var isDownloading by rememberSaveable {
         mutableStateOf(false)
@@ -131,7 +133,7 @@ fun EpisodeItem(
                 }
             }
         } else {
-            TextButton(onClick = { onEvent(EpisodesEvent.Play(episode)) }) {
+            TextButton(onClick = { onNavigationEvent(NavigationEvent.PlayEpisode(episode)) }) {
                 Icon(
                     imageVector = Icons.Filled.PlayArrow,
                     contentDescription = "Episode",

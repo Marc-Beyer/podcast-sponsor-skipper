@@ -28,12 +28,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @Composable
 fun EpisodesView(
     state: EpisodesState,
     onEvent: (EpisodesEvent) -> Unit,
+    onNavigationEvent: (NavigationEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val podcast = state.podcastWithRelations?.podcast
@@ -132,7 +134,8 @@ fun EpisodesView(
                         EpisodeItem(
                             episode = episode,
                             context = context,
-                            onEvent = onEvent
+                            onEvent = onEvent,
+                            onNavigationEvent = onNavigationEvent,
                         )
                     }
                 }

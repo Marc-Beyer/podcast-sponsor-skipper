@@ -39,7 +39,11 @@ fun NavGraph(
             composable(
                 route = NavRoute.Feed.path,
             ){
-                Navigation()
+                val viewModel: NavigationViewModel = hiltViewModel()
+                Navigation(
+                    state = viewModel.state.value,
+                    onEvent = viewModel::onEvent
+                )
             }
         }
     }
