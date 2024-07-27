@@ -11,6 +11,10 @@ sealed class NavigationEvent {
     data class SeekTo(
         val position: Long,
     ) : NavigationEvent()
+    data class Unsubscribe(
+        val podcastWithRelations: PodcastWithRelations?
+    ) : NavigationEvent()
+
     object Play: NavigationEvent()
     object Stop: NavigationEvent()
     object SkipForward: NavigationEvent()

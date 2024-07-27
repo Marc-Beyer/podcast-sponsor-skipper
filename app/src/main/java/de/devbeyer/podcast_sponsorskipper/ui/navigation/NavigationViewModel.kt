@@ -96,6 +96,13 @@ class NavigationViewModel @Inject constructor(
                     isPlaying = false,
                 )
             }
+            is NavigationEvent.Unsubscribe -> {
+                viewModelScope.launch {
+                    event.podcastWithRelations?.let {
+                        podcastsUseCases.deleteLocalPodcastUseCase(it.podcast)
+                    }
+                }
+            }
         }
 
     }

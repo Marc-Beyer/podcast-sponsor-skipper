@@ -71,6 +71,13 @@ fun Navigation(
 
     var isAddRSSFeedDialogOpen by remember { mutableStateOf(false) }
 
+    var currentPodcast = navController
+        .previousBackStackEntry
+        ?.savedStateHandle
+        ?.get<PodcastWithRelations?>(
+            "podcastWithRelations"
+        )
+
 
     Scaffold(
         topBar = {
@@ -81,12 +88,7 @@ fun Navigation(
                             NavRoute.Feed.path -> "Podcasts"
                             NavRoute.Search.path -> "Add podcast"
                             NavRoute.Info.path -> "Podcast"
-                            NavRoute.Episodes.path -> navController
-                                .previousBackStackEntry
-                                ?.savedStateHandle
-                                ?.get<PodcastWithRelations?>(
-                                    "podcastWithRelations"
-                                )?.podcast?.title ?: "Podcast"
+                            NavRoute.Episodes.path -> currentPodcast?.podcast?.title ?: "Podcast"
 
                             else -> ""
                         },
@@ -131,7 +133,8 @@ fun Navigation(
                                 modifier = Modifier
                                     .padding(16.dp)
                                     .clickable {
-
+                                        onEvent(NavigationEvent.Unsubscribe(currentPodcast))
+                                        navController.navigateUp()
                                     }
                             )
                         }

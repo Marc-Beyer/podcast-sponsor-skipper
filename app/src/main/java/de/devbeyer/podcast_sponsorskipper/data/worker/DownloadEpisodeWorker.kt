@@ -51,6 +51,7 @@ class DownloadEpisodeWorker @AssistedInject constructor(
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
+            notificationManager.cancel(notificationId)
             Result.failure()
         }
     }
