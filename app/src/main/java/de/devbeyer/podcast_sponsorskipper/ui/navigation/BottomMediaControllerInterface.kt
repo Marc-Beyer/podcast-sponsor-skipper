@@ -85,7 +85,7 @@ fun BottomMediaControllerInterface(
             Spacer(modifier = Modifier.height(16.dp))
             Slider(
                 value = if(state.currentPosition < state.duration) state.currentPosition.toFloat() else 0f,
-                onValueChange = {  },
+                onValueChange = { onEvent(NavigationEvent.SeekTo(it.toLong())) },
                 valueRange = 0f..if(state.duration.toFloat() < 0f) 100f else state.duration.toFloat(),
                 modifier = Modifier.fillMaxWidth()
             )

@@ -73,6 +73,9 @@ class NavigationViewModel @Inject constructor(
                 state.value.mediaController?.play()
 
             }
+            is NavigationEvent.SeekTo ->{
+                state.value.mediaController?.seekTo(event.position)
+            }
             is NavigationEvent.SkipBack -> {
                 state.value.mediaController?.seekBack()
             }

@@ -6,7 +6,10 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 sealed class NavigationEvent {
     data class PlayEpisode(
         val episode: Episode,
-        val podcast: PodcastWithRelations
+        val podcast: PodcastWithRelations,
+    ) : NavigationEvent()
+    data class SeekTo(
+        val position: Long,
     ) : NavigationEvent()
     object Play: NavigationEvent()
     object Stop: NavigationEvent()
