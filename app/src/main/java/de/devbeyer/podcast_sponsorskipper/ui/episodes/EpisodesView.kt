@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import de.devbeyer.podcast_sponsorskipper.ui.search.SearchEvent
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @Composable
@@ -130,7 +129,11 @@ fun EpisodesView(
                     verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.SMALL),
                 ) {
                     items(items = state.episodes) { episode ->
-                        EpisodeItem(episode = episode, context = context, startAudio = {})
+                        EpisodeItem(
+                            episode = episode,
+                            context = context,
+                            onEvent = onEvent
+                        )
                     }
                 }
             } else {

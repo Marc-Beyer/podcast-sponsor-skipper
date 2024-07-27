@@ -41,7 +41,7 @@ import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 fun EpisodeItem(
     episode: Episode,
     context: Context,
-    startAudio: () -> Unit
+    onEvent: (EpisodesEvent) -> Unit
 ) {
     var isDownloading by rememberSaveable {
         mutableStateOf(false)
@@ -111,13 +111,16 @@ fun EpisodeItem(
                     Icon(
                         imageVector = Icons.Outlined.Sync,
                         contentDescription = "Episode",
-                        modifier = Modifier.padding(8.dp).rotationEffect(),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .rotationEffect(),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             } else {
                 TextButton(onClick = {
                     isDownloading = true
+                    onEvent(EpisodesEvent.Download(episode))
                 }) {
                     Icon(
                         imageVector = Icons.Filled.Download,
@@ -128,7 +131,7 @@ fun EpisodeItem(
                 }
             }
         } else {
-            TextButton(onClick = { startAudio() }) {
+            TextButton(onClick = { onEvent(EpisodesEvent.Play(episode)) }) {
                 Icon(
                     imageVector = Icons.Filled.PlayArrow,
                     contentDescription = "Episode",

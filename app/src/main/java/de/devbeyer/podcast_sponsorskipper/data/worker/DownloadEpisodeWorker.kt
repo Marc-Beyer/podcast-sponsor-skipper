@@ -9,38 +9,37 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
-import kotlinx.coroutines.flow.firstOrNull
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import java.util.UUID
 
 @HiltWorker
-class DownloadWorker @AssistedInject constructor(
+class DownloadEpisodeWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val podcastsUseCases: PodcastsUseCases
+    private val episodeUseCases: EpisodeUseCases
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
         val url = inputData.getString("url") ?: return Result.failure()
-        Log.i("AAA", "WORKER $url")
+        val title = inputData.getString("title") ?: return Result.failure()
+        Log.i("AAA", "EPISODE WORKER $url $title")
 
         val notificationId = UUID.randomUUID().hashCode()
 
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationBuilder = NotificationCompat.Builder(applicationContext, "DOWNLOAD_CHANNEL_ID")
             .setSmallIcon(android.R.drawable.stat_sys_download)
-            .setContentTitle("Downloading Podcast")
+            .setContentTitle("Downloading '$title'")
             .setContentText("Download in progress")
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            //.setProgress(100, 0, true)
 
         // Display the notification
         notificationManager.notify(notificationId, notificationBuilder.build())
 
         return try {
-            podcastsUseCases.getRSSFeed(url).firstOrNull()?.let {
-                podcastsUseCases.insertPodcastUseCase(it)
-            }
+            episodeUseCases.downloadEpisodeUseCase(url)
 
             notificationBuilder.setContentText("Download complete")
                 .setOngoing(false)

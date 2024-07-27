@@ -16,6 +16,9 @@ interface EpisodeDao {
     @Update
     suspend fun update(episode: Episode)
 
+    @Query("UPDATE episode SET episodePath = :episodePath WHERE episodeUrl = :episodeUrl")
+    suspend fun updateEpisodePath(episodeUrl: String, episodePath: String)
+
     @Query("SELECT * FROM episode WHERE podcastId = :podcastId ORDER BY pubDate DESC")
     fun getEpisodesByPodcastId(podcastId: Int): Flow<List<Episode>>
 }

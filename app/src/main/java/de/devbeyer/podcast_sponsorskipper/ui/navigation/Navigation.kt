@@ -14,8 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
@@ -49,8 +50,8 @@ import de.devbeyer.podcast_sponsorskipper.ui.episodes.EpisodesView
 import de.devbeyer.podcast_sponsorskipper.ui.episodes.EpisodesViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedView
 import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedViewModel
-import de.devbeyer.podcast_sponsorskipper.ui.info.InfoViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.info.InfoView
+import de.devbeyer.podcast_sponsorskipper.ui.info.InfoViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchView
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchViewModel
 
@@ -116,11 +117,20 @@ fun Navigation() {
                                     }
                             )
                         }
-
-                        NavRoute.Feed.path -> {
+                        NavRoute.Episodes.path -> {
                             Icon(
-                                imageVector = Icons.Filled.Home,
+                                imageVector = Icons.Filled.Refresh,
                                 contentDescription = "Update",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable {
+
+                                    }
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Unsubscribe",
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier
                                     .padding(16.dp)

@@ -24,7 +24,7 @@ class FileRepositoryImpl(
             if (file.exists()) {
                 Log.i("AAA", "exists $filePath")
                 val deleted = file.delete()
-                Log.i("AAA" ,"delete $deleted $filePath")
+                Log.i("AAA", "delete $deleted $filePath")
                 if (deleted) {
                     emit(filePath)
                 } else {
@@ -38,13 +38,17 @@ class FileRepositoryImpl(
         }
     }
 
-    override fun downloadFile(extension: String, url: String): Flow<String?> = flow {
+    override fun downloadFile(
+        extension: String,
+        url: String,
+        folder: String,
+    ): Flow<String?> = flow {
         try {
             val response = fileAPI.downloadFile(url)
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 if (responseBody != null) {
-                    val imageDir = File(context.filesDir, "images")
+                    val imageDir = File(context.filesDir, folder)
                     if (!imageDir.exists()) {
                         imageDir.mkdir()
                     }
@@ -80,5 +84,9 @@ class FileRepositoryImpl(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun downloadAudioFile(extension: String, url: String): Flow<String?> = flow {
+        emit("TODO")
     }
 }

@@ -22,6 +22,8 @@ import de.devbeyer.podcast_sponsorskipper.data.repositories.PodcastRepositoryImp
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadEpisodeUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DeleteFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DownloadFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
@@ -136,6 +138,20 @@ object ApplicationModule {
             getLocalPodcastByUrl = GetLocalPodcastByUrl(podcastDao),
             getRSSFeed = GetRSSFeed(podcastRepository),
             getEpisodesOfPodcastUseCase = GetEpisodesOfPodcastUseCase(episodeDao),
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideEpisodeUseCases(
+        episodeDao: EpisodeDao,
+        fileUseCases: FileUseCases,
+    ): EpisodeUseCases {
+        return EpisodeUseCases(
+            downloadEpisodeUseCase = DownloadEpisodeUseCase(
+                episodeDao = episodeDao,
+                fileUseCases = fileUseCases,
+            )
         )
     }
 
