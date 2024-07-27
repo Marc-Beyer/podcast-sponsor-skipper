@@ -1,29 +1,19 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RssFeed
-import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -80,6 +70,7 @@ fun Navigation(
     }
 
     var isAddRSSFeedDialogOpen by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -179,31 +170,10 @@ fun Navigation(
             }
         },
         bottomBar = {
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.inverseOnSurface)
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-            ) {
-                Text(text = "Playing")
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround,
-                ) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Filled.SkipPrevious, contentDescription = null)
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = null)
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Filled.SkipNext, contentDescription = null)
-                    }
-                }
-            }
+            BottomMediaControllerInterface(
+                state = state,
+                onEvent = onEvent
+            )
         }
     ) { innerPadding ->
         NavHost(

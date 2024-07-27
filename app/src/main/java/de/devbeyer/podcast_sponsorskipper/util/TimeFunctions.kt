@@ -25,3 +25,11 @@ fun formatDateByDistance(dateTime: LocalDateTime): String {
         else -> "${duration / (60 * 24 * 365)}y"
     }
 }
+
+fun formatMillisecondsToTime(milliseconds: Long): String {
+    val totalSeconds = milliseconds / 1000
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+}

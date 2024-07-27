@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
@@ -41,6 +42,7 @@ import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 @Composable
 fun EpisodeItem(
     episode: Episode,
+    podcastWithRelations: PodcastWithRelations,
     context: Context,
     onEvent: (EpisodesEvent) -> Unit,
     onNavigationEvent: (NavigationEvent) -> Unit,
@@ -133,7 +135,9 @@ fun EpisodeItem(
                 }
             }
         } else {
-            TextButton(onClick = { onNavigationEvent(NavigationEvent.PlayEpisode(episode)) }) {
+            TextButton(onClick = {
+                onNavigationEvent(NavigationEvent.PlayEpisode(episode, podcastWithRelations))
+            }) {
                 Icon(
                     imageVector = Icons.Filled.PlayArrow,
                     contentDescription = "Episode",

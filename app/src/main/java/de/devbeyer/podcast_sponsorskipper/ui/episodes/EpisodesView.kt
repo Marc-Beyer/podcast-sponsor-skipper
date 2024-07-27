@@ -103,7 +103,7 @@ fun EpisodesView(
                     } else {
                         Button(
                             onClick = {
-                                // context.openLink(podcast.link)
+                                // TODO context.openLink(podcast.link)
                             }
                         ) {
                             Text(
@@ -116,7 +116,6 @@ fun EpisodesView(
                         }
                     }
 
-                    //val categories: List<String> = categories.map { category -> category.categoryId }
                     Text(
                         text = categories.joinToString(", ") { it.name },
                         style = MaterialTheme.typography.bodyMedium,
@@ -133,6 +132,7 @@ fun EpisodesView(
                     items(items = state.episodes) { episode ->
                         EpisodeItem(
                             episode = episode,
+                            podcastWithRelations = state.podcastWithRelations,
                             context = context,
                             onEvent = onEvent,
                             onNavigationEvent = onNavigationEvent,
