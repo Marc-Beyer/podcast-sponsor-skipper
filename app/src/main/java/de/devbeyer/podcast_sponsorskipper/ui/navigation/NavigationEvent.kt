@@ -15,4 +15,5 @@ sealed class NavigationEvent {
     object Stop: NavigationEvent()
     object SkipForward: NavigationEvent()
     object SkipBack: NavigationEvent()
+    object Close: NavigationEvent()
 }

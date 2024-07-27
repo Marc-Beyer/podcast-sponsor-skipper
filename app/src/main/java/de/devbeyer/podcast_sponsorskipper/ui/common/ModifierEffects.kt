@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.ui.common
 
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -12,6 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 
@@ -45,3 +46,21 @@ fun Modifier.rotationEffect() = composed {
         rotationZ = rotation
     }
 }
+
+fun Modifier.shadowTopOnly(
+    shadowColor: Color = Color.Black,
+    alpha: Float = 0.5f,
+    shadowHeight: Float = 10f
+) = this.then(
+    Modifier.drawBehind {
+        val transparent = shadowColor.copy(alpha = 0f)
+        drawRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(shadowColor.copy(alpha = alpha), transparent),
+                startY = 0f,
+                endY = shadowHeight
+            ),
+            size = size.copy(height = shadowHeight)
+        )
+    }
+)

@@ -88,6 +88,14 @@ class NavigationViewModel @Inject constructor(
             is NavigationEvent.Stop -> {
                 state.value.mediaController?.stop()
             }
+            is NavigationEvent.Close -> {
+                state.value.mediaController?.stop()
+                _state.value = state.value.copy(
+                    selectedEpisode = null,
+                    selectedPodcast = null,
+                    isPlaying = false,
+                )
+            }
         }
 
     }
