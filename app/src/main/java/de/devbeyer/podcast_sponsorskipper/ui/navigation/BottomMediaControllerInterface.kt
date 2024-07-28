@@ -24,9 +24,13 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Square
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Sync
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +46,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
+import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
 import de.devbeyer.podcast_sponsorskipper.ui.common.shadowTopOnly
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 import de.devbeyer.podcast_sponsorskipper.util.Constants
@@ -159,7 +164,7 @@ fun BottomMediaControllerInterface(
                 IconButton(onClick = { onEvent(NavigationEvent.SkipForward) }) {
                     Icon(imageVector = Icons.Filled.SkipNext, contentDescription = null)
                 }
-                if (state.sponsorSectionStart == null) {
+                if (state.sponsorSectionStart == null || state.sponsorSectionEnd != null) {
                     IconButton(
                         modifier = Modifier
                             .size(64.dp)
@@ -187,8 +192,101 @@ fun BottomMediaControllerInterface(
                             ),
                         onClick = { onEvent(NavigationEvent.EndSponsorSection) }
                     ) {
-                        Icon(imageVector = Icons.Filled.Square, contentDescription = "End Sponsor Section")
+                        Icon(
+                            imageVector = Icons.Filled.Square,
+                            contentDescription = "End Sponsor Section"
+                        )
                     }
+                }
+            }
+            if (state.sponsorSectionStart != null && state.sponsorSectionEnd != null) {
+                Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+                Text(
+                    text = "Sponsor section",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+                Text(
+                    text = "Start: ${formatMillisecondsToTime(state.sponsorSectionStart ?: 0)}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "End: ${formatMillisecondsToTime(state.sponsorSectionEnd ?: 0)}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+
+                when(state.isPreviewing){
+                    PreviewState.NONE -> {
+                        Button(
+                            onClick = { onEvent(NavigationEvent.Preview) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(42.dp),
+                        ) {
+                            Text(
+                                text = "Preview the segment",
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                    PreviewState.PREVIEWING -> {
+                        Button(
+                            onClick = {  },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(42.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Sync,
+                                contentDescription = "Episode",
+                                modifier = Modifier
+                                    .padding(1.dp)
+                                    .rotationEffect(),
+                                tint = MaterialTheme.colorScheme.onSurface,
+                            )
+                        }
+                    }
+                    PreviewState.FINISHED -> {
+                        Button(
+                            onClick = { onEvent(NavigationEvent.Preview) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(42.dp),
+                        ) {
+                            Text(
+                                text = "Preview the segment again",
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+                        OutlinedButton(
+                            onClick = { onEvent(NavigationEvent.SubmitSegment) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(42.dp),
+                        ) {
+                            Text(
+                                text = "Submit the segment",
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
+                    Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
+                    Text(
+                        text = "Please review the highlighted sections before submitting your sponsor segment.",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         }

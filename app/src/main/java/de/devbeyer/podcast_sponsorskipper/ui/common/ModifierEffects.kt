@@ -34,8 +34,8 @@ fun Modifier.loadingEffect() = composed {
 fun Modifier.rotationEffect() = composed {
     val infiniteTransition = rememberInfiniteTransition(label = "DownloadingAnimation")
     val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
+        initialValue = 360f,
+        targetValue = 0f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 1000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart

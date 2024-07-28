@@ -22,4 +22,6 @@ sealed class NavigationEvent {
     object Close: NavigationEvent()
     object StartSponsorSection: NavigationEvent()
     object EndSponsorSection: NavigationEvent()
+    object Preview: NavigationEvent()
+    object SubmitSegment: NavigationEvent()
 }

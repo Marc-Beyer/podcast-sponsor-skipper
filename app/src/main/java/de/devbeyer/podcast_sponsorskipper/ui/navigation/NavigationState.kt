@@ -14,4 +14,11 @@ data class NavigationState (
     val duration: Long = 0,
     val sponsorSectionStart: Long? = null,
     val sponsorSectionEnd: Long? = null,
+    val isPreviewing: PreviewState = PreviewState.NONE,
 )
+
+enum class PreviewState{
+    NONE,
+    PREVIEWING,
+    FINISHED,
+}

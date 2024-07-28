@@ -1,7 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.info
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -160,27 +159,24 @@ private fun PodcastInfo(
 
         }
     } else {
-        if (isLoading) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
+        Button(
+            onClick = {
+                onEvent(InfoEvent.SubscribeToPodcast(podcastWithRelations))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(42.dp)
+        ) {
+            if (isLoading) {
                 Icon(
                     imageVector = Icons.Outlined.Sync,
                     contentDescription = "Episode",
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(1.dp)
                         .rotationEffect(),
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
-            }
-        } else {
-            Button(
-                onClick = {
-                    onEvent(InfoEvent.SubscribeToPodcast(podcastWithRelations))
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            } else {
                 Text(text = "Subscribe")
             }
         }

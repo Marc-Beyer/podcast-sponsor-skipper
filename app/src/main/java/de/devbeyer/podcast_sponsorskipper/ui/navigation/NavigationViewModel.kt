@@ -132,20 +132,34 @@ class NavigationViewModel @Inject constructor(
 
             is NavigationEvent.EndSponsorSection -> {
                 state.value.mediaController?.let { mediaController ->
+                    setIsPreviewing(PreviewState.NONE)
                     val sponsorSectionEnd = mediaController.currentPosition
                     _state.value = state.value.copy(
                         sponsorSectionEnd = sponsorSectionEnd,
                         duration = mediaController.duration,
                     )
                     state.value.sponsorSectionStart?.let {
-                        mediaController.seekTo(max(it - 3000, 0))
-                        mediaController.play()
+                        mediaController.stop()
                         schedulePlaybackAction(
                             startPositionMs = it,
                             endPositionMs = sponsorSectionEnd
                         )
                     }
                 }
+            }
+
+            is NavigationEvent.Preview -> {
+                state.value.mediaController?.let { mediaController ->
+                    state.value.sponsorSectionStart?.let {
+                        mediaController.seekTo(max(it - Constants.PREVIEW_LEAD_TIME, 0))
+                        setIsPreviewing(PreviewState.PREVIEWING)
+                        mediaController.play()
+                    }
+                }
+            }
+
+            NavigationEvent.SubmitSegment -> {
+
             }
         }
 
@@ -210,9 +224,24 @@ class NavigationViewModel @Inject constructor(
         updatePositionJob = viewModelScope.launch {
             while (true) {
                 updateCurrentPosition()
-                delay(1000) // Update every second
+                if (state.value.isPreviewing == PreviewState.PREVIEWING) {
+                    if (
+                        state.value.currentPosition >= (state.value.sponsorSectionEnd ?: 0)
+                        + Constants.PREVIEW_POST_TIME
+                    ) {
+                        setIsPreviewing(PreviewState.FINISHED)
+                        state.value.mediaController?.stop()
+                    }
+                }
+                delay(1000)
             }
         }
+    }
+
+    private fun setIsPreviewing(previewState: PreviewState) {
+        _state.value = state.value.copy(
+            isPreviewing = previewState,
+        )
     }
 
     private fun stopUpdatingPosition() {
