@@ -29,11 +29,13 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @Composable
 fun EpisodesView(
     state: EpisodesState,
+    navigationState: NavigationState,
     onEvent: (EpisodesEvent) -> Unit,
     onNavigationEvent: (NavigationEvent) -> Unit,
 ) {
@@ -127,12 +129,13 @@ fun EpisodesView(
             if (state.episodes.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.padding(top = Constants.Dimensions.SMALL),
-                    verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.SMALL),
+                    verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.EXTRA_SMALL),
                 ) {
                     items(items = state.episodes) { episode ->
                         EpisodeItem(
                             episode = episode,
                             podcastWithRelations = state.podcastWithRelations,
+                            navigationState = navigationState,
                             context = context,
                             onEvent = onEvent,
                             onNavigationEvent = onNavigationEvent,

@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
 import de.devbeyer.podcast_sponsorskipper.util.Constants
@@ -27,10 +27,36 @@ class LocalDataManagerImpl(
             it[PreferencesKeys.COMPLETED_GUIDED_TOUR] ?: false
         }
     }
+
+    override suspend fun saveUsername(username: String) {
+        context.dataStore.edit {
+            it[PreferencesKeys.USERNAME] = username
+        }
+    }
+
+    override fun readUsername(): Flow<String?> {
+        return context.dataStore.data.map {
+            it[PreferencesKeys.USERNAME]
+        }
+    }
+
+    override suspend fun saveToken(token: String) {
+        context.dataStore.edit {
+            it[PreferencesKeys.TOKEN] = token
+        }
+    }
+
+    override fun readToken(): Flow<String?> {
+        return context.dataStore.data.map {
+            it[PreferencesKeys.TOKEN]
+        }
+    }
 }
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.USER_PREFERENCES_NAME)
 
 private object PreferencesKeys{
     val COMPLETED_GUIDED_TOUR = booleanPreferencesKey(Constants.COMPLETED_GUIDED_TOUR)
+    val USERNAME = stringPreferencesKey(Constants.USERNAME)
+    val TOKEN = stringPreferencesKey(Constants.TOKEN)
 }

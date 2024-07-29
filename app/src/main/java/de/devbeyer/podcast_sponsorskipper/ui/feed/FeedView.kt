@@ -17,7 +17,7 @@ fun FeedView(
 ) {
     LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.SMALL),
+        verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.EXTRA_SMALL),
     ) {
         items(items = state.podcastsWithRelations) {
             PodcastItem(podcastWithRelations = it) {

@@ -28,10 +28,12 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.UserUseCases
 import de.devbeyer.podcast_sponsorskipper.service.PlaybackService
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.max
@@ -41,6 +43,7 @@ import kotlin.math.max
 class NavigationViewModel @Inject constructor(
     private val podcastsUseCases: PodcastsUseCases,
     private val episodeUseCases: EpisodeUseCases,
+    private val userUseCases: UserUseCases,
     private val workManager: WorkManager,
     private val application: Application,
 ) : ViewModel() {
@@ -110,6 +113,9 @@ class NavigationViewModel @Inject constructor(
                     selectedEpisode = null,
                     selectedPodcast = null,
                     isPlaying = false,
+                    sponsorSectionStart = null,
+                    sponsorSectionEnd = null,
+                    isPreviewing = PreviewState.NONE,
                 )
             }
 
@@ -159,7 +165,34 @@ class NavigationViewModel @Inject constructor(
             }
 
             NavigationEvent.SubmitSegment -> {
+                viewModelScope.launch {
+                    val episodeUrl = state.value.selectedEpisode?.episodeUrl
+                    val podcastUrl = state.value.selectedPodcast?.podcast?.url
+                    val startPosition = state.value.sponsorSectionStart
+                    val endPosition = state.value.sponsorSectionEnd
 
+                    if (
+                        episodeUrl != null &&
+                        podcastUrl != null &&
+                        startPosition != null &&
+                        endPosition != null
+                    ) {
+                        Log.i("AAA", "submit SponsorSection $episodeUrl $podcastUrl $startPosition $endPosition")
+                        podcastsUseCases.submitSponsorSectionUseCase(
+                            episodeUrl = episodeUrl,
+                            podcastUrl = podcastUrl,
+                            startPosition = startPosition,
+                            endPosition = endPosition,
+                        ).firstOrNull()
+                        _state.value = state.value.copy(
+                            selectedEpisode = null,
+                            selectedPodcast = null,
+                            sponsorSectionStart = null,
+                            sponsorSectionEnd = null,
+                            isPreviewing = PreviewState.NONE,
+                        )
+                    }
+                }
             }
         }
 

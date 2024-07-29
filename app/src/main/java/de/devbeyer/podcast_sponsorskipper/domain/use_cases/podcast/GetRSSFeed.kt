@@ -1,14 +1,13 @@
 package de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast
 
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastAndEpisodes
-import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
-import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
+import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetRSSFeed(
-    private val podcastRepository: PodcastRepository
+    private val backendRepository: BackendRepository
 ) {
     operator fun invoke(rssFeedUrl: String): Flow<PodcastAndEpisodes?> {
-        return podcastRepository.getRSSFeed(rssFeedUrl)
+        return backendRepository.getRSSFeed(rssFeedUrl)
     }
 }

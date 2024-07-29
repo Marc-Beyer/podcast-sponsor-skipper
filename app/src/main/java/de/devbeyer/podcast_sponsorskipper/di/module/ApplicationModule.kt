@@ -17,11 +17,11 @@ import de.devbeyer.podcast_sponsorskipper.data.local.dao.PodcastDao
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.FileAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
+import de.devbeyer.podcast_sponsorskipper.data.repositories.BackendRepositoryImpl
 import de.devbeyer.podcast_sponsorskipper.data.repositories.FileRepositoryImpl
-import de.devbeyer.podcast_sponsorskipper.data.repositories.PodcastRepositoryImpl
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
+import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
-import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DeleteFileUseCase
@@ -38,6 +38,10 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRSSFeed
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRemotePodcastsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.InsertPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.SubmitSponsorSectionUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.GetUserUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.RegisterUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.UserUseCases
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -61,6 +65,16 @@ object ApplicationModule {
     ) = CompletedGuidedTourUseCases(
         GetCompletedGuidedTourUseCase(localDataManager),
         SetCompletedGuidedTourUseCase(localDataManager)
+    )
+
+    @Provides
+    @Singleton
+    fun provideUserUseCases(
+        localDataManager: LocalDataManager,
+        backendRepository: BackendRepository,
+    ) = UserUseCases(
+        RegisterUseCase(localDataManager, backendRepository),
+        GetUserUseCase(localDataManager, backendRepository)
     )
 
     @Provides
@@ -109,20 +123,21 @@ object ApplicationModule {
 
     @Provides
     @Singleton
-    fun providePodcastRepository(backendAPI: BackendAPI, rssAPI: RSSAPI): PodcastRepository =
-        PodcastRepositoryImpl(backendAPI, rssAPI)
+    fun provideBackendRepository(backendAPI: BackendAPI, rssAPI: RSSAPI): BackendRepository =
+        BackendRepositoryImpl(backendAPI, rssAPI)
 
     @Provides
     @Singleton
     fun providePodcastUseCases(
-        podcastRepository: PodcastRepository,
+        backendRepository: BackendRepository,
         podcastDao: PodcastDao,
         categoryDao: CategoryDao,
         episodeDao: EpisodeDao,
         fileUseCases: FileUseCases,
+        userUseCases: UserUseCases,
     ): PodcastsUseCases {
         return PodcastsUseCases(
-            getRemotePodcastsUseCase = GetRemotePodcastsUseCase(podcastRepository),
+            getRemotePodcastsUseCase = GetRemotePodcastsUseCase(backendRepository),
             getLocalPodcastsUseCase = GetLocalPodcastsUseCase(podcastDao),
             insertPodcastUseCase = InsertPodcastUseCase(
                 podcastDao = podcastDao,
@@ -136,8 +151,12 @@ object ApplicationModule {
                 fileUseCases = fileUseCases,
             ),
             getLocalPodcastByUrl = GetLocalPodcastByUrl(podcastDao),
-            getRSSFeed = GetRSSFeed(podcastRepository),
+            getRSSFeed = GetRSSFeed(backendRepository),
             getEpisodesOfPodcastUseCase = GetEpisodesOfPodcastUseCase(episodeDao),
+            submitSponsorSectionUseCase = SubmitSponsorSectionUseCase(
+                backendRepository = backendRepository,
+                userUseCases = userUseCases,
+            )
         )
     }
 

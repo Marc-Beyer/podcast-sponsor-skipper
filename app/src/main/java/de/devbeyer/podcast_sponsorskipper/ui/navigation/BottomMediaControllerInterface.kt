@@ -271,7 +271,7 @@ fun BottomMediaControllerInterface(
                         ) {
                             Text(
                                 text = "Submit the segment",
-                                color = MaterialTheme.colorScheme.onPrimary
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

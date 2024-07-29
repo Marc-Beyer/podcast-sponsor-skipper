@@ -17,7 +17,6 @@ class FileRepositoryImpl(
 ) : FileRepository {
 
     override fun deleteFile(filePath: String): Flow<String?> = flow {
-        Log.i("AAA", "deleteFile wtf----- $filePath")
         try {
             val file = File(filePath)
             Log.i("AAA", "filePath $filePath")

@@ -7,12 +7,14 @@ import androidx.paging.PagingData
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.PodcastPagingSource
 import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
+import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SubmitSponsorSectionBody
+import de.devbeyer.podcast_sponsorskipper.domain.models.UserData
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastAndEpisodes
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
-import de.devbeyer.podcast_sponsorskipper.domain.repositories.PodcastRepository
+import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.util.getCurrentISO8601Time
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -27,10 +29,10 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import javax.xml.parsers.DocumentBuilderFactory
 
-class PodcastRepositoryImpl(
+class BackendRepositoryImpl(
     private val backendAPI: BackendAPI,
     private val rssAPI: RSSAPI,
-) : PodcastRepository {
+) : BackendRepository {
     override fun getPodcasts(search: String): Flow<PagingData<PodcastWithRelations>> {
         return Pager(
             config = PagingConfig(pageSize = 12),
@@ -56,6 +58,39 @@ class PodcastRepositoryImpl(
             val rawResponse = response.body()
             val rssFeed = parseRSS(url = rssUrl, xml = rawResponse ?: "")
             emit(rssFeed)
+        } else {
+            emit(null)
+        }
+    }
+
+    override fun submitSponsorSection(
+        episodeUrl: String,
+        podcastUrl: String,
+        startPosition: Long,
+        endPosition: Long,
+        username: String,
+        token: String
+    ): Flow<Boolean> = flow {
+        val response = backendAPI.submitSponsorSection(
+            SubmitSponsorSectionBody(
+                episodeUrl,
+                podcastUrl,
+                startPosition,
+                endPosition,
+                username,
+                token
+            )
+        )
+        Log.i("AAA", "submitSponsorSection REPO $episodeUrl $username $token isSuccessful ${response.isSuccessful}")
+        emit(response.isSuccessful)
+    }
+
+    override fun register(): Flow<UserData?> = flow  {
+        val response = backendAPI.register()
+
+        if (response.isSuccessful) {
+            val userData = response.body()
+            emit(userData)
         } else {
             emit(null)
         }
@@ -177,7 +212,7 @@ class PodcastRepositoryImpl(
                 "itunes:duration" -> duration = node.textContent
                 "pubDate" -> {
                     var dateString = node.textContent
-                    if (dateString.endsWith("GMT")){
+                    if (dateString.endsWith("GMT")) {
                         dateString = dateString.replace("GMT", "+0000")
                     }
                     val formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z")

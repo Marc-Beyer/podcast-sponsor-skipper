@@ -234,6 +234,7 @@ fun Navigation(
                         viewModel.setPodcast(podcastWithRelations)
                         EpisodesView(
                             state = viewModel.state.value,
+                            navigationState = state,
                             onEvent = viewModel::onEvent,
                             onNavigationEvent = onEvent,
                         )

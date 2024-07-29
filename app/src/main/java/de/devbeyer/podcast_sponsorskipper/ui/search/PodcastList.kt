@@ -40,7 +40,7 @@ fun PodcastList(
         } else {
             LazyColumn(
                 modifier = modifier,
-                verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.SMALL),
+                verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.EXTRA_SMALL),
             ) {
 
                 items(count = podcastsWithRelations.itemCount) {

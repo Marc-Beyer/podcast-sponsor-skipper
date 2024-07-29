@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Icon
@@ -35,6 +36,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 
@@ -43,6 +45,7 @@ import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 fun EpisodeItem(
     episode: Episode,
     podcastWithRelations: PodcastWithRelations,
+    navigationState: NavigationState,
     context: Context,
     onEvent: (EpisodesEvent) -> Unit,
     onNavigationEvent: (NavigationEvent) -> Unit,
@@ -135,15 +138,28 @@ fun EpisodeItem(
                 }
             }
         } else {
-            TextButton(onClick = {
-                onNavigationEvent(NavigationEvent.PlayEpisode(episode, podcastWithRelations))
-            }) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = "Episode",
-                    modifier = Modifier.padding(8.dp),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
+            if(navigationState.selectedEpisode == episode && navigationState.isPlaying){
+                TextButton(onClick = {
+                    onNavigationEvent(NavigationEvent.Stop)
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Pause,
+                        contentDescription = "Episode",
+                        modifier = Modifier.padding(8.dp),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }else{
+                TextButton(onClick = {
+                    onNavigationEvent(NavigationEvent.PlayEpisode(episode, podcastWithRelations))
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.PlayArrow,
+                        contentDescription = "Episode",
+                        modifier = Modifier.padding(8.dp),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
             }
         }
     }
