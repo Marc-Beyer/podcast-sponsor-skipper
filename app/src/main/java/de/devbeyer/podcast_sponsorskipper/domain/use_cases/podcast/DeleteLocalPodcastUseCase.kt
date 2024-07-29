@@ -17,11 +17,16 @@ class DeleteLocalPodcastUseCase(
         episodeDao.getEpisodesByPodcastId(podcast.id).firstOrNull()?.forEach { episode ->
             episode.imagePath?.let { imagePath ->
                 val returnedFilePath = fileUseCases.deleteFileUseCase(imagePath).firstOrNull()
+                Log.i("AAA", "DELETED $returnedFilePath")
             }
-            episode.episodePath?.let { episodePath -> fileUseCases.deleteFileUseCase(episodePath) }
+            episode.episodePath?.let { episodePath ->
+                val returnedFilePath = fileUseCases.deleteFileUseCase(episodePath).firstOrNull()
+                Log.i("AAA", "DELETED $returnedFilePath")
+            }
         }
         podcast.imagePath?.let {
             val returnedFilePath = fileUseCases.deleteFileUseCase(it).firstOrNull()
+            Log.i("AAA", "DELETED $returnedFilePath")
         }
 
 

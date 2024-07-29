@@ -27,18 +27,6 @@ class DownloadEpisodeWorker @AssistedInject constructor(
 
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        /*
-        val notificationBuilder = NotificationCompat.Builder(applicationContext, "DOWNLOAD_CHANNEL_ID")
-            .setSmallIcon(android.R.drawable.stat_sys_download)
-            .setContentTitle("Downloading '$title'")
-            .setContentText("Download in progress")
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setProgress(100, 0, true)
-
-        // Display the notification
-        //notificationManager.notify(Constants.DOWNLOAD_EPISODE_NOTIFICATION_ID, notificationBuilder.build())
-         */
 
         return try {
             val shouldWork = DownloadManager.increment(url = url, title = title)
@@ -46,26 +34,14 @@ class DownloadEpisodeWorker @AssistedInject constructor(
 
             while (shouldWork) {
                 val currentUrl = DownloadManager.decrement()
+                updateNotification(notificationManager, title)
                 if(currentUrl == null){
-                    updateNotification(notificationManager, title)
                     break
                 }
-                Log.i("AAA", "EPISODE WORKER START WORKING ON $currentUrl $title")
 
                 episodeUseCases.downloadEpisodeUseCase(currentUrl)
                 episodeUseCases.downloadSponsorSectionsUseCase(currentUrl)
-                Log.i("AAA", "EPISODE WORKER FINISHED WORKING LETS GET THE NEXT $title")
             }
-            Log.i("AAA", "EPISODE WORKER QUIT $title")
-
-            /*
-            notificationBuilder.setContentText("Download complete")
-                .setOngoing(false)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done)
-            notificationManager.notify(Constants.DOWNLOAD_EPISODE_NOTIFICATION_ID, notificationBuilder.build())
-
-            notificationManager.cancel(Constants.DOWNLOAD_EPISODE_NOTIFICATION_ID)
-             */
 
             Result.success()
         } catch (e: Exception) {
