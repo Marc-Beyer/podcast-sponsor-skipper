@@ -31,7 +31,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,6 +45,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
+import de.devbeyer.podcast_sponsorskipper.ui.common.CustomSlider
 import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
 import de.devbeyer.podcast_sponsorskipper.ui.common.shadowTopOnly
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
@@ -110,12 +110,22 @@ fun BottomMediaControllerInterface(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
+            CustomSlider(
+                value = if (state.currentPosition < state.duration) state.currentPosition.toFloat() else 0f,
+                onValueChange = { onEvent(NavigationEvent.SeekTo(it.toLong())) },
+                valueRange = 0f..if (state.duration.toFloat() < 0f) 100f else state.duration.toFloat(),
+                sponsorSections = state.sponsorSections,
+            )
+            /*
+            Spacer(modifier = Modifier.height(16.dp))
             Slider(
                 value = if (state.currentPosition < state.duration) state.currentPosition.toFloat() else 0f,
                 onValueChange = { onEvent(NavigationEvent.SeekTo(it.toLong())) },
                 valueRange = 0f..if (state.duration.toFloat() < 0f) 100f else state.duration.toFloat(),
                 modifier = Modifier.fillMaxWidth()
             )
+            */
+
             val curPos = formatMillisecondsToTime(state.currentPosition)
             val duration = formatMillisecondsToTime(state.duration)
             Text(
