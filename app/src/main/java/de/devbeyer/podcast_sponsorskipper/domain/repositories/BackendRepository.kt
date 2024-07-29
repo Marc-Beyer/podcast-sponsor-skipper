@@ -18,7 +18,7 @@ interface BackendRepository {
         endPosition: Long,
         username: String,
         token: String
-    ): Flow<Boolean>
+    ): Flow<Long?>
     fun register(): Flow<UserData?>
     fun getSponsorSection(episodeUrl: String): Flow<List<SponsorSection>>
 }

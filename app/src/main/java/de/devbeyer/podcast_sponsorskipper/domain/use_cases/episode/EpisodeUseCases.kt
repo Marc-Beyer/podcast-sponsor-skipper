@@ -4,4 +4,5 @@ data class EpisodeUseCases(
     val downloadEpisodeUseCase: DownloadEpisodeUseCase,
     val downloadSponsorSectionsUseCase: DownloadSponsorSectionsUseCase,
     val getSponsorSectionsUseCase: GetSponsorSectionsUseCase,
+    val completeEpisodeUseCase: CompleteEpisodeUseCase,
 )

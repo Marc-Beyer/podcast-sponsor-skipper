@@ -10,10 +10,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -29,6 +35,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
@@ -53,6 +61,7 @@ fun EpisodeItem(
     var isDownloading by rememberSaveable {
         mutableStateOf(false)
     }
+    val episodePath = episode.episodePath
 
     Row(
         modifier = Modifier
@@ -81,6 +90,46 @@ fun EpisodeItem(
                 context = context,
                 imagePath = imagePath
             )
+            val offset = with(LocalDensity.current) { 32.dp.toPx() }
+            val triangleShape = GenericShape { size, _ ->
+                moveTo(size.width - offset, 0f)
+                lineTo(size.width, 0f)
+                lineTo(size.width, offset)
+                close()
+            }
+            if (episode.isCompleted) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.secondary, shape = triangleShape),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(2.dp),
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
+            if (episodePath == null && isDownloading) {
+                Box(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.secondary, shape = CircleShape),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Sync,
+                        contentDescription = "Episode",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .rotationEffect(),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
         }
         Column(
             modifier = Modifier
@@ -111,16 +160,23 @@ fun EpisodeItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
-        val episodePath = episode.episodePath
         if (episodePath == null) {
             if (isDownloading) {
-                TextButton(onClick = {}) {
+                TextButton(onClick = {
+                    onEvent(
+                        EpisodesEvent.CancelDownload(
+                            episode = episode,
+                            onCanceled = {
+                                isDownloading = !it
+                            }
+                        )
+                    )
+                }) {
                     Icon(
-                        imageVector = Icons.Outlined.Sync,
-                        contentDescription = "Episode",
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Cancel download",
                         modifier = Modifier
-                            .padding(8.dp)
-                            .rotationEffect(),
+                            .padding(8.dp),
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
@@ -138,7 +194,8 @@ fun EpisodeItem(
                 }
             }
         } else {
-            if(navigationState.selectedEpisode == episode && navigationState.isPlaying){
+            if (isDownloading) isDownloading = false
+            if (navigationState.selectedEpisode == episode && navigationState.isPlaying) {
                 TextButton(onClick = {
                     onNavigationEvent(NavigationEvent.Stop)
                 }) {
@@ -149,7 +206,7 @@ fun EpisodeItem(
                         tint = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-            }else{
+            } else {
                 TextButton(onClick = {
                     onNavigationEvent(NavigationEvent.PlayEpisode(episode, podcastWithRelations))
                 }) {

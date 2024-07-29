@@ -123,15 +123,7 @@ class NavigationViewModel @Inject constructor(
             }
 
             is NavigationEvent.Close -> {
-                state.value.mediaController?.stop()
-                _state.value = state.value.copy(
-                    selectedEpisode = null,
-                    selectedPodcast = null,
-                    isPlaying = false,
-                    sponsorSectionStart = null,
-                    sponsorSectionEnd = null,
-                    isPreviewing = PreviewState.NONE,
-                )
+                closePodcastEpisode()
             }
 
             is NavigationEvent.Unsubscribe -> {
@@ -216,6 +208,18 @@ class NavigationViewModel @Inject constructor(
 
     }
 
+    private fun closePodcastEpisode() {
+        state.value.mediaController?.stop()
+        _state.value = state.value.copy(
+            selectedEpisode = null,
+            selectedPodcast = null,
+            isPlaying = false,
+            sponsorSectionStart = null,
+            sponsorSectionEnd = null,
+            isPreviewing = PreviewState.NONE,
+        )
+    }
+
     private fun schedulePlaybackAction(startPositionMs: Long, endPositionMs: Long) {
         viewModelScope.launch {
             val command = SessionCommand(Constants.COMMAND_SCHEDULE_EVENT, Bundle.EMPTY)
@@ -295,6 +299,22 @@ class NavigationViewModel @Inject constructor(
         )
     }
 
+
+    private fun endPodcast() {
+        Log.i("AAA", "ENDED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        viewModelScope.launch {
+            state.value.selectedEpisode?.let { episode ->
+                state.value.selectedPodcast?.let { podcastWithRelations ->
+                    episodeUseCases.completeEpisodeUseCase(
+                        episode = episode,
+                        podcast = podcastWithRelations.podcast
+                    )
+                }
+            }
+            closePodcastEpisode()
+        }
+    }
+
     private fun stopUpdatingPosition() {
         updatePositionJob?.cancel()
     }
@@ -321,6 +341,8 @@ class NavigationViewModel @Inject constructor(
                             PlaybackState.STATE_STOPPED -> setIsPlaying(false)
                             PlaybackState.STATE_PAUSED -> setIsPlaying(false)
                             PlaybackState.STATE_PLAYING -> setIsPlaying(true)
+                            Player.STATE_ENDED -> endPodcast()
+
                         }
                     }
 

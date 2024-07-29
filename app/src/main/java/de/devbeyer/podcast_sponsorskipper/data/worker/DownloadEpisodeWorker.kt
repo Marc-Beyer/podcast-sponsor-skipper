@@ -35,7 +35,7 @@ class DownloadEpisodeWorker @AssistedInject constructor(
             while (shouldWork) {
                 val currentUrl = DownloadManager.decrement()
                 updateNotification(notificationManager, title)
-                if(currentUrl == null){
+                if (currentUrl == null) {
                     break
                 }
 
@@ -122,6 +122,17 @@ object DownloadManager {
                 activeDownloadTitles.clear()
                 return null
             }
+        }
+    }
+
+    fun cancel(url: String, title: String): Boolean {
+        synchronized(lock) {
+            if (activeDownloadUrls.contains(url)) {
+                activeDownloadUrls.remove(url)
+                activeDownloadTitles.remove(title)
+                return true
+            }
+            return false
         }
     }
 

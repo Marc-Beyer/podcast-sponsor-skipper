@@ -72,7 +72,7 @@ class BackendRepositoryImpl(
         endPosition: Long,
         username: String,
         token: String
-    ): Flow<Boolean> = flow {
+    ): Flow<Long?> = flow {
         val response = backendAPI.submitSponsorSection(
             SubmitSponsorSectionBody(
                 episodeUrl,
@@ -83,11 +83,12 @@ class BackendRepositoryImpl(
                 token
             )
         )
+        val sponsorSectionId = response.body()
         Log.i(
             "AAA",
-            "submitSponsorSection REPO $episodeUrl $username $token isSuccessful ${response.isSuccessful}"
+            "submitSponsorSection REPO $episodeUrl $username $token isSuccessful ${response.isSuccessful} $sponsorSectionId"
         )
-        emit(response.isSuccessful)
+        emit(sponsorSectionId)
     }
 
     override fun getSponsorSection(episodeUrl: String): Flow<List<SponsorSection>> = flow {

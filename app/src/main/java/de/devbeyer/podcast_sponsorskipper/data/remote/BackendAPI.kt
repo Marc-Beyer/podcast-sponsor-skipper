@@ -26,7 +26,7 @@ interface BackendAPI {
     @POST("submit-sponsor-section")
     suspend fun submitSponsorSection (
         @Body submitSponsorSectionBody: SubmitSponsorSectionBody
-    ): Response<String>
+    ): Response<Long>
 
     @GET("register")
     suspend fun register (): Response<UserData>

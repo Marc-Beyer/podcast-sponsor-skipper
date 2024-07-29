@@ -1,5 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.episodes
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.devbeyer.podcast_sponsorskipper.data.worker.DownloadEpisodeWorker
+import de.devbeyer.podcast_sponsorskipper.data.worker.DownloadManager
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
@@ -45,6 +47,12 @@ class EpisodesViewModel @Inject constructor(
 
             is EpisodesEvent.Play -> {
 
+            }
+
+            is EpisodesEvent.CancelDownload -> {
+                val couldCancel = DownloadManager.cancel(event.episode.episodeUrl, event.episode.title)
+                Log.i("AAA", "DownloadManager couldCancel $couldCancel")
+                event.onCanceled(couldCancel)
             }
         }
     }

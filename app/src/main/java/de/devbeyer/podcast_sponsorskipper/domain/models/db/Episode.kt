@@ -39,5 +39,6 @@ data class Episode(
     var imageUrl: String,
     var imagePath: String?,
     var explicit: Boolean,
-    var block: Boolean
+    var block: Boolean,
+    var isCompleted: Boolean = false,
 ) : Parcelable

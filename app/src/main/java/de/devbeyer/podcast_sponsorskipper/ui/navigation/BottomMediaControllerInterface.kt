@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
@@ -88,9 +89,11 @@ fun BottomMediaControllerInterface(
                     )
                 }
                 Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
-                Column {
+                Column(modifier = Modifier.weight(5f)) {
                     Text(
                         text = state.selectedEpisode.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -116,16 +119,6 @@ fun BottomMediaControllerInterface(
                 valueRange = 0f..if (state.duration.toFloat() < 0f) 100f else state.duration.toFloat(),
                 sponsorSections = state.sponsorSections,
             )
-            /*
-            Spacer(modifier = Modifier.height(16.dp))
-            Slider(
-                value = if (state.currentPosition < state.duration) state.currentPosition.toFloat() else 0f,
-                onValueChange = { onEvent(NavigationEvent.SeekTo(it.toLong())) },
-                valueRange = 0f..if (state.duration.toFloat() < 0f) 100f else state.duration.toFloat(),
-                modifier = Modifier.fillMaxWidth()
-            )
-            */
-
             val curPos = formatMillisecondsToTime(state.currentPosition)
             val duration = formatMillisecondsToTime(state.duration)
             Text(
@@ -338,7 +331,7 @@ fun BottomMediaControllerInterfacePreview() {
                     episodePath = "",
                     episodeLength = 42,
                     episodeType = "",
-                    title = "Episode 01",
+                    title = "Episode 01 - Extra Long and overflowing",
                     guid = " 01",
                     link = " 01",
                     pubDate = LocalDateTime.now(),
@@ -389,7 +382,7 @@ fun BottomMediaControllerInterfacePreviewDark() {
                     episodePath = "",
                     episodeLength = 42,
                     episodeType = "",
-                    title = "Episode 01",
+                    title = "Episode 01 - Extra Long and overflowing",
                     guid = " 01",
                     link = " 01",
                     pubDate = LocalDateTime.now(),

@@ -23,6 +23,7 @@ import de.devbeyer.podcast_sponsorskipper.data.repositories.FileRepositoryImpl
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.CompleteEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadSponsorSectionsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
@@ -138,6 +139,7 @@ object ApplicationModule {
         episodeDao: EpisodeDao,
         fileUseCases: FileUseCases,
         userUseCases: UserUseCases,
+        sponsorSectionDao: SponsorSectionDao
     ): PodcastsUseCases {
         return PodcastsUseCases(
             getRemotePodcastsUseCase = GetRemotePodcastsUseCase(backendRepository),
@@ -159,6 +161,7 @@ object ApplicationModule {
             submitSponsorSectionUseCase = SubmitSponsorSectionUseCase(
                 backendRepository = backendRepository,
                 userUseCases = userUseCases,
+                sponsorSectionDao = sponsorSectionDao,
             )
         )
     }
@@ -182,6 +185,10 @@ object ApplicationModule {
             ),
             getSponsorSectionsUseCase = GetSponsorSectionsUseCase(
                 sponsorSectionDao = sponsorSectionDao,
+            ),
+            completeEpisodeUseCase = CompleteEpisodeUseCase(
+                episodeDao = episodeDao,
+                fileUseCases = fileUseCases,
             )
         )
     }
