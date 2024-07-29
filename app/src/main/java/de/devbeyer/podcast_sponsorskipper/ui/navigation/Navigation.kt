@@ -193,7 +193,14 @@ fun Navigation(
                             navController = navController,
                             podcastWithRelations = podcastWithRelations
                         )
-                    })
+                    },
+                    navigateToSearch = {
+                        navigateToSearch(
+                            navController = navController,
+                        )
+                    },
+                )
+
             }
             composable(route = NavRoute.Search.path) { backStackEntry ->
                 val viewModel: SearchViewModel = hiltViewModel()

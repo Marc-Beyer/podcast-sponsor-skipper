@@ -3,6 +3,10 @@ package de.devbeyer.podcast_sponsorskipper.util
 import androidx.compose.ui.unit.dp
 
 object Constants {
+    const val DOWNLOAD_CHANNEL_ID = "DOWNLOAD_CHANNEL_ID"
+    const val UPDATE_CHANNEL_ID = "UPDATE_CHANNEL_ID"
+    const val DOWNLOAD_EPISODE_NOTIFICATION_ID: Int = 42
+    const val UPDATE_NOTIFICATION_ID: Int = 53
     const val USERNAME = "username"
     const val TOKEN = "token"
     const val USER_PREFERENCES_NAME = "user_preferences"

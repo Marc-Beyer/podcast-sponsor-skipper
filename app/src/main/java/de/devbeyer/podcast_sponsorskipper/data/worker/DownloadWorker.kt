@@ -22,17 +22,19 @@ class DownloadWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val url = inputData.getString("url") ?: return Result.failure()
-        Log.i("AAA", "WORKER $url")
+        val title = inputData.getString("title") ?: return Result.failure()
+        Log.i("AAA", "WORKER $title $url")
 
         val notificationId = UUID.randomUUID().hashCode()
 
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationBuilder = NotificationCompat.Builder(applicationContext, "DOWNLOAD_CHANNEL_ID")
-            .setSmallIcon(android.R.drawable.stat_sys_download)
-            .setContentTitle("Downloading Podcast")
-            .setContentText("Download in progress")
+            .setSmallIcon(android.R.drawable.ic_popup_sync)
+            .setContentTitle("Updating $title")
+            .setContentText("Update in progress")
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setProgress(100, 0, true)
 
         // Display the notification
         notificationManager.notify(notificationId, notificationBuilder.build())

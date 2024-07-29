@@ -38,7 +38,9 @@ class EpisodesViewModel @Inject constructor(
                 val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadEpisodeWorker>()
                     .setInputData(workData)
                     .build()
-                workManager.enqueue(downloadWorkRequest)
+                workManager.enqueue(
+                    downloadWorkRequest
+                )
             }
 
             is EpisodesEvent.Play -> {
