@@ -7,6 +7,7 @@ import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -16,12 +17,11 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionCommand
-import androidx.media3.session.SessionResult
 import androidx.media3.session.SessionToken
 import androidx.work.WorkManager
-import androidx.work.await
 import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
@@ -206,13 +206,7 @@ class NavigationViewModel @Inject constructor(
                 putLong("END_POSITION_MS", endPositionMs)
             }
             Log.i("AAA", "sendCustomCommand to mediaController!!!!!")
-            val result = state.value.mediaController?.sendCustomCommand(command, args)?.await()
-            Log.i("AAA", "result $result")
-            if (result != null && result.resultCode == SessionResult.RESULT_SUCCESS) {
-                Log.i("AAA", "SessionResult.RESULT_SUCCESS")
-            } else {
-                Log.i("AAA", "SessionResult.RESULT_failure")
-            }
+            val result = state.value.mediaController?.sendCustomCommand(command, args)
         }
     }
 
@@ -281,6 +275,7 @@ class NavigationViewModel @Inject constructor(
         updatePositionJob?.cancel()
     }
 
+    @OptIn(UnstableApi::class)
     private fun initializeMediaController(context: Context) {
         val sessionToken =
             SessionToken(context, ComponentName(context, PlaybackService::class.java))

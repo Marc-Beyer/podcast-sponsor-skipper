@@ -87,7 +87,7 @@ fun Navigation(
                         text = when (backStackState?.destination?.route) {
                             NavRoute.Feed.path -> "Podcasts"
                             NavRoute.Search.path -> "Add podcast"
-                            NavRoute.Info.path -> "Podcast"
+                            NavRoute.Info.path -> currentPodcast?.podcast?.title ?: "Podcast"
                             NavRoute.Episodes.path -> currentPodcast?.podcast?.title ?: "Podcast"
 
                             else -> ""
