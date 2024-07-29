@@ -26,6 +26,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.UserUseCases
@@ -63,6 +64,20 @@ class NavigationViewModel @Inject constructor(
                 val episode = event.episode
                 val podcast = event.podcast
                 setCurrentEpisodeAndPodcast(event.episode, event.podcast)
+
+                viewModelScope.launch {
+                    val sponsorSections =
+                        episodeUseCases.getSponsorSectionsUseCase(episode.episodeUrl).firstOrNull()
+                            ?.let { sponsorSections ->
+                                setSponsorSections(sponsorSections)
+                                sponsorSections.forEach { sponsorSection ->
+                                    schedulePlaybackAction(
+                                        startPositionMs = sponsorSection.startPosition,
+                                        endPositionMs = sponsorSection.endPosition,
+                                    )
+                                }
+                            }
+                }
 
                 val mediaItem =
                     MediaItem.Builder()
@@ -177,7 +192,10 @@ class NavigationViewModel @Inject constructor(
                         startPosition != null &&
                         endPosition != null
                     ) {
-                        Log.i("AAA", "submit SponsorSection $episodeUrl $podcastUrl $startPosition $endPosition")
+                        Log.i(
+                            "AAA",
+                            "submit SponsorSection $episodeUrl $podcastUrl $startPosition $endPosition"
+                        )
                         podcastsUseCases.submitSponsorSectionUseCase(
                             episodeUrl = episodeUrl,
                             podcastUrl = podcastUrl,
@@ -220,6 +238,12 @@ class NavigationViewModel @Inject constructor(
         if (isPlaying) startUpdatingPosition() else stopUpdatingPosition()
         _state.value = state.value.copy(
             isPlaying = isPlaying,
+        )
+    }
+
+    private fun setSponsorSections(sponsorSections: List<SponsorSection>) {
+        _state.value = state.value.copy(
+            sponsorSections = sponsorSections,
         )
     }
 

@@ -24,6 +24,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadEpisodeUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadSponsorSectionsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.GetSponsorSectionsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DeleteFileUseCase
@@ -175,8 +176,11 @@ object ApplicationModule {
                 episodeDao = episodeDao,
                 fileUseCases = fileUseCases,
             ),
-            getSponsorSectionsUseCase = GetSponsorSectionsUseCase(
+            downloadSponsorSectionsUseCase = DownloadSponsorSectionsUseCase(
                 backendRepository = backendRepository,
+                sponsorSectionDao = sponsorSectionDao,
+            ),
+            getSponsorSectionsUseCase = GetSponsorSectionsUseCase(
                 sponsorSectionDao = sponsorSectionDao,
             )
         )

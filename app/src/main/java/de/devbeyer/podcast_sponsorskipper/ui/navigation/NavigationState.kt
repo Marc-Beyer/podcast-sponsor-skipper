@@ -3,6 +3,7 @@ package de.devbeyer.podcast_sponsorskipper.ui.navigation
 import androidx.media3.session.MediaController
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 
 data class NavigationState (
     val test: Boolean = false,
@@ -15,6 +16,7 @@ data class NavigationState (
     val sponsorSectionStart: Long? = null,
     val sponsorSectionEnd: Long? = null,
     val isPreviewing: PreviewState = PreviewState.NONE,
+    val sponsorSections: List<SponsorSection> = emptyList(),
 )
 
 enum class PreviewState{
