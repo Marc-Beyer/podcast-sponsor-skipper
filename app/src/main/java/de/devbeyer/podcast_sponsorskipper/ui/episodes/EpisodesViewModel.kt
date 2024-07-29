@@ -26,6 +26,10 @@ class EpisodesViewModel @Inject constructor(
     private val _state = mutableStateOf(EpisodesState())
     val state: State<EpisodesState> = _state
 
+    init {
+        updateActiveDownloadUrls()
+    }
+
     fun onEvent(event: EpisodesEvent) {
         when (event) {
             is EpisodesEvent.UpdatePodcast -> {
@@ -43,6 +47,7 @@ class EpisodesViewModel @Inject constructor(
                 workManager.enqueue(
                     downloadWorkRequest
                 )
+                updateActiveDownloadUrls(event.episode.episodeUrl)
             }
 
             is EpisodesEvent.Play -> {
@@ -52,11 +57,21 @@ class EpisodesViewModel @Inject constructor(
             is EpisodesEvent.CancelDownload -> {
                 val couldCancel = DownloadManager.cancel(event.episode.episodeUrl, event.episode.title)
                 Log.i("AAA", "DownloadManager couldCancel $couldCancel")
-                event.onCanceled(couldCancel)
+                updateActiveDownloadUrls()
             }
         }
     }
 
+
+    private fun updateActiveDownloadUrls(additionalUrl: String? = null) {
+        _state.value = state.value.copy(
+            activeDownloadUrls = if(additionalUrl != null){
+                DownloadManager.getActiveDownloadUrls() + listOf(additionalUrl)
+            }else{
+                DownloadManager.getActiveDownloadUrls()
+            },
+        )
+    }
 
     fun setPodcast(podcastWithRelations: PodcastWithRelations) {
         viewModelScope.launch {

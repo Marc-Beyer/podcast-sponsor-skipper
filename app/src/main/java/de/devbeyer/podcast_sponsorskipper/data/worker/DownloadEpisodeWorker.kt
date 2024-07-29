@@ -95,6 +95,7 @@ data class DownloadState(
 )
 
 object DownloadManager {
+    private var activeDownloadUrl: String? = null
     private val activeDownloadUrls = mutableListOf<String>()
     private val activeDownloadTitles = mutableListOf<String>()
     private val lock = Any()
@@ -117,8 +118,10 @@ object DownloadManager {
             if (activeDownloadUrls.size > 0) {
                 val url = activeDownloadUrls.first()
                 activeDownloadUrls.removeAt(0)
+                activeDownloadUrl = url
                 return url
             } else {
+                activeDownloadUrl = null
                 activeDownloadTitles.clear()
                 return null
             }
@@ -143,6 +146,16 @@ object DownloadManager {
                 activeDownloadTitles.size,
                 activeDownloadTitles.joinToString("\n")
             )
+        }
+    }
+
+    fun getActiveDownloadUrls(): List<String> {
+        synchronized(lock) {
+            return if (activeDownloadUrl != null) {
+                listOf(activeDownloadUrl!!) + activeDownloadUrls.toList()
+            } else {
+                activeDownloadUrls.toList()
+            }
         }
     }
 }

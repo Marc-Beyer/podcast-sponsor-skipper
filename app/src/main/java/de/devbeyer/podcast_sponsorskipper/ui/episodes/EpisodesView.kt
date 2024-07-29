@@ -134,6 +134,7 @@ fun EpisodesView(
                     items(items = state.episodes) { episode ->
                         EpisodeItem(
                             episode = episode,
+                            isDownloading = state.activeDownloadUrls.contains(episode.episodeUrl),
                             podcastWithRelations = state.podcastWithRelations,
                             navigationState = navigationState,
                             context = context,

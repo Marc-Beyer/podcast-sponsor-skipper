@@ -29,10 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,15 +48,18 @@ import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 @Composable
 fun EpisodeItem(
     episode: Episode,
+    isDownloading: Boolean,
     podcastWithRelations: PodcastWithRelations,
     navigationState: NavigationState,
     context: Context,
     onEvent: (EpisodesEvent) -> Unit,
     onNavigationEvent: (NavigationEvent) -> Unit,
 ) {
+    /*
     var isDownloading by rememberSaveable {
-        mutableStateOf(false)
+        mutableStateOf(inDownloadQueue)
     }
+     */
     val episodePath = episode.episodePath
 
     Row(
@@ -164,12 +163,7 @@ fun EpisodeItem(
             if (isDownloading) {
                 TextButton(onClick = {
                     onEvent(
-                        EpisodesEvent.CancelDownload(
-                            episode = episode,
-                            onCanceled = {
-                                isDownloading = !it
-                            }
-                        )
+                        EpisodesEvent.CancelDownload(episode = episode)
                     )
                 }) {
                     Icon(
@@ -182,7 +176,6 @@ fun EpisodeItem(
                 }
             } else {
                 TextButton(onClick = {
-                    isDownloading = true
                     onEvent(EpisodesEvent.Download(episode))
                 }) {
                     Icon(
@@ -194,7 +187,6 @@ fun EpisodeItem(
                 }
             }
         } else {
-            if (isDownloading) isDownloading = false
             if (navigationState.selectedEpisode == episode && navigationState.isPlaying) {
                 TextButton(onClick = {
                     onNavigationEvent(NavigationEvent.Stop)

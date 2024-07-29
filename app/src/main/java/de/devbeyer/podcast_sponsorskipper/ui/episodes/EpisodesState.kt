@@ -5,5 +5,6 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 
 data class EpisodesState (
     val podcastWithRelations: PodcastWithRelations? = null,
-    val episodes:List<Episode> = emptyList()
+    val episodes:List<Episode> = emptyList(),
+    val activeDownloadUrls: List<String> = emptyList(),
 )
