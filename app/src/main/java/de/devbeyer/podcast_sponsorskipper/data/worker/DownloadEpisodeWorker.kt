@@ -40,6 +40,7 @@ class DownloadEpisodeWorker @AssistedInject constructor(
 
         return try {
             episodeUseCases.downloadEpisodeUseCase(url)
+            episodeUseCases.getSponsorSectionsUseCase(url)
 
             notificationBuilder.setContentText("Download complete")
                 .setOngoing(false)

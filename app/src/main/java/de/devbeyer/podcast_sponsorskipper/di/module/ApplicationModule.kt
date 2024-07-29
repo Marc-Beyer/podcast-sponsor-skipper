@@ -14,6 +14,7 @@ import de.devbeyer.podcast_sponsorskipper.data.local.PodcastDatabase
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.CategoryDao
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.EpisodeDao
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.PodcastDao
+import de.devbeyer.podcast_sponsorskipper.data.local.dao.SponsorSectionDao
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.FileAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
@@ -24,6 +25,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.GetSponsorSectionsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DeleteFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DownloadFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
@@ -165,11 +167,17 @@ object ApplicationModule {
     fun provideEpisodeUseCases(
         episodeDao: EpisodeDao,
         fileUseCases: FileUseCases,
+        backendRepository: BackendRepository,
+        sponsorSectionDao: SponsorSectionDao,
     ): EpisodeUseCases {
         return EpisodeUseCases(
             downloadEpisodeUseCase = DownloadEpisodeUseCase(
                 episodeDao = episodeDao,
                 fileUseCases = fileUseCases,
+            ),
+            getSponsorSectionsUseCase = GetSponsorSectionsUseCase(
+                backendRepository = backendRepository,
+                sponsorSectionDao = sponsorSectionDao,
             )
         )
     }
@@ -203,6 +211,11 @@ object ApplicationModule {
     @Singleton
     fun provideEpisodeDao(podcastDatabase: PodcastDatabase): EpisodeDao =
         podcastDatabase.episodeDao()
+
+    @Provides
+    @Singleton
+    fun provideSponsorSectionDao(podcastDatabase: PodcastDatabase): SponsorSectionDao =
+        podcastDatabase.sponsorSectionDao()
 
     @Provides
     @Singleton

@@ -1,8 +1,10 @@
 package de.devbeyer.podcast_sponsorskipper.data.remote
 
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.PodcastResponse
+import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SponsorSectionRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SubmitSponsorSectionBody
 import de.devbeyer.podcast_sponsorskipper.domain.models.UserData
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -28,5 +30,10 @@ interface BackendAPI {
 
     @GET("register")
     suspend fun register (): Response<UserData>
+
+    @POST("get-sponsor-section")
+    suspend fun getSponsorSection(
+        @Body request: SponsorSectionRequest
+    ): Response<List<SponsorSection>>
 
 }

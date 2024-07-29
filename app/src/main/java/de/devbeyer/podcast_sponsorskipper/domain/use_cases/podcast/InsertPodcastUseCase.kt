@@ -43,12 +43,18 @@ class InsertPodcastUseCase(
                 )
             )
         }
+        val imageCache = mutableMapOf<String, String?>()
+
         for (episode in podcastAndEpisodes.episodes) {
             Log.i("AAA", "ADD episode ${episode.title}")
-            val episodeImagePath = fileUseCases.downloadFileUseCase.invoke(
-                extension = "jpg",
-                url = episode.imageUrl
-            ).firstOrNull()
+
+            val episodeImagePath =
+                imageCache[episode.imageUrl] ?: fileUseCases.downloadFileUseCase.invoke(
+                    extension = "jpg",
+                    url = episode.imageUrl
+                ).firstOrNull()
+
+            imageCache[episode.imageUrl] = episodeImagePath
             episodeDao.insert(episode.copy(podcastId = podcastId, imagePath = episodeImagePath))
         }
     }

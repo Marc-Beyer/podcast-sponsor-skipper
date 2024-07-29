@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.PodcastPagingSource
 import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
+import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SponsorSectionRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SubmitSponsorSectionBody
 import de.devbeyer.podcast_sponsorskipper.domain.models.UserData
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
@@ -14,6 +15,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastAndEpisodes
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.util.getCurrentISO8601Time
 import kotlinx.coroutines.flow.Flow
@@ -81,11 +83,24 @@ class BackendRepositoryImpl(
                 token
             )
         )
-        Log.i("AAA", "submitSponsorSection REPO $episodeUrl $username $token isSuccessful ${response.isSuccessful}")
+        Log.i(
+            "AAA",
+            "submitSponsorSection REPO $episodeUrl $username $token isSuccessful ${response.isSuccessful}"
+        )
         emit(response.isSuccessful)
     }
 
-    override fun register(): Flow<UserData?> = flow  {
+    override fun getSponsorSection(episodeUrl: String): Flow<List<SponsorSection>> = flow {
+        val response = backendAPI.getSponsorSection(SponsorSectionRequest(episodeUrl = episodeUrl))
+        if (response.isSuccessful) {
+            val sponsorSections = response.body()?.map { it.copy(episodeUrl = episodeUrl) }
+            emit(sponsorSections ?: emptyList())
+        } else {
+            emit(emptyList())
+        }
+    }
+
+    override fun register(): Flow<UserData?> = flow {
         val response = backendAPI.register()
 
         if (response.isSuccessful) {
