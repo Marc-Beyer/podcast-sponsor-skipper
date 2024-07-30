@@ -7,6 +7,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 data class EpisodeState(
     val episode: Episode? = null,
     val podcastWithRelations: PodcastWithRelations? = null,
-    val sponsorSections: List<SponsorSection> = emptyList()
+    val sponsorSections: List<SponsorSection> = emptyList(),
+    val activeDownloadUrls: List<String> = emptyList(),
 
 )

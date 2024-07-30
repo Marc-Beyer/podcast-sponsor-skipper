@@ -62,20 +62,7 @@ class NavigationViewModel @Inject constructor(
                 val episode = event.episode
                 val podcast = event.podcast
                 setCurrentEpisodeAndPodcast(event.episode, event.podcast)
-
-                viewModelScope.launch {
-                    val sponsorSections =
-                        episodeUseCases.getSponsorSectionsUseCase(episode.episodeUrl).firstOrNull()
-                            ?.let { sponsorSections ->
-                                setSponsorSections(sponsorSections)
-                                sponsorSections.forEach { sponsorSection ->
-                                    schedulePlaybackAction(
-                                        startPositionMs = sponsorSection.startPosition,
-                                        endPositionMs = sponsorSection.endPosition,
-                                    )
-                                }
-                            }
-                }
+                loadSponsorSections(episodeUrl = episode.episodeUrl)
 
                 val mediaItem =
                     MediaItem.Builder()
@@ -182,24 +169,38 @@ class NavigationViewModel @Inject constructor(
                         startPosition != null &&
                         endPosition != null
                     ) {
+                        _state.value = state.value.copy(
+                            sponsorSectionStart = null,
+                            sponsorSectionEnd = null,
+                            isPreviewing = PreviewState.NONE,
+                        )
                         podcastsUseCases.submitSponsorSectionUseCase(
                             episodeUrl = episodeUrl,
                             podcastUrl = podcastUrl,
                             startPosition = startPosition,
                             endPosition = endPosition,
                         ).firstOrNull()
-                        _state.value = state.value.copy(
-                            selectedEpisode = null,
-                            selectedPodcast = null,
-                            sponsorSectionStart = null,
-                            sponsorSectionEnd = null,
-                            isPreviewing = PreviewState.NONE,
-                        )
+                        loadSponsorSections(episodeUrl = episodeUrl)
                     }
                 }
             }
         }
 
+    }
+
+    private fun loadSponsorSections(episodeUrl: String) {
+        viewModelScope.launch {
+            episodeUseCases.getSponsorSectionsUseCase(episodeUrl).firstOrNull()
+                ?.let { sponsorSections ->
+                    setSponsorSections(sponsorSections)
+                    sponsorSections.forEach { sponsorSection ->
+                        schedulePlaybackAction(
+                            startPositionMs = sponsorSection.startPosition,
+                            endPositionMs = sponsorSection.endPosition,
+                        )
+                    }
+                }
+        }
     }
 
     private fun closePodcastEpisode() {

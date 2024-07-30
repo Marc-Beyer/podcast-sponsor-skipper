@@ -36,7 +36,6 @@ class EpisodesViewModel @Inject constructor(
             is EpisodesEvent.UpdatePodcast -> {
 
             }
-
             is EpisodesEvent.Download -> {
                 val workData = workDataOf(
                     "url" to event.episode.episodeUrl,
