@@ -135,6 +135,7 @@ fun EpisodesView(
                         EpisodeItem(
                             episode = episode,
                             isDownloading = state.activeDownloadUrls.contains(episode.episodeUrl),
+                            state = state,
                             podcastWithRelations = state.podcastWithRelations,
                             navigationState = navigationState,
                             context = context,
@@ -143,6 +144,7 @@ fun EpisodesView(
                         )
                     }
                 }
+
             } else {
                 Text(
                     text = "No episodes",

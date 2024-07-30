@@ -24,10 +24,12 @@ import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.FileRepository
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.CompleteEpisodeUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DeleteEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadSponsorSectionsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.GetSponsorSectionsUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.MarkEpisodeCompleteUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DeleteFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DownloadFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
@@ -173,6 +175,7 @@ object ApplicationModule {
         fileUseCases: FileUseCases,
         backendRepository: BackendRepository,
         sponsorSectionDao: SponsorSectionDao,
+        podcastsDao: PodcastDao,
     ): EpisodeUseCases {
         return EpisodeUseCases(
             downloadEpisodeUseCase = DownloadEpisodeUseCase(
@@ -189,7 +192,16 @@ object ApplicationModule {
             completeEpisodeUseCase = CompleteEpisodeUseCase(
                 episodeDao = episodeDao,
                 fileUseCases = fileUseCases,
-            )
+            ),
+            markEpisodeCompleteUseCase = MarkEpisodeCompleteUseCase(
+                episodeDao = episodeDao,
+                fileUseCases = fileUseCases,
+                podcastsDao = podcastsDao,
+            ),
+            deleteEpisodeUseCase = DeleteEpisodeUseCase(
+                episodeDao = episodeDao,
+                fileUseCases = fileUseCases,
+            ),
         )
     }
 

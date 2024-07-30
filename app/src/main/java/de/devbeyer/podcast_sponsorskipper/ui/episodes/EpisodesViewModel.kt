@@ -1,8 +1,8 @@
 package de.devbeyer.podcast_sponsorskipper.ui.episodes
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.DpOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
@@ -13,6 +13,7 @@ import de.devbeyer.podcast_sponsorskipper.data.worker.DownloadEpisodeWorker
 import de.devbeyer.podcast_sponsorskipper.data.worker.DownloadManager
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class EpisodesViewModel @Inject constructor(
     private val podcastsUseCases: PodcastsUseCases,
     private val episodeUseCases: EpisodeUseCases,
+    private val fileUseCases: FileUseCases,
     private val workManager: WorkManager,
 ) : ViewModel() {
     private val _state = mutableStateOf(EpisodesState())
@@ -49,17 +51,41 @@ class EpisodesViewModel @Inject constructor(
                 )
                 updateActiveDownloadUrls(event.episode.episodeUrl)
             }
-
-            is EpisodesEvent.Play -> {
-
+            is EpisodesEvent.OpenMenu -> {
+                _state.value = state.value.copy(
+                    selectedEpisode = event.selectedEpisode,
+                    menuOffset = event.menuOffset,
+                    isMenuExpanded = true,
+                )
             }
-
+            is EpisodesEvent.DismissMenu -> {
+                dismissMenu()
+            }
+            is EpisodesEvent.CompleteEpisode -> {
+                viewModelScope.launch {
+                    episodeUseCases.markEpisodeCompleteUseCase(episode = event.episode)
+                }
+                dismissMenu()
+            }
+            is EpisodesEvent.DeleteEpisode -> {
+                viewModelScope.launch {
+                    episodeUseCases.deleteEpisodeUseCase(event.episode)
+                }
+                dismissMenu()
+            }
             is EpisodesEvent.CancelDownload -> {
                 val couldCancel = DownloadManager.cancel(event.episode.episodeUrl, event.episode.title)
-                Log.i("AAA", "DownloadManager couldCancel $couldCancel")
                 updateActiveDownloadUrls()
             }
         }
+    }
+
+    private fun dismissMenu() {
+        _state.value = state.value.copy(
+            selectedEpisode = null,
+            menuOffset = DpOffset.Zero,
+            isMenuExpanded = false,
+        )
     }
 
 

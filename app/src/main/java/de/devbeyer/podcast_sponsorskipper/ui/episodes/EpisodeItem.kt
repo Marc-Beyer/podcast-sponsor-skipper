@@ -3,7 +3,7 @@ package de.devbeyer.podcast_sponsorskipper.ui.episodes
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Sync
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,8 +34,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
@@ -49,6 +53,7 @@ import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 fun EpisodeItem(
     episode: Episode,
     isDownloading: Boolean,
+    state: EpisodesState,
     podcastWithRelations: PodcastWithRelations,
     navigationState: NavigationState,
     context: Context,
@@ -65,12 +70,21 @@ fun EpisodeItem(
     Row(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.inverseOnSurface)
-            .combinedClickable(
-                onLongClick = {
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = { offset ->
+                        val offsetX = with(density) { offset.x.toDp() }
+                        val offsetY = with(density) { -offset.y.toDp() }
 
-                },
-                onClick = {}
-            )
+                        onEvent(
+                            EpisodesEvent.OpenMenu(
+                                selectedEpisode = episode,
+                                menuOffset = DpOffset(offsetX, offsetY),
+                            )
+                        )
+                    }
+                )
+            }
             .fillMaxWidth()
             .padding(Constants.Dimensions.MEDIUM),
         verticalAlignment = Alignment.CenterVertically,
@@ -210,6 +224,24 @@ fun EpisodeItem(
                     )
                 }
             }
+        }
+        DropdownMenu(
+            expanded = state.selectedEpisode == episode,
+            onDismissRequest = { onEvent(EpisodesEvent.DismissMenu) },
+            offset = state.menuOffset
+        ) {
+            if (episode.episodePath != null){
+                DropdownMenuItem(text = {
+                    Text(text = "Delete Episode")
+                },
+                    onClick = { onEvent(EpisodesEvent.DeleteEpisode(episode)) }
+                )
+            }
+            DropdownMenuItem(text = {
+                Text(text = "Mark Episode as Complete")
+            },
+                onClick = { onEvent(EpisodesEvent.CompleteEpisode(episode)) }
+            )
         }
     }
 }

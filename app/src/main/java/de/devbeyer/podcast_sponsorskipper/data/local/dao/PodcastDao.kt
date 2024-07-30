@@ -25,11 +25,11 @@ interface PodcastDao {
     @Query("SELECT * FROM podcast")
     fun getPodcasts(): Flow<List<PodcastWithRelations>>
 
-    //@Transaction
-    //@Query("SELECT * FROM podcast")
-    //fun getAllLive(): LiveData<List<Podcast>>
     @Query("SELECT * FROM podcast WHERE url = :url")
     fun getPodcastFromUrl(url: String): Flow<PodcastWithRelations?>
+
+    @Query("SELECT * FROM podcast WHERE podcastId = :id")
+    fun getPodcastFromId(id: Int): Flow<PodcastWithRelations?>
 
     @Transaction
     @Query("SELECT * FROM podcast WHERE podcastId = :podcastId")
