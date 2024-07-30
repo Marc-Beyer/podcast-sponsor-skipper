@@ -24,4 +24,7 @@ interface EpisodeDao {
 
     @Query("SELECT * FROM episode WHERE podcastId = :podcastId ORDER BY pubDate DESC")
     fun getEpisodesByPodcastId(podcastId: Int): Flow<List<Episode>>
+
+    @Query("SELECT * FROM episode WHERE imagePath = :imagePath")
+    fun getEpisodesByImagePath(imagePath: String): Flow<List<Episode>>
 }

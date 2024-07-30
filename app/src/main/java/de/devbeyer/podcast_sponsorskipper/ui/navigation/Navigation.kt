@@ -35,7 +35,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.episode.EpisodeView
+import de.devbeyer.podcast_sponsorskipper.ui.episode.EpisodeViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.episodes.EpisodesView
 import de.devbeyer.podcast_sponsorskipper.ui.episodes.EpisodesViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedView
@@ -66,16 +69,24 @@ fun Navigation(
     val isBackArrowVisible = remember(key1 = backStackState) {
         backStackState?.destination?.route == NavRoute.Search.path ||
                 backStackState?.destination?.route == NavRoute.Info.path ||
-                backStackState?.destination?.route == NavRoute.Episodes.path
+                backStackState?.destination?.route == NavRoute.Episodes.path ||
+                backStackState?.destination?.route == NavRoute.Episode.path
     }
 
     var isAddRSSFeedDialogOpen by remember { mutableStateOf(false) }
 
-    var currentPodcast = navController
+    val currentPodcast = navController
         .previousBackStackEntry
         ?.savedStateHandle
         ?.get<PodcastWithRelations?>(
             "podcastWithRelations"
+        )
+
+    val currentEpisode = navController
+        .previousBackStackEntry
+        ?.savedStateHandle
+        ?.get<Episode?>(
+            "episode"
         )
 
 
@@ -89,7 +100,7 @@ fun Navigation(
                             NavRoute.Search.path -> "Add podcast"
                             NavRoute.Info.path -> currentPodcast?.podcast?.title ?: "Podcast"
                             NavRoute.Episodes.path -> currentPodcast?.podcast?.title ?: "Podcast"
-
+                            NavRoute.Episode.path -> currentEpisode?.title ?: "Episode"
                             else -> ""
                         },
                         maxLines = 1,
@@ -175,7 +186,14 @@ fun Navigation(
         bottomBar = {
             BottomMediaControllerInterface(
                 state = state,
-                onEvent = onEvent
+                onEvent = onEvent,
+                navigateToEpisode = { episode, podcastWithRelations ->
+                    navigateToEpisode(
+                        navController = navController,
+                        episode = episode,
+                        podcastWithRelations = podcastWithRelations,
+                    )
+                }
             )
         }
     ) { innerPadding ->
@@ -244,12 +262,55 @@ fun Navigation(
                             navigationState = state,
                             onEvent = viewModel::onEvent,
                             onNavigationEvent = onEvent,
+                            navigateToEpisode = { episode, podcastWithRelations ->
+                                navigateToEpisode(
+                                    navController = navController,
+                                    episode = episode,
+                                    podcastWithRelations = podcastWithRelations,
+                                )
+                            },
                         )
                     }
 
             }
+            composable(route = NavRoute.Episode.path) {
+                val viewModel: EpisodeViewModel = hiltViewModel()
+                val podcastWithRelations =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<PodcastWithRelations?>(
+                        "podcastWithRelations"
+                    )
+                val episode = navController.previousBackStackEntry?.savedStateHandle?.get<Episode?>(
+                    "episode"
+                )
+                if (podcastWithRelations != null && episode != null) {
+                    viewModel.setEpisode(episode, podcastWithRelations)
+                    EpisodeView(
+                        state = viewModel.state.value,
+                        navigationState = state,
+                        onEvent = viewModel::onEvent,
+                        onNavigationEvent = onEvent,
+                    )
+                }
+
+            }
         }
     }
+}
+
+private fun navigateToEpisode(
+    navController: NavController,
+    episode: Episode,
+    podcastWithRelations: PodcastWithRelations
+) {
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        "podcastWithRelations",
+        podcastWithRelations
+    )
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        "episode",
+        episode
+    )
+    navController.navigate(route = NavRoute.Episode.path)
 }
 
 private fun navigateToInfo(

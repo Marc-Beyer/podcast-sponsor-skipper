@@ -12,17 +12,28 @@ class MarkEpisodeCompleteUseCase(
     private val fileUseCases: FileUseCases,
 ) {
     suspend operator fun invoke(episode: Episode) {
-        episode.imagePath?.let {
-            fileUseCases.deleteFileUseCase(it).firstOrNull()
-        }
-        val imagePath =
-            podcastsDao.getPodcastFromId(episode.podcastId).firstOrNull()?.podcast?.imagePath
-        episodeDao.update(
-            episode.copy(
-                episodePath = null,
-                imagePath = imagePath,
-                isCompleted = true,
+        if (episode.isCompleted) {
+            episodeDao.update(
+                episode.copy(
+                    isCompleted = false,
+                )
             )
-        )
+        } else {
+            val oldImagePath = episode.imagePath
+            val imagePath =
+                podcastsDao.getPodcastFromId(episode.podcastId).firstOrNull()?.podcast?.imagePath
+            episodeDao.update(
+                episode.copy(
+                    imagePath = imagePath,
+                    isCompleted = true,
+                )
+            )
+            oldImagePath?.let {
+                val episodesWithThisImage = episodeDao.getEpisodesByImagePath(it).firstOrNull()
+                if(episodesWithThisImage.isNullOrEmpty()){
+                    fileUseCases.deleteFileUseCase(it).firstOrNull()
+                }
+            }
+        }
     }
 }

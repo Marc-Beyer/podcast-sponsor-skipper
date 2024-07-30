@@ -11,10 +11,9 @@ class CompleteEpisodeUseCase(
     private val fileUseCases: FileUseCases,
 ) {
     suspend operator fun invoke(episode: Episode, podcast: Podcast) {
+        val oldImagePath = episode.imagePath
+
         episode.episodePath?.let {
-            fileUseCases.deleteFileUseCase(it).firstOrNull()
-        }
-        episode.imagePath?.let {
             fileUseCases.deleteFileUseCase(it).firstOrNull()
         }
         episodeDao.update(
@@ -24,5 +23,11 @@ class CompleteEpisodeUseCase(
                 isCompleted = true
             )
         )
+        oldImagePath?.let {
+            val episodesWithThisImage = episodeDao.getEpisodesByImagePath(it).firstOrNull()
+            if(episodesWithThisImage.isNullOrEmpty()){
+                fileUseCases.deleteFileUseCase(it).firstOrNull()
+            }
+        }
     }
 }

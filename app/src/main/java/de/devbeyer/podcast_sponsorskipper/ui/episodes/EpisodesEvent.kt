@@ -15,4 +15,5 @@ sealed class EpisodesEvent {
 
     object UpdatePodcast : EpisodesEvent()
     object DismissMenu : EpisodesEvent()
+
 }

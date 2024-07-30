@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,7 +58,8 @@ import java.time.LocalDateTime
 @Composable
 fun BottomMediaControllerInterface(
     state: NavigationState,
-    onEvent: (NavigationEvent) -> Unit
+    onEvent: (NavigationEvent) -> Unit,
+    navigateToEpisode: (Episode, PodcastWithRelations) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -77,6 +79,12 @@ fun BottomMediaControllerInterface(
                     modifier = Modifier
                         .height(48.dp)
                         .aspectRatio(1f)
+                        .clickable {
+                            navigateToEpisode(
+                                state.selectedEpisode,
+                                state.selectedPodcast
+                            )
+                        }
                         .background(
                             color = MaterialTheme.colorScheme.primary,
                         ),
@@ -89,7 +97,16 @@ fun BottomMediaControllerInterface(
                     )
                 }
                 Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
-                Column(modifier = Modifier.weight(5f)) {
+                Column(
+                    modifier = Modifier
+                        .weight(5f)
+                        .clickable {
+                            navigateToEpisode(
+                                state.selectedEpisode,
+                                state.selectedPodcast
+                            )
+                        },
+                ) {
                     Text(
                         text = state.selectedEpisode.title,
                         maxLines = 1,
@@ -222,7 +239,7 @@ fun BottomMediaControllerInterface(
                 )
                 Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
 
-                when(state.isPreviewing){
+                when (state.isPreviewing) {
                     PreviewState.NONE -> {
                         Button(
                             onClick = { onEvent(NavigationEvent.Preview) },
@@ -236,9 +253,10 @@ fun BottomMediaControllerInterface(
                             )
                         }
                     }
+
                     PreviewState.PREVIEWING -> {
                         Button(
-                            onClick = {  },
+                            onClick = { },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(42.dp),
@@ -253,6 +271,7 @@ fun BottomMediaControllerInterface(
                             )
                         }
                     }
+
                     PreviewState.FINISHED -> {
                         Button(
                             onClick = { onEvent(NavigationEvent.Preview) },
@@ -343,7 +362,10 @@ fun BottomMediaControllerInterfacePreview() {
                     block = false
                 )
             ),
-            onEvent = {}
+            onEvent = {},
+            navigateToEpisode = { _, _ ->
+
+            }
         )
     }
 }
@@ -394,7 +416,10 @@ fun BottomMediaControllerInterfacePreviewDark() {
                     block = false
                 )
             ),
-            onEvent = {}
+            onEvent = {},
+            navigateToEpisode = { _, _ ->
+
+            }
         )
     }
 }

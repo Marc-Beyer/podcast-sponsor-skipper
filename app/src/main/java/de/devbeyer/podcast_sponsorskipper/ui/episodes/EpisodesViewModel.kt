@@ -2,7 +2,6 @@ package de.devbeyer.podcast_sponsorskipper.ui.episodes
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.unit.DpOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
@@ -83,9 +82,9 @@ class EpisodesViewModel @Inject constructor(
     private fun dismissMenu() {
         _state.value = state.value.copy(
             selectedEpisode = null,
-            menuOffset = DpOffset.Zero,
             isMenuExpanded = false,
         )
+        updateActiveDownloadUrls()
     }
 
 

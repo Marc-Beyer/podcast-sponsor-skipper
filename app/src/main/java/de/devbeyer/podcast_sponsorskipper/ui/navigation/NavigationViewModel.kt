@@ -6,7 +6,6 @@ import android.content.Context
 import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -60,7 +59,6 @@ class NavigationViewModel @Inject constructor(
     fun onEvent(event: NavigationEvent) {
         when (event) {
             is NavigationEvent.PlayEpisode -> {
-                Log.i("AAA", "Play ${event.episode.title}")
                 val episode = event.episode
                 val podcast = event.podcast
                 setCurrentEpisodeAndPodcast(event.episode, event.podcast)
@@ -184,10 +182,6 @@ class NavigationViewModel @Inject constructor(
                         startPosition != null &&
                         endPosition != null
                     ) {
-                        Log.i(
-                            "AAA",
-                            "submit SponsorSection $episodeUrl $podcastUrl $startPosition $endPosition"
-                        )
                         podcastsUseCases.submitSponsorSectionUseCase(
                             episodeUrl = episodeUrl,
                             podcastUrl = podcastUrl,
@@ -227,7 +221,6 @@ class NavigationViewModel @Inject constructor(
                 putLong("START_POSITION_MS", startPositionMs)
                 putLong("END_POSITION_MS", endPositionMs)
             }
-            Log.i("AAA", "sendCustomCommand to mediaController!!!!!")
             val result = state.value.mediaController?.sendCustomCommand(command, args)
         }
     }
@@ -301,7 +294,6 @@ class NavigationViewModel @Inject constructor(
 
 
     private fun endPodcast() {
-        Log.i("AAA", "ENDED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         viewModelScope.launch {
             state.value.selectedEpisode?.let { episode ->
                 state.value.selectedPodcast?.let { podcastWithRelations ->
@@ -329,12 +321,10 @@ class NavigationViewModel @Inject constructor(
                 setMediaController(controllerFuture.get())
                 state.value.mediaController?.addListener(object : Player.Listener {
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
-                        Log.i("AAA", "isPlaying changed to $isPlaying")
                         setIsPlaying(isPlaying)
                     }
 
                     override fun onPlaybackStateChanged(playbackState: Int) {
-                        Log.i("AAA", "playbackState changed to $playbackState")
                         updateCurrentPosition()
                         when (playbackState) {
                             PlaybackState.STATE_NONE -> setIsPlaying(false)

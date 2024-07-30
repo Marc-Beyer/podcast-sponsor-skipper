@@ -3,7 +3,7 @@ package de.devbeyer.podcast_sponsorskipper.ui.episodes
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,8 +34,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -59,19 +59,35 @@ fun EpisodeItem(
     context: Context,
     onEvent: (EpisodesEvent) -> Unit,
     onNavigationEvent: (NavigationEvent) -> Unit,
+    navigateToEpisode: (Episode, PodcastWithRelations) -> Unit,
 ) {
-    /*
-    var isDownloading by rememberSaveable {
-        mutableStateOf(inDownloadQueue)
-    }
-     */
     val episodePath = episode.episodePath
+    val haptics = LocalHapticFeedback.current
 
     Row(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.inverseOnSurface)
-            .pointerInput(Unit) {
-                detectTapGestures(
+            .fillMaxWidth()
+            .combinedClickable(
+                onLongClick = {
+                    haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+
+                    onEvent(
+                        EpisodesEvent.OpenMenu(
+                            selectedEpisode = episode,
+                            menuOffset = DpOffset(32.dp, 0.dp),
+                        )
+                    )
+                },
+                onClick = {
+                    navigateToEpisode(episode, podcastWithRelations)
+                },
+                onLongClickLabel = "Open context menu"
+            )
+            .padding(Constants.Dimensions.MEDIUM),
+            /*
+            .pointerInput(true) {
+                detectTapGestures (
                     onLongPress = { offset ->
                         val offsetX = with(density) { offset.x.toDp() }
                         val offsetY = with(density) { -offset.y.toDp() }
@@ -85,8 +101,7 @@ fun EpisodeItem(
                     }
                 )
             }
-            .fillMaxWidth()
-            .padding(Constants.Dimensions.MEDIUM),
+             */
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
@@ -225,12 +240,13 @@ fun EpisodeItem(
                 }
             }
         }
+        val expanded = state.isMenuExpanded && state.selectedEpisode?.episodeUrl == episode.episodeUrl
         DropdownMenu(
-            expanded = state.selectedEpisode == episode,
+            expanded = expanded,
             onDismissRequest = { onEvent(EpisodesEvent.DismissMenu) },
             offset = state.menuOffset
         ) {
-            if (episode.episodePath != null){
+            if (episode.episodePath != null) {
                 DropdownMenuItem(text = {
                     Text(text = "Delete Episode")
                 },
@@ -238,7 +254,7 @@ fun EpisodeItem(
                 )
             }
             DropdownMenuItem(text = {
-                Text(text = "Mark Episode as Complete")
+                Text(text = "Mark as " + if(episode.isCompleted) "Incomplete" else "Complete")
             },
                 onClick = { onEvent(EpisodesEvent.CompleteEpisode(episode)) }
             )

@@ -3,7 +3,8 @@ package de.devbeyer.podcast_sponsorskipper.ui.navigation
 sealed class NavRoute(val path: String) {
     object TourGuide : NavRoute("tourGuide")
     object Feed : NavRoute("feed")
-    object Episodes : NavRoute("home")
+    object Episodes : NavRoute("episodes")
+    object Episode : NavRoute("episode")
     object Search : NavRoute("search")
     object Info : NavRoute("info")
 

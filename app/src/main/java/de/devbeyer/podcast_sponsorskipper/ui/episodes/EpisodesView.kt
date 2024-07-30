@@ -28,6 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
@@ -38,6 +40,7 @@ fun EpisodesView(
     navigationState: NavigationState,
     onEvent: (EpisodesEvent) -> Unit,
     onNavigationEvent: (NavigationEvent) -> Unit,
+    navigateToEpisode: (Episode, PodcastWithRelations) -> Unit,
 ) {
     val context = LocalContext.current
     val podcast = state.podcastWithRelations?.podcast
@@ -141,6 +144,7 @@ fun EpisodesView(
                             context = context,
                             onEvent = onEvent,
                             onNavigationEvent = onNavigationEvent,
+                            navigateToEpisode = navigateToEpisode,
                         )
                     }
                 }

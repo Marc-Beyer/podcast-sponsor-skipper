@@ -26,6 +26,11 @@ fun formatDateByDistance(dateTime: LocalDateTime): String {
     }
 }
 
+fun formatLocalDateTime(dateTime: LocalDateTime, pattern: String = "yyyy/MM/dd"): String {
+    val formatter = DateTimeFormatter.ofPattern(pattern)
+    return dateTime.format(formatter)
+}
+
 fun formatMillisecondsToTime(milliseconds: Long): String {
     val totalSeconds = milliseconds / 1000
     val hours = totalSeconds / 3600

@@ -74,13 +74,6 @@ private fun PodcastInfo(
     val context = LocalContext.current
     val podcast = podcastWithRelations.podcast
 
-    /*
-    Text(
-        text = podcast.title,
-        style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onSurface
-    )
-     */
 
     Spacer(modifier = Modifier.height(8.dp))
 
