@@ -46,6 +46,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.common.CustomSlider
 import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
@@ -130,11 +131,25 @@ fun BottomMediaControllerInterface(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
+            var sponsorSections = state.sponsorSections
+            var sponsorSectionStart: Long? = null
+            if(state.sponsorSectionStart != null && state.sponsorSectionEnd != null)
+            {
+                sponsorSections = sponsorSections + listOf(SponsorSection(
+                    id = 0,
+                    endPosition = state.sponsorSectionEnd,
+                    startPosition = state.sponsorSectionStart,
+                    episodeUrl = ""
+                ))
+            }else if(state.sponsorSectionStart != null && state.sponsorSectionEnd == null){
+                sponsorSectionStart = state.sponsorSectionStart
+            }
             CustomSlider(
                 value = if (state.currentPosition < state.duration) state.currentPosition.toFloat() else 0f,
                 onValueChange = { onEvent(NavigationEvent.SeekTo(it.toLong())) },
                 valueRange = 0f..if (state.duration.toFloat() < 0f) 100f else state.duration.toFloat(),
-                sponsorSections = state.sponsorSections,
+                sponsorSections = sponsorSections,
+                sponsorSectionStart = sponsorSectionStart,
             )
             val curPos = formatMillisecondsToTime(state.currentPosition)
             val duration = formatMillisecondsToTime(state.duration)

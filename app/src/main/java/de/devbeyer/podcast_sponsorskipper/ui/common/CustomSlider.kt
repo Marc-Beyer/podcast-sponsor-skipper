@@ -23,6 +23,7 @@ fun CustomSlider(
     onValueChange: (Float) -> Unit,
     valueRange: ClosedFloatingPointRange<Float>,
     sponsorSections: List<SponsorSection>,
+    sponsorSectionStart: Long?,
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val sponsorColor = MaterialTheme.colorScheme.error
@@ -60,6 +61,17 @@ fun CustomSlider(
                     size = Size(width = sectionWidth, height = height)
                 )
             }
+            sponsorSectionStart?.let {
+                val sectionStart = ((it - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
+                val sectionEnd = ((value - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
+                val sectionWidth = sectionEnd - sectionStart
+
+                drawRect(
+                    color = sponsorColor,
+                    topLeft = Offset(x = sectionStart, y = 0f),
+                    size = Size(width = sectionWidth, height = height)
+                )
+            }
         }
 
         Slider(
@@ -70,7 +82,7 @@ fun CustomSlider(
                 .fillMaxWidth()
                 .align(Alignment.Center),
             colors = SliderDefaults.colors(
-                thumbColor = determineThumbColor(value.toLong(), sponsorSections),
+                thumbColor = determineThumbColor(value.toLong(), sponsorSections, sponsorSectionStart),
                 activeTrackColor = Color.Transparent,
                 inactiveTrackColor = Color.Transparent
             )
@@ -79,7 +91,13 @@ fun CustomSlider(
 }
 
 @Composable
-fun determineThumbColor(sliderPosition: Long, sponsorSections: List<SponsorSection>): Color {
+fun determineThumbColor(
+    sliderPosition: Long,
+    sponsorSections: List<SponsorSection>,
+    sponsorSectionStart: Long?
+): Color {
+    if(sponsorSectionStart != null) return MaterialTheme.colorScheme.error
+
     for (section in sponsorSections) {
         if (sliderPosition in section.startPosition..section.endPosition) {
             return MaterialTheme.colorScheme.error
