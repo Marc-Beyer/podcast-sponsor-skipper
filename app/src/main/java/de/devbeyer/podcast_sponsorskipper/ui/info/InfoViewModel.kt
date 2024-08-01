@@ -8,7 +8,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import dagger.hilt.android.lifecycle.HiltViewModel
-import de.devbeyer.podcast_sponsorskipper.data.worker.DownloadWorker
+import de.devbeyer.podcast_sponsorskipper.data.worker.UpdateWorker
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import kotlinx.coroutines.launch
@@ -32,10 +32,10 @@ class InfoViewModel @Inject constructor(
                     "url" to event.podcastWithRelations.podcast.url,
                     "title" to event.podcastWithRelations.podcast.title,
                 )
-                val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadWorker>()
+                val updateWorkRequest = OneTimeWorkRequestBuilder<UpdateWorker>()
                     .setInputData(workData)
                     .build()
-                workManager.enqueue(downloadWorkRequest)
+                workManager.enqueue(updateWorkRequest)
             }
 
             is InfoEvent.UnsubscribeFromPodcast -> {

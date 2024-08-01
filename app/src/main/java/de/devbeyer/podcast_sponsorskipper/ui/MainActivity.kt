@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.PodcastDao
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavGraph
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -86,14 +87,23 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            "DOWNLOAD_CHANNEL_ID",
+        val downloadChannel = NotificationChannel(
+            Constants.DOWNLOAD_CHANNEL_ID,
             "Download Channel",
             NotificationManager.IMPORTANCE_LOW
         ).apply {
             description = "Channel for download notifications"
         }
+        val updateChannel = NotificationChannel(
+            Constants.UPDATE_CHANNEL_ID,
+            "Update Channel",
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = "Channel for update notifications"
+        }
+
         val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
+        manager.createNotificationChannel(downloadChannel)
+        manager.createNotificationChannel(updateChannel)
     }
 }

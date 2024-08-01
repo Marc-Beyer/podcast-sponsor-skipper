@@ -87,13 +87,6 @@ class DownloadEpisodeWorker @AssistedInject constructor(
     }
 }
 
-data class DownloadState(
-    val activeDownloads: Int,
-    val age: Int,
-    val address: String,
-    val phoneNumber: String
-)
-
 object DownloadManager {
     private var activeDownloadUrl: String? = null
     private val activeDownloadUrls = mutableListOf<String>()

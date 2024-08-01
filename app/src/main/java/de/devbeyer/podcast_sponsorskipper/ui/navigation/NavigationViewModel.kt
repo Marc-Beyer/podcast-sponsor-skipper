@@ -20,9 +20,12 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionToken
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.devbeyer.podcast_sponsorskipper.data.worker.UpdateWorker
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
@@ -58,32 +61,23 @@ class NavigationViewModel @Inject constructor(
 
     fun onEvent(event: NavigationEvent) {
         when (event) {
+            is NavigationEvent.UpdatePodcast -> {
+                val workData = workDataOf(
+                    "url" to event.podcast.url,
+                    "title" to event.podcast.title,
+                )
+                val updateWorkRequest = OneTimeWorkRequestBuilder<UpdateWorker>()
+                    .setInputData(workData)
+                    .build()
+                workManager.enqueue(updateWorkRequest)
+            }
+
             is NavigationEvent.PlayEpisode -> {
                 val episode = event.episode
                 val podcast = event.podcast
                 setCurrentEpisodeAndPodcast(event.episode, event.podcast)
                 loadSponsorSections(episodeUrl = episode.episodeUrl)
-
-                val mediaItem =
-                    MediaItem.Builder()
-                        .setMediaId("media-1")
-                        .setUri(episode.episodePath)
-                        .setMediaMetadata(
-                            MediaMetadata.Builder()
-                                .setArtist(podcast.podcast.title)
-                                .setTitle(episode.title)
-                                .setArtworkUri(
-                                    Uri.parse(
-                                        episode.imagePath ?: episode.imageUrl
-                                    )
-                                )
-                                .build()
-                        )
-                        .build()
-
-                state.value.mediaController?.setMediaItem(mediaItem)
-                state.value.mediaController?.prepare()
-                state.value.mediaController?.play()
+                setEpisodeAsMediaItem(episode, podcast)
 
             }
 
@@ -156,6 +150,35 @@ class NavigationViewModel @Inject constructor(
                 }
             }
 
+            is NavigationEvent.DiscardSegment -> {
+                state.value.mediaController?.let { mediaController ->
+                    val currentPosition = mediaController.currentPosition
+                    val duration = mediaController.duration
+                    val episode = state.value.selectedEpisode
+                    val podcast = state.value.selectedPodcast
+                    _state.value = state.value.copy(
+                        sponsorSectionStart = null,
+                        sponsorSectionEnd = null,
+                        isPreviewing = PreviewState.NONE,
+                        currentPosition = currentPosition,
+                        duration = duration,
+                    )
+                    if (episode != null && podcast != null) {
+                        setEpisodeAsMediaItem(
+                            episode = episode,
+                            podcast = podcast,
+                            startPlaying = true,
+
+                        )
+                    }
+                    mediaController.seekTo(currentPosition)
+                    _state.value = state.value.copy(
+                        currentPosition = currentPosition,
+                        duration = duration,
+                    )
+                }
+            }
+
             NavigationEvent.SubmitSegment -> {
                 viewModelScope.launch {
                     val episodeUrl = state.value.selectedEpisode?.episodeUrl
@@ -186,6 +209,33 @@ class NavigationViewModel @Inject constructor(
             }
         }
 
+    }
+
+    private fun setEpisodeAsMediaItem(
+        episode: Episode,
+        podcast: PodcastWithRelations,
+        startPlaying: Boolean = true,
+    ) {
+        val mediaItem =
+            MediaItem.Builder()
+                .setMediaId("media-1")
+                .setUri(episode.episodePath)
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setArtist(podcast.podcast.title)
+                        .setTitle(episode.title)
+                        .setArtworkUri(
+                            Uri.parse(
+                                episode.imagePath ?: episode.imageUrl
+                            )
+                        )
+                        .build()
+                )
+                .build()
+
+        state.value.mediaController?.setMediaItem(mediaItem)
+        state.value.mediaController?.prepare()
+        if (startPlaying) state.value.mediaController?.play()
     }
 
     private fun loadSponsorSections(episodeUrl: String) {

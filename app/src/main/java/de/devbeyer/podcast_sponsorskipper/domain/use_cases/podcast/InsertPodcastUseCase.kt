@@ -16,46 +16,60 @@ class InsertPodcastUseCase(
     private val fileUseCases: FileUseCases,
 ) {
     suspend operator fun invoke(podcastAndEpisodes: PodcastAndEpisodes) {
-        val podcastImagePath = fileUseCases.downloadFileUseCase.invoke(
-            extension = "jpg",
-            url = podcastAndEpisodes.podcastWithRelations.podcast.imageUrl
-        ).firstOrNull()
-        val podcast = podcastAndEpisodes.podcastWithRelations.podcast.copy(
-            id = 0,
-            imagePath = podcastImagePath
-        )
-        val podcastId = podcastDao.insert(podcast).toInt()
-
-        for (categoryToAdd in podcastAndEpisodes.podcastWithRelations.categories) {
-            var categoryId = -1
-            val category = categoryDao.getCategory(categoryToAdd.name)
-                .firstOrNull()
-                ?: categoryToAdd.copy(id = 0).also {
-                    categoryId = categoryDao.insert(it).toInt()
-                }
-
-            if (categoryId == -1) categoryId = category.id
-
-            podcastDao.insertPodcastCategoryCrossRef(
-                PodcastCategoryCrossRef(
-                    podcastId = podcastId,
-                    categoryId = categoryId
-                )
+        val podcastWithRelations = podcastDao.getPodcastFromUrl(podcastAndEpisodes.podcastWithRelations.podcast.url).firstOrNull()
+        var podcastId = 0
+        if(podcastWithRelations == null){
+            Log.i("AAA", "Podcast does not exists!")
+            val podcastImagePath = fileUseCases.downloadFileUseCase.invoke(
+                extension = "jpg",
+                url = podcastAndEpisodes.podcastWithRelations.podcast.imageUrl
+            ).firstOrNull()
+            val podcast = podcastAndEpisodes.podcastWithRelations.podcast.copy(
+                id = 0,
+                imagePath = podcastImagePath
             )
+            podcastId = podcastDao.insert(podcast).toInt()
+
+            for (categoryToAdd in podcastAndEpisodes.podcastWithRelations.categories) {
+                var categoryId = -1
+                val category = categoryDao.getCategory(categoryToAdd.name)
+                    .firstOrNull()
+                    ?: categoryToAdd.copy(id = 0).also {
+                        categoryId = categoryDao.insert(it).toInt()
+                    }
+
+                if (categoryId == -1) categoryId = category.id
+
+                podcastDao.insertPodcastCategoryCrossRef(
+                    PodcastCategoryCrossRef(
+                        podcastId = podcastId,
+                        categoryId = categoryId
+                    )
+                )
+            }
+        }else{
+            Log.i("AAA", "Podcast already exists!")
+            podcastId = podcastWithRelations.podcast.id
         }
+
         val imageCache = mutableMapOf<String, String?>()
 
         for (episode in podcastAndEpisodes.episodes) {
             Log.i("AAA", "ADD episode ${episode.title}")
 
-            val episodeImagePath =
-                imageCache[episode.imageUrl] ?: fileUseCases.downloadFileUseCase.invoke(
-                    extension = "jpg",
-                    url = episode.imageUrl
-                ).firstOrNull()
+            val foundEpisode = episodeDao.getEpisodesByUrl(episode.episodeUrl).firstOrNull()
+            if(foundEpisode == null){
+                val episodeImagePath =
+                    imageCache[episode.imageUrl] ?: fileUseCases.downloadFileUseCase.invoke(
+                        extension = "jpg",
+                        url = episode.imageUrl
+                    ).firstOrNull()
 
-            imageCache[episode.imageUrl] = episodeImagePath
-            episodeDao.insert(episode.copy(podcastId = podcastId, imagePath = episodeImagePath))
+                imageCache[episode.imageUrl] = episodeImagePath
+                episodeDao.insert(episode.copy(podcastId = podcastId, imagePath = episodeImagePath))
+            }else if(foundEpisode.imagePath != null){
+                imageCache[foundEpisode.imageUrl] = foundEpisode.imagePath
+            }
         }
     }
 }

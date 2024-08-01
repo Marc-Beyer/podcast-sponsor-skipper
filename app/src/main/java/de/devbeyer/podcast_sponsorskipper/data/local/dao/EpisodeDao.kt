@@ -27,4 +27,7 @@ interface EpisodeDao {
 
     @Query("SELECT * FROM episode WHERE imagePath = :imagePath")
     fun getEpisodesByImagePath(imagePath: String): Flow<List<Episode>>
+
+    @Query("SELECT * FROM episode WHERE episodeUrl = :episodeUrl")
+    fun getEpisodesByUrl(episodeUrl: String): Flow<Episode?>
 }

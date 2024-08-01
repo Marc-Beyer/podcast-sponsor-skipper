@@ -1,5 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -25,6 +26,8 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Square
+import androidx.compose.material.icons.filled.ThumbDown
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.Button
@@ -73,76 +76,49 @@ fun BottomMediaControllerInterface(
                 .fillMaxWidth()
                 .navigationBarsPadding()
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .height(48.dp)
-                        .aspectRatio(1f)
-                        .clickable {
-                            navigateToEpisode(
-                                state.selectedEpisode,
-                                state.selectedPodcast
-                            )
-                        }
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                        ),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CoverImage(
-                        context = context,
-                        imagePath = state.selectedEpisode.imagePath
-                            ?: state.selectedEpisode.imageUrl
-                    )
-                }
-                Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
-                Column(
-                    modifier = Modifier
-                        .weight(5f)
-                        .clickable {
-                            navigateToEpisode(
-                                state.selectedEpisode,
-                                state.selectedPodcast
-                            )
-                        },
-                ) {
-                    Text(
-                        text = state.selectedEpisode.title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = state.selectedPodcast.podcast.title,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-                Box(
-                    contentAlignment = Alignment.TopEnd,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    IconButton(onClick = { onEvent(NavigationEvent.Close) }) {
-                        Icon(imageVector = Icons.Filled.Close, contentDescription = null)
-                    }
-                }
-            }
+            ControllerHeader(
+                navigateToEpisode,
+                context,
+                state.selectedEpisode,
+                state.selectedPodcast,
+                onEvent,
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             var sponsorSections = state.sponsorSections
             var sponsorSectionStart: Long? = null
-            if(state.sponsorSectionStart != null && state.sponsorSectionEnd != null)
-            {
-                sponsorSections = sponsorSections + listOf(SponsorSection(
-                    id = 0,
-                    endPosition = state.sponsorSectionEnd,
-                    startPosition = state.sponsorSectionStart,
-                    episodeUrl = ""
-                ))
-            }else if(state.sponsorSectionStart != null && state.sponsorSectionEnd == null){
+            if (state.sponsorSectionStart != null && state.sponsorSectionEnd != null) {
+                sponsorSections = sponsorSections + listOf(
+                    SponsorSection(
+                        id = 0,
+                        endPosition = state.sponsorSectionEnd,
+                        startPosition = state.sponsorSectionStart,
+                        episodeUrl = ""
+                    )
+                )
+            } else if (state.sponsorSectionStart != null) {
                 sponsorSectionStart = state.sponsorSectionStart
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Is this information correct?\nYour feedback helps us improve.",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.width(48.dp).padding(Constants.Dimensions.SMALL),
+                ) {
+                    Icon(imageVector = Icons.Filled.ThumbUp, contentDescription = null)
+                }
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.width(48.dp).padding(Constants.Dimensions.SMALL),
+                ) {
+                    Icon(imageVector = Icons.Filled.ThumbDown, contentDescription = null)
+                }
             }
             CustomSlider(
                 value = if (state.currentPosition < state.duration) state.currentPosition.toFloat() else 0f,
@@ -160,171 +136,269 @@ fun BottomMediaControllerInterface(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
+
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround,
-            ) {
-                IconButton(onClick = { onEvent(NavigationEvent.SkipBack) }) {
-                    Icon(imageVector = Icons.Filled.SkipPrevious, contentDescription = null)
-                }
-                if (state.isPlaying) {
-                    IconButton(
-                        onClick = { onEvent(NavigationEvent.Stop) },
-                        modifier = Modifier
-                            .size(64.dp)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Pause,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                } else {
-                    IconButton(
-                        onClick = { onEvent(NavigationEvent.Play) },
-                        modifier = Modifier
-                            .size(64.dp)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                }
-                IconButton(onClick = { onEvent(NavigationEvent.SkipForward) }) {
-                    Icon(imageVector = Icons.Filled.SkipNext, contentDescription = null)
-                }
-                if (state.sponsorSectionStart == null || state.sponsorSectionEnd != null) {
-                    IconButton(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .border(
-                                BorderStroke(4.dp, MaterialTheme.colorScheme.error),
-                                CircleShape
-                            ),
-                        onClick = { onEvent(NavigationEvent.StartSponsorSection) }
-                    ) {
-                        Text(
-                            text = "AD",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                } else {
-                    IconButton(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .border(
-                                BorderStroke(4.dp, MaterialTheme.colorScheme.error),
-                                CircleShape
-                            ),
-                        onClick = { onEvent(NavigationEvent.EndSponsorSection) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Square,
-                            contentDescription = "End Sponsor Section"
-                        )
-                    }
-                }
-            }
+
+            ControllerButtons(onEvent, state)
+
             if (state.sponsorSectionStart != null && state.sponsorSectionEnd != null) {
-                Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+                ControllerPreview(state, onEvent)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ControllerPreview(
+    state: NavigationState,
+    onEvent: (NavigationEvent) -> Unit
+) {
+    Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+    Text(
+        text = "Sponsor section",
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onSurface
+    )
+    Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+    Text(
+        text = "Start: ${formatMillisecondsToTime(state.sponsorSectionStart ?: 0)}",
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface
+    )
+    Text(
+        text = "End: ${formatMillisecondsToTime(state.sponsorSectionEnd ?: 0)}",
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface
+    )
+    Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+
+    when (state.isPreviewing) {
+        PreviewState.NONE -> {
+            Button(
+                onClick = { onEvent(NavigationEvent.Preview) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp),
+            ) {
                 Text(
-                    text = "Sponsor section",
-                    style = MaterialTheme.typography.titleLarge,
+                    text = "Preview the segment",
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        }
+
+        PreviewState.PREVIEWING -> {
+            Button(
+                onClick = { },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Sync,
+                    contentDescription = "Episode",
+                    modifier = Modifier
+                        .padding(1.dp)
+                        .rotationEffect(),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+
+        PreviewState.FINISHED -> {
+            Button(
+                onClick = { onEvent(NavigationEvent.Preview) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp),
+            ) {
+                Text(
+                    text = "Preview the segment again",
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+            Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+            OutlinedButton(
+                onClick = { onEvent(NavigationEvent.DiscardSegment) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp),
+            ) {
+                Text(
+                    text = "Discard Segment",
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+            }
+            Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+            OutlinedButton(
+                onClick = { onEvent(NavigationEvent.SubmitSegment) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp),
+            ) {
                 Text(
-                    text = "Start: ${formatMillisecondsToTime(state.sponsorSectionStart ?: 0)}",
-                    style = MaterialTheme.typography.titleMedium,
+                    text = "Submit the segment",
                     color = MaterialTheme.colorScheme.onSurface
                 )
+            }
+        }
+    }
+    Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
+        Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
+        Text(
+            text = "Please review the highlighted sections before submitting your sponsor segment.",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+private fun ControllerButtons(
+    onEvent: (NavigationEvent) -> Unit,
+    state: NavigationState
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround,
+    ) {
+        IconButton(onClick = { onEvent(NavigationEvent.SkipBack) }) {
+            Icon(imageVector = Icons.Filled.SkipPrevious, contentDescription = null)
+        }
+        if (state.isPlaying) {
+            IconButton(
+                onClick = { onEvent(NavigationEvent.Stop) },
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(MaterialTheme.colorScheme.primary, CircleShape),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Pause,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        } else {
+            IconButton(
+                onClick = { onEvent(NavigationEvent.Play) },
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(MaterialTheme.colorScheme.primary, CircleShape),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        }
+        IconButton(onClick = { onEvent(NavigationEvent.SkipForward) }) {
+            Icon(imageVector = Icons.Filled.SkipNext, contentDescription = null)
+        }
+        if (state.sponsorSectionStart == null || state.sponsorSectionEnd != null) {
+            IconButton(
+                modifier = Modifier
+                    .size(64.dp)
+                    .border(
+                        BorderStroke(4.dp, MaterialTheme.colorScheme.error),
+                        CircleShape
+                    ),
+                onClick = { onEvent(NavigationEvent.StartSponsorSection) }
+            ) {
                 Text(
-                    text = "End: ${formatMillisecondsToTime(state.sponsorSectionEnd ?: 0)}",
-                    style = MaterialTheme.typography.titleMedium,
+                    text = "AD",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                    ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+            }
+        } else {
+            IconButton(
+                modifier = Modifier
+                    .size(64.dp)
+                    .border(
+                        BorderStroke(4.dp, MaterialTheme.colorScheme.error),
+                        CircleShape
+                    ),
+                onClick = { onEvent(NavigationEvent.EndSponsorSection) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Square,
+                    contentDescription = "End Sponsor Section"
+                )
+            }
+        }
+    }
+}
 
-                when (state.isPreviewing) {
-                    PreviewState.NONE -> {
-                        Button(
-                            onClick = { onEvent(NavigationEvent.Preview) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(42.dp),
-                        ) {
-                            Text(
-                                text = "Preview the segment",
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
-
-                    PreviewState.PREVIEWING -> {
-                        Button(
-                            onClick = { },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(42.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Sync,
-                                contentDescription = "Episode",
-                                modifier = Modifier
-                                    .padding(1.dp)
-                                    .rotationEffect(),
-                                tint = MaterialTheme.colorScheme.onSurface,
-                            )
-                        }
-                    }
-
-                    PreviewState.FINISHED -> {
-                        Button(
-                            onClick = { onEvent(NavigationEvent.Preview) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(42.dp),
-                        ) {
-                            Text(
-                                text = "Preview the segment again",
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
-                        OutlinedButton(
-                            onClick = { onEvent(NavigationEvent.SubmitSegment) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(42.dp),
-                        ) {
-                            Text(
-                                text = "Submit the segment",
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
-                    Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
-                    Text(
-                        text = "Please review the highlighted sections before submitting your sponsor segment.",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurface
+@Composable
+private fun ControllerHeader(
+    navigateToEpisode: (Episode, PodcastWithRelations) -> Unit,
+    context: Context,
+    selectedEpisode: Episode,
+    selectedPodcast: PodcastWithRelations,
+    onEvent: (NavigationEvent) -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .height(48.dp)
+                .aspectRatio(1f)
+                .clickable {
+                    navigateToEpisode(
+                        selectedEpisode,
+                        selectedPodcast
                     )
                 }
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            CoverImage(
+                context = context,
+                imagePath = selectedEpisode.imagePath
+                    ?: selectedEpisode.imageUrl
+            )
+        }
+        Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
+        Column(
+            modifier = Modifier
+                .weight(5f)
+                .clickable {
+                    navigateToEpisode(
+                        selectedEpisode,
+                        selectedPodcast
+                    )
+                },
+        ) {
+            Text(
+                text = selectedEpisode.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = selectedPodcast.podcast.title,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        Box(
+            contentAlignment = Alignment.TopEnd,
+            modifier = Modifier.weight(1f),
+        ) {
+            IconButton(onClick = { onEvent(NavigationEvent.Close) }) {
+                Icon(imageVector = Icons.Filled.Close, contentDescription = null)
             }
         }
     }

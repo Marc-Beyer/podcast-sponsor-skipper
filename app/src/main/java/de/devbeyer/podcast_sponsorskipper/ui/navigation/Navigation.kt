@@ -134,7 +134,9 @@ fun Navigation(
                                 modifier = Modifier
                                     .padding(16.dp)
                                     .clickable {
-
+                                        currentPodcast?.let {
+                                            onEvent(NavigationEvent.UpdatePodcast(it.podcast))
+                                        }
                                     }
                             )
                             Icon(
