@@ -16,6 +16,7 @@ interface BackendRepository {
         podcastUrl: String,
         startPosition: Long,
         endPosition: Long,
+        duration: Long,
         username: String,
         token: String
     ): Flow<Long?>

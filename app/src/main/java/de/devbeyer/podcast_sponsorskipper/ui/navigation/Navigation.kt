@@ -45,6 +45,7 @@ import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedView
 import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.info.InfoView
 import de.devbeyer.podcast_sponsorskipper.ui.info.InfoViewModel
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.playbackController.PlaybackController
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchView
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchViewModel
 
@@ -186,7 +187,7 @@ fun Navigation(
             }
         },
         bottomBar = {
-            BottomMediaControllerInterface(
+            PlaybackController(
                 state = state,
                 onEvent = onEvent,
                 navigateToEpisode = { episode, podcastWithRelations ->

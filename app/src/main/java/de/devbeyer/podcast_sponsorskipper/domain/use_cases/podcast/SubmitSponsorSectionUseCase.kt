@@ -18,7 +18,8 @@ class SubmitSponsorSectionUseCase(
         episodeUrl: String,
         podcastUrl: String,
         startPosition: Long,
-        endPosition: Long
+        endPosition: Long,
+        duration: Long,
     ): Flow<SponsorSection?> = flow {
         Log.i("AAA", "SubmitSponsorSectionUseCase")
         userUseCases.getUserUseCase().firstOrNull()?.let { userData ->
@@ -27,6 +28,7 @@ class SubmitSponsorSectionUseCase(
                 podcastUrl = podcastUrl,
                 startPosition = startPosition,
                 endPosition = endPosition,
+                duration = duration,
                 username = userData.username,
                 token = userData.token
             ).firstOrNull()?.let { sponsorSectionId ->
@@ -35,6 +37,8 @@ class SubmitSponsorSectionUseCase(
                     episodeUrl = episodeUrl,
                     startPosition = startPosition,
                     endPosition = endPosition,
+                    isRated = true,
+                    isProvisional = false,
                 )
                 sponsorSectionDao.insert(sponsorSection)
                 emit(sponsorSection)

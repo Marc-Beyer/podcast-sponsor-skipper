@@ -185,6 +185,7 @@ class NavigationViewModel @Inject constructor(
                     val podcastUrl = state.value.selectedPodcast?.podcast?.url
                     val startPosition = state.value.sponsorSectionStart
                     val endPosition = state.value.sponsorSectionEnd
+                    val duration = state.value.mediaController?.duration ?: -1
 
                     if (
                         episodeUrl != null &&
@@ -202,6 +203,7 @@ class NavigationViewModel @Inject constructor(
                             podcastUrl = podcastUrl,
                             startPosition = startPosition,
                             endPosition = endPosition,
+                            duration = duration,
                         ).firstOrNull()
                         loadSponsorSections(episodeUrl = episodeUrl)
                     }

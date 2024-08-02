@@ -23,6 +23,7 @@ fun CustomSlider(
     onValueChange: (Float) -> Unit,
     valueRange: ClosedFloatingPointRange<Float>,
     sponsorSections: List<SponsorSection>,
+    isInsideOfSponsorSection: Boolean,
     sponsorSectionStart: Long?,
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -50,9 +51,11 @@ fun CustomSlider(
                 size = Size(width = totalWidth, height = height)
             )
 
-            sponsorSections.forEach {sponsorSection ->
-                val sectionStart = ((sponsorSection.startPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
-                val sectionEnd = ((sponsorSection.endPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
+            sponsorSections.forEach { sponsorSection ->
+                val sectionStart =
+                    ((sponsorSection.startPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
+                val sectionEnd =
+                    ((sponsorSection.endPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
                 val sectionWidth = sectionEnd - sectionStart
 
                 drawRect(
@@ -62,8 +65,10 @@ fun CustomSlider(
                 )
             }
             sponsorSectionStart?.let {
-                val sectionStart = ((it - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
-                val sectionEnd = ((value - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
+                val sectionStart =
+                    ((it - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
+                val sectionEnd =
+                    ((value - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
                 val sectionWidth = sectionEnd - sectionStart
 
                 drawRect(
@@ -82,7 +87,7 @@ fun CustomSlider(
                 .fillMaxWidth()
                 .align(Alignment.Center),
             colors = SliderDefaults.colors(
-                thumbColor = determineThumbColor(value.toLong(), sponsorSections, sponsorSectionStart),
+                thumbColor = determineThumbColor(isInsideOfSponsorSection, sponsorSectionStart),
                 activeTrackColor = Color.Transparent,
                 inactiveTrackColor = Color.Transparent
             )
@@ -92,16 +97,9 @@ fun CustomSlider(
 
 @Composable
 fun determineThumbColor(
-    sliderPosition: Long,
-    sponsorSections: List<SponsorSection>,
+    isInsideOfSponsorSection: Boolean,
     sponsorSectionStart: Long?
 ): Color {
-    if(sponsorSectionStart != null) return MaterialTheme.colorScheme.error
-
-    for (section in sponsorSections) {
-        if (sliderPosition in section.startPosition..section.endPosition) {
-            return MaterialTheme.colorScheme.error
-        }
-    }
+    if (sponsorSectionStart != null || isInsideOfSponsorSection) return MaterialTheme.colorScheme.error
     return MaterialTheme.colorScheme.primary
 }

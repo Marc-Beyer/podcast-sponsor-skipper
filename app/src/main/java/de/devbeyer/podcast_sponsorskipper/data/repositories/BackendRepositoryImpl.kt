@@ -70,17 +70,19 @@ class BackendRepositoryImpl(
         podcastUrl: String,
         startPosition: Long,
         endPosition: Long,
+        duration: Long,
         username: String,
         token: String
     ): Flow<Long?> = flow {
         val response = backendAPI.submitSponsorSection(
             SubmitSponsorSectionBody(
-                episodeUrl,
-                podcastUrl,
-                startPosition,
-                endPosition,
-                username,
-                token
+                episodeUrl = episodeUrl,
+                podcastUrl = podcastUrl,
+                startPosition = startPosition,
+                endPosition = endPosition,
+                duration = duration,
+                username = username,
+                token = token,
             )
         )
         val sponsorSectionId = response.body()

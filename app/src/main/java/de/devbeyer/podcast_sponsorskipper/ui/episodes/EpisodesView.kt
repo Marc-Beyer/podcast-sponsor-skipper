@@ -131,7 +131,8 @@ fun EpisodesView(
             }
             if (state.episodes.isNotEmpty()) {
                 LazyColumn(
-                    modifier = Modifier.padding(top = Constants.Dimensions.SMALL),
+                    modifier = Modifier
+                        .padding(top = Constants.Dimensions.SMALL),
                     verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.EXTRA_SMALL),
                 ) {
                     items(items = state.episodes) { episode ->
@@ -155,7 +156,6 @@ fun EpisodesView(
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                 )
-
             }
         }
     }

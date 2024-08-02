@@ -5,6 +5,7 @@ data class SubmitSponsorSectionBody(
     val podcastUrl: String,
     val startPosition: Long,
     val endPosition: Long,
+    val duration: Long,
     val username: String,
     val token: String,
 )
