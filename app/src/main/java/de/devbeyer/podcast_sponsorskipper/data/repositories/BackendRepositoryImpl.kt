@@ -29,6 +29,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.xml.parsers.DocumentBuilderFactory
 
 class BackendRepositoryImpl(
@@ -235,7 +236,7 @@ class BackendRepositoryImpl(
                     if (dateString.endsWith("GMT")) {
                         dateString = dateString.replace("GMT", "+0000")
                     }
-                    val formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z")
+                    val formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
                     val zonedDateTime = ZonedDateTime.parse(dateString, formatter)
                     pubDate =
                         zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
