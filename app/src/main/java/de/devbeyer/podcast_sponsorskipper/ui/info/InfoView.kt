@@ -38,6 +38,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +48,8 @@ fun InfoView(
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(Constants.Dimensions.MEDIUM),
     ) {
         item {
             if (state.podcastWithRelations != null) {
@@ -74,10 +76,9 @@ private fun PodcastInfo(
     val context = LocalContext.current
     val podcast = podcastWithRelations.podcast
 
-
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Box(
             modifier = Modifier
                 .width(150.dp)
@@ -94,7 +95,7 @@ private fun PodcastInfo(
             )
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
 
         Column {
             if (podcast.author != null) {
@@ -113,7 +114,7 @@ private fun PodcastInfo(
                 text = podcastWithRelations.categories.joinToString { it.name },
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
 
             IconWithText(
                 imageVector = Icons.Filled.Language,
@@ -121,7 +122,7 @@ private fun PodcastInfo(
                 text = podcast.language,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
 
             IconWithText(
                 imageVector = Icons.Filled.LibraryMusic,
@@ -131,24 +132,23 @@ private fun PodcastInfo(
         }
     }
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
 
     Text(
         text = podcast.description,
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurface
+        color = MaterialTheme.colorScheme.onSurface,
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
 
     if (isSubscribed) {
         OutlinedButton(
             onClick = {
                 onEvent(InfoEvent.UnsubscribeFromPodcast(podcastWithRelations))
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth(),
         ) {
             Text(text = "Unsubscribe", color = MaterialTheme.colorScheme.onSurface)
 
@@ -160,7 +160,7 @@ private fun PodcastInfo(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(42.dp)
+                .height(42.dp),
         ) {
             if (isLoading) {
                 Icon(

@@ -56,6 +56,8 @@ class BackendRepositoryImpl(
     override fun getRSSFeed(rssUrl: String): Flow<PodcastAndEpisodes?> = flow {
         val response = rssAPI.getRSSFeed(rssUrl)
 
+        Log.i("Update", "response.isSuccessful ${response.isSuccessful}")
+
         if (response.isSuccessful) {
             val rawResponse = response.body()
             val rssFeed = parseRSS(url = rssUrl, xml = rawResponse ?: "")
