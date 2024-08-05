@@ -65,7 +65,7 @@ fun PlaybackController(
                         endPosition = state.sponsorSectionEnd,
                         startPosition = state.sponsorSectionStart,
                         episodeUrl = "",
-                        isRated = true,
+                        rated = 1,
                         isProvisional = false,
                     )
                 )
@@ -77,7 +77,7 @@ fun PlaybackController(
                 sponsorSections = sponsorSections,
                 currentPosition = state.currentPosition
             )
-            if(sponsorSectionAtPosition != null){
+            if(sponsorSectionAtPosition != null && sponsorSectionAtPosition.rated == 0){
                 FeedbackBar(
                     sponsorSection = sponsorSectionAtPosition,
                     onEvent = onEvent,
@@ -88,7 +88,7 @@ fun PlaybackController(
                 onValueChange = { onEvent(NavigationEvent.SeekTo(it.toLong())) },
                 valueRange = 0f..if (state.duration.toFloat() < 0f) 100f else state.duration.toFloat(),
                 sponsorSections = sponsorSections,
-                isInsideOfSponsorSection = sponsorSectionAtPosition != null,
+                isInsideOfSponsorSection = sponsorSectionAtPosition != null && sponsorSectionAtPosition.rated != -1,
                 sponsorSectionStart = sponsorSectionStart,
             )
             val curPos = formatMillisecondsToTime(state.currentPosition)

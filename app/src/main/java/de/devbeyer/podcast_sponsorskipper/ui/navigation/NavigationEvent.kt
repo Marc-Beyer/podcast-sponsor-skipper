@@ -3,6 +3,7 @@ package de.devbeyer.podcast_sponsorskipper.ui.navigation
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 
 sealed class NavigationEvent {
     data class PlayEpisode(
@@ -20,6 +21,11 @@ sealed class NavigationEvent {
 
     data class UpdatePodcast(
         val podcast: Podcast
+    ) : NavigationEvent()
+
+    data class RateSponsorSection(
+        val sponsorSection: SponsorSection,
+        val isPositive: Boolean,
     ) : NavigationEvent()
 
     object Play : NavigationEvent()

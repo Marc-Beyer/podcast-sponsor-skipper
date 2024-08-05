@@ -9,4 +9,5 @@ data class PodcastsUseCases(
     val getRSSFeed: GetRSSFeed,
     val getEpisodesOfPodcastUseCase: GetEpisodesOfPodcastUseCase,
     val submitSponsorSectionUseCase: SubmitSponsorSectionUseCase,
+    val rateSponsorSectionUseCase: RateSponsorSectionUseCase,
 )

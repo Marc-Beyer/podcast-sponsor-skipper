@@ -1,5 +1,7 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,7 +51,7 @@ import de.devbeyer.podcast_sponsorskipper.ui.navigation.playbackController.Playb
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchView
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun Navigation(
     state: NavigationState,
@@ -106,6 +108,7 @@ fun Navigation(
                         },
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.basicMarquee(),
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

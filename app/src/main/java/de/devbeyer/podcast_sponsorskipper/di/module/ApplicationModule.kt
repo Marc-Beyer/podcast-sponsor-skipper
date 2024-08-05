@@ -44,6 +44,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRSSFeed
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRemotePodcastsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.InsertPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.RateSponsorSectionUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.SubmitSponsorSectionUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.GetUserUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.RegisterUseCase
@@ -161,6 +162,11 @@ object ApplicationModule {
             getRSSFeed = GetRSSFeed(backendRepository),
             getEpisodesOfPodcastUseCase = GetEpisodesOfPodcastUseCase(episodeDao),
             submitSponsorSectionUseCase = SubmitSponsorSectionUseCase(
+                backendRepository = backendRepository,
+                userUseCases = userUseCases,
+                sponsorSectionDao = sponsorSectionDao,
+            ),
+            rateSponsorSectionUseCase = RateSponsorSectionUseCase(
                 backendRepository = backendRepository,
                 userUseCases = userUseCases,
                 sponsorSectionDao = sponsorSectionDao,

@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.PodcastPagingSource
 import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
+import de.devbeyer.podcast_sponsorskipper.data.remote.dto.RateSponsorSectionRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SponsorSectionRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SubmitSponsorSectionBody
 import de.devbeyer.podcast_sponsorskipper.domain.models.UserData
@@ -96,15 +97,49 @@ class BackendRepositoryImpl(
         emit(sponsorSectionId)
     }
 
-    override fun getSponsorSection(episodeUrl: String): Flow<List<SponsorSection>> = flow {
-        val response = backendAPI.getSponsorSection(SponsorSectionRequest(episodeUrl = episodeUrl))
-        if (response.isSuccessful) {
-            val sponsorSections = response.body()?.map { it.copy(episodeUrl = episodeUrl) }
-            emit(sponsorSections ?: emptyList())
-        } else {
-            emit(emptyList())
-        }
+    override fun rateSponsorSection(
+        sponsorSectionId: Long,
+        isPositive: Boolean,
+        duration: Long,
+        username: String,
+        token: String
+    ): Flow<Long?> = flow {
+        val response = backendAPI.rateSponsorSection(
+            RateSponsorSectionRequest(
+                sponsorSectionId = sponsorSectionId,
+                isPositive = isPositive,
+                duration = duration,
+                username = username,
+                token = token,
+            )
+        )
+        val returnedSponsorSectionId = response.body()
+        Log.i(
+            "AAA",
+            "rated SponsorSection REPO $sponsorSectionId $isPositive $username $token isSuccessful ${response.isSuccessful} $sponsorSectionId"
+        )
+        Log.i(
+            "AAA",
+            "rated SponsorSection returnedSponsorSectionId $returnedSponsorSectionId"
+        )
+        emit(sponsorSectionId)
     }
+
+    override fun getSponsorSection(episodeUrl: String, duration: Long): Flow<List<SponsorSection>> =
+        flow {
+            val response = backendAPI.getSponsorSection(
+                SponsorSectionRequest(
+                    episodeUrl = episodeUrl,
+                    duration = duration
+                )
+            )
+            if (response.isSuccessful) {
+                val sponsorSections = response.body()?.map { it.copy(episodeUrl = episodeUrl) }
+                emit(sponsorSections ?: emptyList())
+            } else {
+                emit(emptyList())
+            }
+        }
 
     override fun register(): Flow<UserData?> = flow {
         val response = backendAPI.register()
@@ -236,7 +271,8 @@ class BackendRepositoryImpl(
                     if (dateString.endsWith("GMT")) {
                         dateString = dateString.replace("GMT", "+0000")
                     }
-                    val formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
+                    val formatter =
+                        DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
                     val zonedDateTime = ZonedDateTime.parse(dateString, formatter)
                     pubDate =
                         zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()

@@ -3,6 +3,7 @@ package de.devbeyer.podcast_sponsorskipper.ui.episodes
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -169,7 +170,8 @@ fun EpisodeItem(
                 text = episode.title,
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.basicMarquee(),
             )
 
             Spacer(modifier = Modifier.height(8.dp))

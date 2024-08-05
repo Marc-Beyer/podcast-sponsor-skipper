@@ -37,7 +37,7 @@ class SubmitSponsorSectionUseCase(
                     episodeUrl = episodeUrl,
                     startPosition = startPosition,
                     endPosition = endPosition,
-                    isRated = true,
+                    rated = 1,
                     isProvisional = false,
                 )
                 sponsorSectionDao.insert(sponsorSection)

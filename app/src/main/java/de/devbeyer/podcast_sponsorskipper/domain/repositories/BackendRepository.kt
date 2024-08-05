@@ -9,8 +9,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface BackendRepository {
     fun getPodcasts(search: String): Flow<PagingData<PodcastWithRelations>>
+
     fun searchPodcasts(search: String): Flow<PagingData<PodcastWithRelations>>
+
     fun getRSSFeed(rssUrl: String): Flow<PodcastAndEpisodes?>
+
     fun submitSponsorSection(
         episodeUrl: String,
         podcastUrl: String,
@@ -20,6 +23,19 @@ interface BackendRepository {
         username: String,
         token: String
     ): Flow<Long?>
+
     fun register(): Flow<UserData?>
-    fun getSponsorSection(episodeUrl: String): Flow<List<SponsorSection>>
+
+    fun getSponsorSection(
+        episodeUrl: String,
+        duration: Long
+    ): Flow<List<SponsorSection>>
+
+    fun rateSponsorSection(
+        sponsorSectionId: Long,
+        isPositive: Boolean,
+        duration: Long,
+        username: String,
+        token: String
+    ): Flow<Long?>
 }

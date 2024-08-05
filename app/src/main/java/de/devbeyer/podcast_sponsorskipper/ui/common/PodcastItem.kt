@@ -3,6 +3,7 @@ package de.devbeyer.podcast_sponsorskipper.ui.common
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -72,7 +73,8 @@ fun PodcastItem(podcastWithRelations: PodcastWithRelations, onClick: () -> Unit)
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.basicMarquee(),
             )
 
             Spacer(modifier = Modifier.height(8.dp))

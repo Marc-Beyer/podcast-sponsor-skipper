@@ -40,7 +40,7 @@ class DownloadEpisodeWorker @AssistedInject constructor(
                 }
 
                 episodeUseCases.downloadEpisodeUseCase(currentUrl)
-                episodeUseCases.downloadSponsorSectionsUseCase(currentUrl)
+                episodeUseCases.downloadSponsorSectionsUseCase(currentUrl, -1)
             }
 
             Result.success()

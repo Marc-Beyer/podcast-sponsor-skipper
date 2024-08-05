@@ -25,4 +25,7 @@ interface SponsorSectionDao {
 
     @Query("SELECT * FROM sponsorSection WHERE episodeUrl = :episodeUrl")
     fun getSponsorSectionsOfEpisode(episodeUrl: String): Flow<List<SponsorSection>>
+
+    @Query("UPDATE sponsorSection SET rated = :rating WHERE id = :sponsorSectionId")
+    suspend fun markAsRated(sponsorSectionId: Long, rating: Int)
 }

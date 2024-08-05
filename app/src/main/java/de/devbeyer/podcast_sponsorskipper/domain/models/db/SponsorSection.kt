@@ -27,5 +27,5 @@ data class SponsorSection(
     val startPosition: Long,
     val endPosition: Long,
     val isProvisional : Boolean,
-    val isRated: Boolean,
+    val rated: Int = 0,
 ) : Parcelable

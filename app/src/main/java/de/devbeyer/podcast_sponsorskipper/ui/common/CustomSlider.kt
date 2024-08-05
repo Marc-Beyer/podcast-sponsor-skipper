@@ -52,17 +52,19 @@ fun CustomSlider(
             )
 
             sponsorSections.forEach { sponsorSection ->
-                val sectionStart =
-                    ((sponsorSection.startPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
-                val sectionEnd =
-                    ((sponsorSection.endPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
-                val sectionWidth = sectionEnd - sectionStart
+                if(sponsorSection.rated != -1){
+                    val sectionStart =
+                        ((sponsorSection.startPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
+                    val sectionEnd =
+                        ((sponsorSection.endPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
+                    val sectionWidth = sectionEnd - sectionStart
 
-                drawRect(
-                    color = sponsorColor,
-                    topLeft = Offset(x = sectionStart, y = 0f),
-                    size = Size(width = sectionWidth, height = height)
-                )
+                    drawRect(
+                        color = sponsorColor,
+                        topLeft = Offset(x = sectionStart, y = 0f),
+                        size = Size(width = sectionWidth, height = height)
+                    )
+                }
             }
             sponsorSectionStart?.let {
                 val sectionStart =

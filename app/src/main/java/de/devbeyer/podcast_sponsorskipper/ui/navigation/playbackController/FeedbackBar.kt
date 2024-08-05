@@ -31,7 +31,14 @@ fun FeedbackBar(
             modifier = Modifier.weight(1f),
         )
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = {
+                onEvent(
+                    NavigationEvent.RateSponsorSection(
+                        sponsorSection = sponsorSection,
+                        isPositive = true,
+                    )
+                )
+            },
             modifier = Modifier
                 .width(48.dp)
                 .padding(Constants.Dimensions.SMALL),
@@ -39,7 +46,14 @@ fun FeedbackBar(
             Icon(imageVector = Icons.Filled.ThumbUp, contentDescription = null)
         }
         IconButton(
-            onClick = { /*TODO*/ },
+            onClick = {
+                onEvent(
+                    NavigationEvent.RateSponsorSection(
+                        sponsorSection = sponsorSection,
+                        isPositive = false,
+                    )
+                )
+            },
             modifier = Modifier
                 .width(48.dp)
                 .padding(Constants.Dimensions.SMALL),

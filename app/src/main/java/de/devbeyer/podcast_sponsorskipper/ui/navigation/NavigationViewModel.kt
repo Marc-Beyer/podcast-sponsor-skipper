@@ -3,7 +3,6 @@ package de.devbeyer.podcast_sponsorskipper.ui.navigation
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
-import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.OptIn
@@ -169,7 +168,7 @@ class NavigationViewModel @Inject constructor(
                             podcast = podcast,
                             startPlaying = true,
 
-                        )
+                            )
                     }
                     mediaController.seekTo(currentPosition)
                     _state.value = state.value.copy(
@@ -206,6 +205,27 @@ class NavigationViewModel @Inject constructor(
                             duration = duration,
                         ).firstOrNull()
                         loadSponsorSections(episodeUrl = episodeUrl)
+                    }
+                }
+            }
+
+            is NavigationEvent.RateSponsorSection -> {
+                viewModelScope.launch {
+                    state.value.mediaController?.let { mediaController ->
+                        podcastsUseCases.rateSponsorSectionUseCase(
+                            sponsorSectionId = event.sponsorSection.id,
+                            isPositive = event.isPositive,
+                            duration = mediaController.duration,
+                        ).firstOrNull()
+
+                        if (event.isPositive) {
+                            mediaController.seekTo(event.sponsorSection.endPosition)
+                        } else {
+
+                        }
+                        state.value.selectedEpisode?.episodeUrl?.let {
+                            loadSponsorSections(episodeUrl = it)
+                        }
                     }
                 }
             }
@@ -246,10 +266,12 @@ class NavigationViewModel @Inject constructor(
                 ?.let { sponsorSections ->
                     setSponsorSections(sponsorSections)
                     sponsorSections.forEach { sponsorSection ->
-                        schedulePlaybackAction(
-                            startPositionMs = sponsorSection.startPosition,
-                            endPositionMs = sponsorSection.endPosition,
-                        )
+                        if(!sponsorSection.isProvisional && sponsorSection.rated != -1){
+                            schedulePlaybackAction(
+                                startPositionMs = sponsorSection.startPosition,
+                                endPositionMs = sponsorSection.endPosition,
+                            )
+                        }
                     }
                 }
         }
@@ -371,8 +393,10 @@ class NavigationViewModel @Inject constructor(
         val controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
         controllerFuture.addListener(
             {
-                setMediaController(controllerFuture.get())
-                state.value.mediaController?.addListener(object : Player.Listener {
+                val mediaController = controllerFuture.get()
+                setMediaController(mediaController)
+
+                mediaController.addListener(object : Player.Listener {
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
                         setIsPlaying(isPlaying)
                     }
@@ -380,11 +404,15 @@ class NavigationViewModel @Inject constructor(
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         updateCurrentPosition()
                         when (playbackState) {
-                            PlaybackState.STATE_NONE -> setIsPlaying(false)
-                            PlaybackState.STATE_STOPPED -> setIsPlaying(false)
-                            PlaybackState.STATE_PAUSED -> setIsPlaying(false)
-                            PlaybackState.STATE_PLAYING -> setIsPlaying(true)
-                            Player.STATE_ENDED -> endPodcast()
+                            Player.STATE_IDLE -> setIsPlaying(false)
+                            Player.STATE_BUFFERING -> {} // Handle buffering state if needed
+                            Player.STATE_READY -> setIsPlaying(mediaController.playWhenReady)
+                            Player.STATE_ENDED -> {
+                                setIsPlaying(false)
+                                endPodcast()
+                            }
+
+                            else -> setIsPlaying(false)
 
                         }
                     }
@@ -398,10 +426,6 @@ class NavigationViewModel @Inject constructor(
                     }
 
                     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-                        updateCurrentPosition()
-                    }
-
-                    override fun onPositionDiscontinuity(reason: Int) {
                         updateCurrentPosition()
                     }
 
