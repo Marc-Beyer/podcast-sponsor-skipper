@@ -28,6 +28,8 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DeleteEpisode
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.DownloadSponsorSectionsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.FavoriteEpisodeUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.GetEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.GetSponsorSectionsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.MarkEpisodeCompleteUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DeleteFileUseCase
@@ -207,6 +209,12 @@ object ApplicationModule {
             deleteEpisodeUseCase = DeleteEpisodeUseCase(
                 episodeDao = episodeDao,
                 fileUseCases = fileUseCases,
+            ),
+            favoriteEpisodeUseCase = FavoriteEpisodeUseCase(
+                episodeDao = episodeDao,
+            ),
+            getEpisodeUseCase = GetEpisodeUseCase(
+                episodeDao = episodeDao,
             ),
         )
     }

@@ -60,6 +60,12 @@ class NavigationViewModel @Inject constructor(
 
     fun onEvent(event: NavigationEvent) {
         when (event) {
+            is NavigationEvent.ChangeCurNavEpisode -> {
+                _state.value = state.value.copy(
+                    currentNavEpisode = event.episode,
+                )
+            }
+
             is NavigationEvent.UpdatePodcast -> {
                 val workData = workDataOf(
                     "url" to event.podcast.url,
@@ -126,6 +132,20 @@ class NavigationViewModel @Inject constructor(
                     event.podcastWithRelations?.let {
                         podcastsUseCases.deleteLocalPodcastUseCase(it.podcast)
                     }
+                }
+            }
+
+            is NavigationEvent.Favorite -> {
+                viewModelScope.launch {
+                    episodeUseCases.favoriteEpisodeUseCase(
+                        episode = event.episode,
+                        favorite = event.favorite,
+                    )
+                    _state.value = state.value.copy(
+                        currentNavEpisode = event.episode.copy(
+                            favorite = event.favorite,
+                        ),
+                    )
                 }
             }
 

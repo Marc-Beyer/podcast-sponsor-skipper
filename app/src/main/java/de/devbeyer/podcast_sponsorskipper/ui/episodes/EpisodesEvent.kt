@@ -15,6 +15,10 @@ sealed class EpisodesEvent {
         val selectedEpisode: Episode,
         val menuOffset: DpOffset,
     ) : EpisodesEvent()
+    data class Favorite(
+        val episode: Episode,
+        val favorite: Boolean,
+    ) : EpisodesEvent()
 
 
     object UpdatePodcast : EpisodesEvent()
@@ -26,4 +30,6 @@ enum class EpisodeFilter {
     ALL,
     DOWNLOADED,
     INCOMPLETE,
+    RECENT,
+    FAVORITE,
 }

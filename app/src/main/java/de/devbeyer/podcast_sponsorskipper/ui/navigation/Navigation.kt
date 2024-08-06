@@ -11,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -85,13 +87,6 @@ fun Navigation(
             "podcastWithRelations"
         )
 
-    val currentEpisode = navController
-        .previousBackStackEntry
-        ?.savedStateHandle
-        ?.get<Episode?>(
-            "episode"
-        )
-
 
     Scaffold(
         topBar = {
@@ -103,7 +98,7 @@ fun Navigation(
                             NavRoute.Search.path -> "Add podcast"
                             NavRoute.Info.path -> currentPodcast?.podcast?.title ?: "Podcast"
                             NavRoute.Episodes.path -> currentPodcast?.podcast?.title ?: "Podcast"
-                            NavRoute.Episode.path -> currentEpisode?.title ?: "Episode"
+                            NavRoute.Episode.path -> state.currentNavEpisode?.title ?: "Episode"
                             else -> ""
                         },
                         maxLines = 1,
@@ -165,6 +160,30 @@ fun Navigation(
                                     }
                             )
                         }
+
+                        NavRoute.Episode.path -> {
+                            Icon(
+                                imageVector = if (state.currentNavEpisode?.favorite == true) {
+                                    Icons.Filled.Favorite
+                                } else {
+                                    Icons.Filled.FavoriteBorder
+                                },
+                                contentDescription = "Favorite",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable {
+                                        state.currentNavEpisode?.let {
+                                            onEvent(
+                                                NavigationEvent.Favorite(
+                                                    episode = state.currentNavEpisode,
+                                                    favorite = !state.currentNavEpisode.favorite
+                                                )
+                                            )
+                                        }
+                                    }
+                            )
+                        }
                     }
                 },
                 navigationIcon = {
@@ -208,6 +227,7 @@ fun Navigation(
                         navController = navController,
                         episode = episode,
                         podcastWithRelations = podcastWithRelations,
+                        onEvent = onEvent,
                     )
                 }
             )
@@ -283,6 +303,7 @@ fun Navigation(
                                     navController = navController,
                                     episode = episode,
                                     podcastWithRelations = podcastWithRelations,
+                                    onEvent = onEvent,
                                 )
                             },
                         )
@@ -316,7 +337,8 @@ fun Navigation(
 private fun navigateToEpisode(
     navController: NavController,
     episode: Episode,
-    podcastWithRelations: PodcastWithRelations
+    podcastWithRelations: PodcastWithRelations,
+    onEvent: (NavigationEvent) -> Unit,
 ) {
     navController.currentBackStackEntry?.savedStateHandle?.set(
         "podcastWithRelations",
@@ -326,6 +348,7 @@ private fun navigateToEpisode(
         "episode",
         episode
     )
+    onEvent(NavigationEvent.ChangeCurNavEpisode(episode))
     navController.navigate(route = NavRoute.Episode.path)
 }
 

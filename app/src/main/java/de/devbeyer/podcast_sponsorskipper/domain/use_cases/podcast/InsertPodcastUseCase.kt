@@ -57,7 +57,7 @@ class InsertPodcastUseCase(
         for (episode in podcastAndEpisodes.episodes) {
             Log.i("AAA", "ADD episode ${episode.title}")
 
-            val foundEpisode = episodeDao.getEpisodesByUrl(episode.episodeUrl).firstOrNull()
+            val foundEpisode = episodeDao.getEpisodeByUrl(episode.episodeUrl).firstOrNull()
             if(foundEpisode == null){
                 val episodeImagePath =
                     imageCache[episode.imageUrl] ?: fileUseCases.downloadFileUseCase.invoke(

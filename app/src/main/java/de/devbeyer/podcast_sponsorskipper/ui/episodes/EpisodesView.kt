@@ -35,6 +35,8 @@ import de.devbeyer.podcast_sponsorskipper.ui.common.DropDown
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
+import de.devbeyer.podcast_sponsorskipper.util.isNotOlderThanAWeek
+import de.devbeyer.podcast_sponsorskipper.util.openLink
 
 @Composable
 fun EpisodesView(
@@ -52,6 +54,8 @@ fun EpisodesView(
             EpisodeFilter.ALL -> true
             EpisodeFilter.DOWNLOADED -> it.episodePath != null
             EpisodeFilter.INCOMPLETE -> !it.isCompleted
+            EpisodeFilter.RECENT -> isNotOlderThanAWeek(it.pubDate)
+            EpisodeFilter.FAVORITE -> it.favorite
         }
     }
 
@@ -100,34 +104,28 @@ fun EpisodesView(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    if (!podcast.fundingText.isNullOrBlank()) {
-                        Button(
-                            onClick = {
-                                //context.openLink(podcast.fundingUrl)
-                            }
-                        ) {
-                            Text(
-                                text = podcast.fundingText,
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                textAlign = TextAlign.Center,
+                    Button(
+                        onClick = {
+                            context.openLink(
+                                url = if (podcast.fundingUrl.isNullOrBlank()) {
+                                    podcast.link
+                                } else {
+                                    podcast.fundingUrl
+                                }
                             )
                         }
-                    } else {
-                        Button(
-                            onClick = {
-                                // TODO context.openLink(podcast.link)
-                            }
-                        ) {
-                            Text(
-                                text = "Homepage",
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
+                    ) {
+                        Text(
+                            text = if (podcast.fundingText.isNullOrBlank()) {
+                                "Homepage"
+                            } else {
+                                podcast.fundingText
+                            },
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
+                        )
                     }
 
                     Text(
@@ -144,6 +142,8 @@ fun EpisodesView(
                     EpisodeFilter.ALL -> "All Episodes (${episodes.size})"
                     EpisodeFilter.DOWNLOADED -> "Downloaded Episodes (${episodes.size})"
                     EpisodeFilter.INCOMPLETE -> "Incomplete Episodes (${episodes.size})"
+                    EpisodeFilter.RECENT -> "Recent Episodes (${episodes.size})"
+                    EpisodeFilter.FAVORITE -> "Favorite Episodes (${episodes.size})"
                 },
                 expanded = state.isFilterMenuExpanded,
                 onExpandedChanged = { onEvent(EpisodesEvent.SetFilterMenuExpanded(it)) }
@@ -159,6 +159,14 @@ fun EpisodesView(
                 DropdownMenuItem(
                     text = { Text("Incomplete Episodes") },
                     onClick = { onEvent(EpisodesEvent.SetFilter(EpisodeFilter.INCOMPLETE)) }
+                )
+                DropdownMenuItem(
+                    text = { Text("Recent Episodes") },
+                    onClick = { onEvent(EpisodesEvent.SetFilter(EpisodeFilter.RECENT)) }
+                )
+                DropdownMenuItem(
+                    text = { Text("Favorite Episodes") },
+                    onClick = { onEvent(EpisodesEvent.SetFilter(EpisodeFilter.FAVORITE)) }
                 )
             }
 

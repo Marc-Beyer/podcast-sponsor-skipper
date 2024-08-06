@@ -50,3 +50,8 @@ fun formatDuration(duration: String): String {
     }
     return duration
 }
+
+fun isNotOlderThanAWeek(dateTime: LocalDateTime): Boolean {
+    val oneWeekAgo = LocalDateTime.now().minus(1, ChronoUnit.WEEKS)
+    return dateTime.isAfter(oneWeekAgo) || dateTime.isEqual(oneWeekAgo)
+}

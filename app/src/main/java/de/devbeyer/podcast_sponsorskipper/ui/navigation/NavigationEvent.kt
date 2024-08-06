@@ -28,6 +28,15 @@ sealed class NavigationEvent {
         val isPositive: Boolean,
     ) : NavigationEvent()
 
+    data class Favorite(
+        val episode: Episode,
+        val favorite: Boolean,
+    ) : NavigationEvent()
+
+    data class ChangeCurNavEpisode(
+        val episode: Episode,
+    ) : NavigationEvent()
+
     object Play : NavigationEvent()
     object Stop : NavigationEvent()
     object SkipForward : NavigationEvent()

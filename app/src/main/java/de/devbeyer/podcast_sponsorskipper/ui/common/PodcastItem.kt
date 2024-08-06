@@ -85,7 +85,7 @@ fun PodcastItem(podcastWithRelations: PodcastWithRelations, onClick: () -> Unit)
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

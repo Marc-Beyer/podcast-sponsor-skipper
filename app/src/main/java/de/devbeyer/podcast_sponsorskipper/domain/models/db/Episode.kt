@@ -41,4 +41,5 @@ data class Episode(
     var explicit: Boolean,
     var block: Boolean,
     var isCompleted: Boolean = false,
+    var favorite: Boolean = false,
 ) : Parcelable

@@ -180,8 +180,9 @@ fun EpisodeItem(
             Text(
                 text = episode.description,
                 style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Column(
@@ -192,7 +193,8 @@ fun EpisodeItem(
                 text = formatDateByDistance(episode.pubDate),
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (episodePath == null) {
                 if (isDownloading) {
@@ -255,7 +257,8 @@ fun EpisodeItem(
                 text = formatDuration(episode.duration),
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         val expanded =
@@ -288,6 +291,15 @@ fun EpisodeItem(
                     onClick = { onEvent(EpisodesEvent.CompleteEpisodesFromHere(episode)) }
                 )
             }
+
+            DropdownMenuItem(
+                text = {
+                    Text(text = if (episode.favorite) "Unfavorite" else "Favorite")
+                },
+                onClick = {
+                    onEvent(EpisodesEvent.Favorite(episode = episode, favorite = !episode.favorite))
+                }
+            )
         }
     }
 }

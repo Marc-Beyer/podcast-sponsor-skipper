@@ -73,12 +73,22 @@ class EpisodeViewModel @Inject constructor(
     }
     fun setEpisode(episode: Episode, podcastWithRelations: PodcastWithRelations) {
         viewModelScope.launch {
-            val sponsorSections = episodeUseCases.getSponsorSectionsUseCase(episode.episodeUrl).firstOrNull()
-            _state.value = state.value.copy(
-                episode = episode,
-                podcastWithRelations = podcastWithRelations,
-                sponsorSections = sponsorSections ?: emptyList(),
-            )
+            episodeUseCases.getSponsorSectionsUseCase(episode.episodeUrl).firstOrNull()?.let { sponsorSections ->
+                _state.value = state.value.copy(
+                    episode = episode,
+                    podcastWithRelations = podcastWithRelations,
+                    sponsorSections = sponsorSections
+                )
+            }
+        }
+        observeEpisodeChanges(episode.episodeUrl)
+    }
+
+    private fun observeEpisodeChanges(episodeUrl: String) {
+        viewModelScope.launch {
+            episodeUseCases.getEpisodeUseCase(episodeUrl).collect { updatedEpisode ->
+                _state.value = state.value.copy(episode = updatedEpisode)
+            }
         }
     }
 }

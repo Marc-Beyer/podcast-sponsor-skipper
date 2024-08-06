@@ -83,6 +83,16 @@ class EpisodesViewModel @Inject constructor(
                 dismissMenu()
             }
 
+            is EpisodesEvent.Favorite -> {
+                viewModelScope.launch {
+                    episodeUseCases.favoriteEpisodeUseCase(
+                        episode = event.episode,
+                        favorite = event.favorite
+                    )
+                }
+                dismissMenu()
+            }
+
             is EpisodesEvent.CompleteEpisodesFromHere -> {
                 viewModelScope.launch {
                     var markAsComplete = false
