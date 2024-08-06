@@ -17,6 +17,7 @@ object Constants {
     const val PREVIEW_POST_TIME = 4000
 
     object Dimensions{
+        val EXTRA_LARGE = 80.dp
         val LARGE = 32.dp
         val MEDIUM = 16.dp
         val SMALL = 8.dp

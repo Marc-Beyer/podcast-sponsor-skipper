@@ -119,6 +119,16 @@ fun Navigation(
                     when (backStackState?.destination?.route) {
                         NavRoute.Feed.path -> {
                             Icon(
+                                imageVector = Icons.Filled.Refresh,
+                                contentDescription = "Update",
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable {
+                                        onEvent(NavigationEvent.UpdatePodcasts)
+                                    }
+                            )
+                            Icon(
                                 imageVector = Icons.Filled.Add,
                                 contentDescription = "Add Podcast",
                                 tint = MaterialTheme.colorScheme.onPrimary,

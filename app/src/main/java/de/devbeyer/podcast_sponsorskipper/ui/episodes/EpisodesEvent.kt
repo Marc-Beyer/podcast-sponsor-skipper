@@ -8,12 +8,22 @@ sealed class EpisodesEvent {
     data class CancelDownload(val episode: Episode) : EpisodesEvent()
     data class DeleteEpisode(val episode: Episode) : EpisodesEvent()
     data class CompleteEpisode(val episode: Episode) : EpisodesEvent()
+    data class CompleteEpisodesFromHere(val episode: Episode) : EpisodesEvent()
+    data class SetFilter(val episodesFilter: EpisodeFilter) : EpisodesEvent()
+    data class SetFilterMenuExpanded(val expanded: Boolean) : EpisodesEvent()
     data class OpenMenu(
         val selectedEpisode: Episode,
         val menuOffset: DpOffset,
     ) : EpisodesEvent()
 
+
     object UpdatePodcast : EpisodesEvent()
     object DismissMenu : EpisodesEvent()
 
+}
+
+enum class EpisodeFilter {
+    ALL,
+    DOWNLOADED,
+    INCOMPLETE,
 }

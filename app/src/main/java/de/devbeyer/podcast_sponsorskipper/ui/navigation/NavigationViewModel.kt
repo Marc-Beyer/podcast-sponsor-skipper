@@ -71,6 +71,23 @@ class NavigationViewModel @Inject constructor(
                 workManager.enqueue(updateWorkRequest)
             }
 
+            is NavigationEvent.UpdatePodcasts -> {
+                viewModelScope.launch {
+                    podcastsUseCases.getLocalPodcastsUseCase().firstOrNull()?.let { podcasts ->
+                        podcasts.forEach {
+                            val workData = workDataOf(
+                                "url" to it.podcast.url,
+                                "title" to it.podcast.title,
+                            )
+                            val updateWorkRequest = OneTimeWorkRequestBuilder<UpdateWorker>()
+                                .setInputData(workData)
+                                .build()
+                            workManager.enqueue(updateWorkRequest)
+                        }
+                    }
+                }
+            }
+
             is NavigationEvent.PlayEpisode -> {
                 val episode = event.episode
                 val podcast = event.podcast
@@ -266,7 +283,7 @@ class NavigationViewModel @Inject constructor(
                 ?.let { sponsorSections ->
                     setSponsorSections(sponsorSections)
                     sponsorSections.forEach { sponsorSection ->
-                        if(!sponsorSection.isProvisional && sponsorSection.rated != -1){
+                        if (!sponsorSection.isProvisional && sponsorSection.rated != -1) {
                             schedulePlaybackAction(
                                 startPositionMs = sponsorSection.startPosition,
                                 endPositionMs = sponsorSection.endPosition,

@@ -11,4 +11,7 @@ data class EpisodesState(
     val selectedEpisode: Episode? = null,
     val menuOffset: DpOffset = DpOffset.Zero,
     val isMenuExpanded: Boolean = false,
-)
+    val activeFilter: EpisodeFilter = EpisodeFilter.ALL,
+    val isFilterMenuExpanded: Boolean = false,
+
+    )

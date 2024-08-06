@@ -1,7 +1,9 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation.playbackController
 
 import android.content.Context
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,7 @@ import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ControllerHeader(
     navigateToEpisode: (Episode, PodcastWithRelations) -> Unit,
@@ -40,7 +43,7 @@ fun ControllerHeader(
     ) {
         Box(
             modifier = Modifier
-                .height(48.dp)
+                .height(64.dp)
                 .aspectRatio(1f)
                 .clickable {
                     navigateToEpisode(
@@ -75,7 +78,8 @@ fun ControllerHeader(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.basicMarquee()
             )
             Text(
                 text = selectedPodcast.podcast.title,

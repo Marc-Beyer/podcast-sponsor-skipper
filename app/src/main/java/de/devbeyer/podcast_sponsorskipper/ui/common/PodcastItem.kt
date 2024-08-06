@@ -28,6 +28,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -45,13 +46,13 @@ fun PodcastItem(podcastWithRelations: PodcastWithRelations, onClick: () -> Unit)
                 onClick = onClick
             )
             .background(MaterialTheme.colorScheme.inverseOnSurface)
-            .padding(16.dp)
+            .padding(Constants.Dimensions.SMALL)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier
-                .height(64.dp)
+                .height(Constants.Dimensions.EXTRA_LARGE)
                 .aspectRatio(1f)
                 .background(
                     color = MaterialTheme.colorScheme.primary,
@@ -95,13 +96,13 @@ fun PodcastItemLoading() {
     Row(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.inverseOnSurface)
-            .padding(16.dp)
+            .padding(Constants.Dimensions.SMALL)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier
-                .height(64.dp)
+                .height(Constants.Dimensions.EXTRA_LARGE)
                 .width(64.dp)
                 .aspectRatio(1f)
                 .loadingEffect(),

@@ -36,6 +36,7 @@ class EpisodesViewModel @Inject constructor(
             is EpisodesEvent.UpdatePodcast -> {
 
             }
+
             is EpisodesEvent.Download -> {
                 val workData = workDataOf(
                     "url" to event.episode.episodeUrl,
@@ -49,6 +50,7 @@ class EpisodesViewModel @Inject constructor(
                 )
                 updateActiveDownloadUrls(event.episode.episodeUrl)
             }
+
             is EpisodesEvent.OpenMenu -> {
                 _state.value = state.value.copy(
                     selectedEpisode = event.selectedEpisode,
@@ -56,23 +58,57 @@ class EpisodesViewModel @Inject constructor(
                     isMenuExpanded = true,
                 )
             }
+
             is EpisodesEvent.DismissMenu -> {
                 dismissMenu()
             }
+
+            is EpisodesEvent.SetFilterMenuExpanded -> {
+                _state.value = state.value.copy(
+                    isFilterMenuExpanded = event.expanded,
+                )
+            }
+
+            is EpisodesEvent.SetFilter -> {
+                _state.value = state.value.copy(
+                    activeFilter = event.episodesFilter,
+                    isFilterMenuExpanded = false,
+                )
+            }
+
             is EpisodesEvent.CompleteEpisode -> {
                 viewModelScope.launch {
                     episodeUseCases.markEpisodeCompleteUseCase(episode = event.episode)
                 }
                 dismissMenu()
             }
+
+            is EpisodesEvent.CompleteEpisodesFromHere -> {
+                viewModelScope.launch {
+                    var markAsComplete = false
+                    for (episode in state.value.episodes) {
+                        if (episode.episodeUrl == event.episode.episodeUrl) markAsComplete = true
+                        if (markAsComplete) {
+                            episodeUseCases.markEpisodeCompleteUseCase(
+                                episode = episode,
+                                toggleStatus = false,
+                            )
+                        }
+                    }
+                }
+                dismissMenu()
+            }
+
             is EpisodesEvent.DeleteEpisode -> {
                 viewModelScope.launch {
                     episodeUseCases.deleteEpisodeUseCase(event.episode)
                 }
                 dismissMenu()
             }
+
             is EpisodesEvent.CancelDownload -> {
-                val couldCancel = DownloadManager.cancel(event.episode.episodeUrl, event.episode.title)
+                val couldCancel =
+                    DownloadManager.cancel(event.episode.episodeUrl, event.episode.title)
                 updateActiveDownloadUrls()
             }
         }
@@ -89,9 +125,9 @@ class EpisodesViewModel @Inject constructor(
 
     private fun updateActiveDownloadUrls(additionalUrl: String? = null) {
         _state.value = state.value.copy(
-            activeDownloadUrls = if(additionalUrl != null){
+            activeDownloadUrls = if (additionalUrl != null) {
                 DownloadManager.getActiveDownloadUrls() + listOf(additionalUrl)
-            }else{
+            } else {
                 DownloadManager.getActiveDownloadUrls()
             },
         )

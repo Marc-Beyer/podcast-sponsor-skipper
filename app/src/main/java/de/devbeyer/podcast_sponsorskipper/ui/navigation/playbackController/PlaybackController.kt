@@ -26,6 +26,7 @@ import de.devbeyer.podcast_sponsorskipper.ui.common.shadowTopOnly
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.formatMillisecondsToTime
 import java.time.LocalDateTime
 
@@ -41,8 +42,11 @@ fun PlaybackController(
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.inverseOnSurface)
-                .shadowTopOnly(shadowHeight = -50f)
-                .padding(16.dp)
+                .shadowTopOnly(
+                    alpha = 0.3f,
+                    shadowHeight = -50f,
+                )
+                .padding(Constants.Dimensions.SMALL)
                 .fillMaxWidth()
                 .navigationBarsPadding()
         ) {
@@ -54,7 +58,7 @@ fun PlaybackController(
                 onEvent,
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
 
             var sponsorSections = state.sponsorSections
             var sponsorSectionStart: Long? = null

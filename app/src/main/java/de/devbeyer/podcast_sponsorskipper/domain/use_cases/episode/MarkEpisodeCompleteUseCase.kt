@@ -11,8 +11,8 @@ class MarkEpisodeCompleteUseCase(
     private val podcastsDao: PodcastDao,
     private val fileUseCases: FileUseCases,
 ) {
-    suspend operator fun invoke(episode: Episode) {
-        if (episode.isCompleted) {
+    suspend operator fun invoke(episode: Episode, toggleStatus: Boolean = true) {
+        if (toggleStatus && episode.isCompleted) {
             episodeDao.update(
                 episode.copy(
                     isCompleted = false,

@@ -33,8 +33,20 @@ fun formatLocalDateTime(dateTime: LocalDateTime, pattern: String = "yyyy/MM/dd")
 
 fun formatMillisecondsToTime(milliseconds: Long): String {
     val totalSeconds = milliseconds / 1000
-    val hours = totalSeconds / 3600
-    val minutes = (totalSeconds % 3600) / 60
-    val seconds = totalSeconds % 60
+    return formatSecondsToTime(totalSeconds)
+}
+
+fun formatSecondsToTime(seconds: Long): String {
+    val hours = seconds / 3600
+    val minutes = (seconds % 3600) / 60
+    val seconds = seconds % 60
     return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+}
+
+fun formatDuration(duration: String): String {
+    if (duration.contains(":")) return duration
+    duration.toLongOrNull()?.let {
+        return formatSecondsToTime(it)
+    }
+    return duration
 }

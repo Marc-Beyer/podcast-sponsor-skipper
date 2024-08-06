@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Podcasts
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.common.DropDown
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
@@ -45,6 +47,13 @@ fun EpisodesView(
     val context = LocalContext.current
     val podcast = state.podcastWithRelations?.podcast
     val categories = state.podcastWithRelations?.categories ?: emptyList()
+    val episodes = state.episodes.filter {
+        when (state.activeFilter) {
+            EpisodeFilter.ALL -> true
+            EpisodeFilter.DOWNLOADED -> it.episodePath != null
+            EpisodeFilter.INCOMPLETE -> !it.isCompleted
+        }
+    }
 
     if (podcast != null) {
         Column(
@@ -129,13 +138,35 @@ fun EpisodesView(
                     )
                 }
             }
+
+            DropDown(
+                text = when (state.activeFilter) {
+                    EpisodeFilter.ALL -> "All Episodes (${episodes.size})"
+                    EpisodeFilter.DOWNLOADED -> "Downloaded Episodes (${episodes.size})"
+                    EpisodeFilter.INCOMPLETE -> "Incomplete Episodes (${episodes.size})"
+                },
+                expanded = state.isFilterMenuExpanded,
+                onExpandedChanged = { onEvent(EpisodesEvent.SetFilterMenuExpanded(it)) }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("All Episodes") },
+                    onClick = { onEvent(EpisodesEvent.SetFilter(EpisodeFilter.ALL)) }
+                )
+                DropdownMenuItem(
+                    text = { Text("Downloaded Episodes") },
+                    onClick = { onEvent(EpisodesEvent.SetFilter(EpisodeFilter.DOWNLOADED)) }
+                )
+                DropdownMenuItem(
+                    text = { Text("Incomplete Episodes") },
+                    onClick = { onEvent(EpisodesEvent.SetFilter(EpisodeFilter.INCOMPLETE)) }
+                )
+            }
+
             if (state.episodes.isNotEmpty()) {
                 LazyColumn(
-                    modifier = Modifier
-                        .padding(top = Constants.Dimensions.SMALL),
                     verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.EXTRA_SMALL),
                 ) {
-                    items(items = state.episodes) { episode ->
+                    items(items = episodes) { episode ->
                         EpisodeItem(
                             episode = episode,
                             isDownloading = state.activeDownloadUrls.contains(episode.episodeUrl),
