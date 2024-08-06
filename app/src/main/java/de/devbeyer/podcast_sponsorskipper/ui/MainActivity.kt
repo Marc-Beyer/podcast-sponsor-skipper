@@ -60,13 +60,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             val startDestination = viewModel.startDestination
 
-            startWithNotificationPermission(){}
             PodcastSponsorSkipperTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavGraph(startDestination = startDestination)
+                    NavGraph(
+                        startDestination = startDestination,
+                        startWithNotificationPermission = {
+                            startWithNotificationPermission(callback = {})
+                        }
+                    )
                 }
             }
         }

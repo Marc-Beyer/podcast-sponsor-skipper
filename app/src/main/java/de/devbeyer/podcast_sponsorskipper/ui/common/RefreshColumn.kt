@@ -46,16 +46,19 @@ fun <T> RefreshColumn(
         }
 
         LaunchedEffect(key1 = isRefreshing) {
-            if(isRefreshing){
+            if (isRefreshing) {
                 pullToRefreshState.startRefresh()
-            }else{
+            } else {
                 pullToRefreshState.endRefresh()
             }
         }
 
-        PullToRefreshContainer(
-            state = pullToRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter),
-        )
+        if (pullToRefreshState.verticalOffset > 0) {
+            PullToRefreshContainer(
+                state = pullToRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
+        }
+
     }
 }

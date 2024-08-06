@@ -11,7 +11,8 @@ import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuide
 
 @Composable
 fun NavGraph(
-    startDestination: String
+    startDestination: String,
+    startWithNotificationPermission: () -> Unit,
 ) {
     val navController = rememberNavController()
     NavHost(
@@ -39,6 +40,7 @@ fun NavGraph(
             composable(
                 route = NavRoute.Feed.path,
             ){
+                startWithNotificationPermission()
                 val viewModel: NavigationViewModel = hiltViewModel()
                 Navigation(
                     state = viewModel.state.value,
