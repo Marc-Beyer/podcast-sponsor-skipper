@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Podcasts
@@ -32,9 +30,9 @@ import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.DropDown
+import de.devbeyer.podcast_sponsorskipper.ui.common.RefreshColumn
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
-import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.isNotOlderThanAWeek
 import de.devbeyer.podcast_sponsorskipper.util.openLink
 
@@ -171,22 +169,24 @@ fun EpisodesView(
             }
 
             if (state.episodes.isNotEmpty()) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.EXTRA_SMALL),
-                ) {
-                    items(items = episodes) { episode ->
-                        EpisodeItem(
-                            episode = episode,
-                            isDownloading = state.activeDownloadUrls.contains(episode.episodeUrl),
-                            state = state,
-                            podcastWithRelations = state.podcastWithRelations,
-                            navigationState = navigationState,
-                            context = context,
-                            onEvent = onEvent,
-                            onNavigationEvent = onNavigationEvent,
-                            navigateToEpisode = navigateToEpisode,
-                        )
-                    }
+                RefreshColumn(
+                    items = episodes,
+                    isRefreshing = navigationState.activeUpdateUrls.contains(podcast.url),
+                    onRefresh = {
+                        onNavigationEvent(NavigationEvent.UpdatePodcast(podcast = podcast))
+                    },
+                ) { episode ->
+                    EpisodeItem(
+                        episode = episode,
+                        isDownloading = state.activeDownloadUrls.contains(episode.episodeUrl),
+                        state = state,
+                        podcastWithRelations = state.podcastWithRelations,
+                        navigationState = navigationState,
+                        context = context,
+                        onEvent = onEvent,
+                        onNavigationEvent = onNavigationEvent,
+                        navigateToEpisode = navigateToEpisode,
+                    )
                 }
 
             } else {

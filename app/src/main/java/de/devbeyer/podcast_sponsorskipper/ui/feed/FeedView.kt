@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -22,11 +20,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.PodcastItem
+import de.devbeyer.podcast_sponsorskipper.ui.common.RefreshColumn
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @Composable
 fun FeedView(
     state: FeedState,
+    navigationState: NavigationState,
+    onNavigationEvent: (NavigationEvent) -> Unit,
     navigateToEpisodes: (PodcastWithRelations) -> Unit,
     navigateToSearch: () -> Unit,
     modifier: Modifier = Modifier
@@ -54,15 +57,14 @@ fun FeedView(
             }
         }
     } else {
-        LazyColumn(
+        RefreshColumn(
+            items = state.podcastsWithRelations,
+            isRefreshing = navigationState.activeUpdateUrls.isNotEmpty(),
+            onRefresh = { onNavigationEvent(NavigationEvent.UpdatePodcasts) },
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.EXTRA_SMALL),
         ) {
-
-            items(items = state.podcastsWithRelations) {
-                PodcastItem(podcastWithRelations = it) {
-                    navigateToEpisodes(it)
-                }
+            PodcastItem(podcastWithRelations = it) {
+                navigateToEpisodes(it)
             }
         }
     }

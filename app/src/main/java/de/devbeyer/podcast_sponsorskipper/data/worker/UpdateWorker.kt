@@ -11,6 +11,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import de.devbeyer.podcast_sponsorskipper.util.Constants
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 
 @HiltWorker
@@ -94,6 +96,9 @@ object UpdateManager {
 
     private val lock = Any()
 
+    private val _activeUpdateUrlsFlow = MutableStateFlow<List<String>>(emptyList())
+    val activeUpdateUrlsFlow: StateFlow<List<String>> get() = _activeUpdateUrlsFlow
+
     // Return if the worker should start the work or stop
     fun increment(url: String, title: String): Boolean {
         synchronized(lock) {
@@ -103,6 +108,7 @@ object UpdateManager {
             activeUpdateTitles.add(title)
             activeUpdateUrls.add(url)
             Log.i("AAA", "activeDownloadTitles.size ${activeUpdateTitles.size}")
+            updateActiveUpdateUrls()
             return activeUpdateTitles.size == 1
         }
     }
@@ -113,10 +119,12 @@ object UpdateManager {
                 val url = activeUpdateUrls.first()
                 activeUpdateUrls.removeAt(0)
                 activeUpdateUrl = url
+                updateActiveUpdateUrls()
                 return url
             } else {
                 activeUpdateUrl = null
                 activeUpdateTitles.clear()
+                updateActiveUpdateUrls()
                 return null
             }
         }
@@ -127,6 +135,7 @@ object UpdateManager {
             if (activeUpdateUrls.contains(url)) {
                 activeUpdateUrls.remove(url)
                 activeUpdateTitles.remove(title)
+                updateActiveUpdateUrls()
                 return true
             }
             return false
@@ -143,7 +152,7 @@ object UpdateManager {
         }
     }
 
-    fun getActiveUpdateUrls(): List<String> {
+    private fun getActiveUpdateUrls(): List<String> {
         synchronized(lock) {
             return if (activeUpdateUrl != null) {
                 listOf(activeUpdateUrl!!) + activeUpdateUrls.toList()
@@ -151,5 +160,9 @@ object UpdateManager {
                 activeUpdateUrls.toList()
             }
         }
+    }
+
+    private fun updateActiveUpdateUrls() {
+        _activeUpdateUrlsFlow.value = getActiveUpdateUrls()
     }
 }

@@ -26,4 +26,5 @@ class FeedViewModel @Inject constructor(
             _state.value = state.value.copy(podcastsWithRelations = it)
         }.launchIn(viewModelScope)
     }
+
 }

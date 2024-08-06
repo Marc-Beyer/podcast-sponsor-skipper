@@ -24,6 +24,7 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.lifecycle.HiltViewModel
+import de.devbeyer.podcast_sponsorskipper.data.worker.UpdateManager
 import de.devbeyer.podcast_sponsorskipper.data.worker.UpdateWorker
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
@@ -56,6 +57,11 @@ class NavigationViewModel @Inject constructor(
 
     init {
         initializeMediaController(context = application)
+        viewModelScope.launch {
+            UpdateManager.activeUpdateUrlsFlow.collect { activeUrls ->
+                _state.value = state.value.copy(activeUpdateUrls = activeUrls)
+            }
+        }
     }
 
     fun onEvent(event: NavigationEvent) {

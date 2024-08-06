@@ -18,6 +18,7 @@ data class NavigationState (
     val isPreviewing: PreviewState = PreviewState.NONE,
     val sponsorSections: List<SponsorSection> = emptyList(),
     val currentNavEpisode: Episode? = null,
+    val activeUpdateUrls: List<String> = emptyList(),
 )
 
 enum class PreviewState{
