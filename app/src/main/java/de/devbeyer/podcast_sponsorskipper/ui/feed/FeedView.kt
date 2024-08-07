@@ -24,6 +24,7 @@ import de.devbeyer.podcast_sponsorskipper.ui.common.RefreshColumn
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
+import de.devbeyer.podcast_sponsorskipper.util.toTripleList
 
 @Composable
 fun FeedView(
@@ -57,14 +58,26 @@ fun FeedView(
             }
         }
     } else {
-        RefreshColumn(
-            items = state.podcastsWithRelations,
-            isRefreshing = navigationState.activeUpdateUrls.isNotEmpty(),
-            onRefresh = { onNavigationEvent(NavigationEvent.UpdatePodcasts) },
-            modifier = modifier,
-        ) {
-            PodcastItem(podcastWithRelations = it) {
-                navigateToEpisodes(it)
+        if(navigationState.settings.feedGridLayout){
+
+            RefreshColumn<Triple<PodcastWithRelations?, PodcastWithRelations?, PodcastWithRelations?>>(
+                items = state.podcastsWithRelations.toTripleList(),
+                isRefreshing = navigationState.activeUpdateUrls.isNotEmpty(),
+                onRefresh = { onNavigationEvent(NavigationEvent.UpdatePodcasts) },
+                modifier = modifier,
+            ) { triple ->
+                GridPodcastItem(triple = triple, navigateToEpisodes = navigateToEpisodes)
+            }
+        }else{
+            RefreshColumn<PodcastWithRelations>(
+                items = state.podcastsWithRelations,
+                isRefreshing = navigationState.activeUpdateUrls.isNotEmpty(),
+                onRefresh = { onNavigationEvent(NavigationEvent.UpdatePodcasts) },
+                modifier = modifier,
+            ) {
+                PodcastItem(podcastWithRelations = it) {
+                    navigateToEpisodes(it)
+                }
             }
         }
     }

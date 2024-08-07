@@ -29,7 +29,9 @@ import java.io.StringReader
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.SignStyle
+import java.time.temporal.ChronoField
 import java.util.Locale
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -267,15 +269,25 @@ class BackendRepositoryImpl(
                 "itunes:block" -> block = node.textContent == "yes"
                 "itunes:duration" -> duration = node.textContent
                 "pubDate" -> {
-                    var dateString = node.textContent
-                    if (dateString.endsWith("GMT")) {
-                        dateString = dateString.replace("GMT", "+0000")
+                    try {
+                        var dateString = node.textContent
+                        if (dateString.endsWith("GMT")) {
+                            dateString = dateString.replace("GMT", "+0000")
+                        }
+                        val formatter = DateTimeFormatterBuilder()
+                            .appendPattern("EEE, ")
+                            .appendValue(ChronoField.DAY_OF_MONTH, 1, 2, SignStyle.NOT_NEGATIVE)
+                            .appendPattern(" MMM yyyy HH:mm:ss Z")
+                            .toFormatter(Locale.ENGLISH)
+
+                        val zonedDateTime = ZonedDateTime.parse(dateString, formatter)
+
+                        pubDate = zonedDateTime
+                            .withZoneSameInstant(ZoneId.systemDefault())
+                            .toLocalDateTime()
+                    } catch (e: Exception) {
+                        pubDate = LocalDateTime.now()
                     }
-                    val formatter =
-                        DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
-                    val zonedDateTime = ZonedDateTime.parse(dateString, formatter)
-                    pubDate =
-                        zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 
                 }
 

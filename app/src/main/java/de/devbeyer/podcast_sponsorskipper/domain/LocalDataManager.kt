@@ -16,5 +16,6 @@ interface LocalDataManager {
 }
 
 enum class SettingKey{
-    DOWNLOAD_IMAGES
+    DOWNLOAD_IMAGES,
+    FEED_GRID_LAYOUT,
 }

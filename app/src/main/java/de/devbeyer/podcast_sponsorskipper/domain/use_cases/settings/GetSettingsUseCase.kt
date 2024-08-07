@@ -12,10 +12,12 @@ class GetSettingsUseCase(
 ) {
     operator fun invoke(): Flow<Settings?> = flow {
         val downloadImages = localDataManager.readBooleanSetting(SettingKey.DOWNLOAD_IMAGES).firstOrNull()
+        val feedGridLayout = localDataManager.readBooleanSetting(SettingKey.FEED_GRID_LAYOUT).firstOrNull()
 
         emit(
             Settings(
                 downloadImages = downloadImages ?: true,
+                feedGridLayout = feedGridLayout ?: false,
             )
         )
     }

@@ -7,6 +7,6 @@ class SetSettingUseCase(
     private val localDataManager: LocalDataManager,
 ) {
     suspend operator fun invoke(settingKey: SettingKey, value: Boolean) {
-        val downloadImages = localDataManager.saveBooleanSetting(setting = Pair(settingKey, value))
+        localDataManager.saveBooleanSetting(setting = Pair(settingKey, value))
     }
 }
