@@ -54,7 +54,7 @@ import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun Navigation(
+fun NavigationView(
     state: NavigationState,
     onEvent: (NavigationEvent) -> Unit,
 ) {

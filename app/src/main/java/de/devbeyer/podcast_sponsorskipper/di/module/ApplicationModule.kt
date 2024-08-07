@@ -40,6 +40,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetComple
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.SetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.DeleteLocalPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetEpisodesOfPodcastUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastByIdUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastByUrlUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRSSFeedUseCase
@@ -175,6 +176,9 @@ object ApplicationModule {
                 backendRepository = backendRepository,
                 userUseCases = userUseCases,
                 sponsorSectionDao = sponsorSectionDao,
+            ),
+            getLocalPodcastByIdUseCase = GetLocalPodcastByIdUseCase(
+                podcastDao = podcastDao,
             )
         )
     }

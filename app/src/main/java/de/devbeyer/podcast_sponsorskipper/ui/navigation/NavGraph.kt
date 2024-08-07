@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.Navigation
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationView
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.TourGuideViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuideView
@@ -44,7 +44,7 @@ fun NavGraph(
             ){
                 startWithNotificationPermission()
                 val viewModel: NavigationViewModel = hiltViewModel()
-                Navigation(
+                NavigationView(
                     state = viewModel.state.value,
                     onEvent = viewModel::onEvent
                 )

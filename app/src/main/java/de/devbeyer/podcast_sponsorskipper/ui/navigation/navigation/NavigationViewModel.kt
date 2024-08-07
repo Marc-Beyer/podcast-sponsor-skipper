@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -52,6 +53,7 @@ class NavigationViewModel @Inject constructor(
     private val settingsUseCases: SettingsUseCases,
     private val workManager: WorkManager,
     private val application: Application,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _state = mutableStateOf(NavigationState())
     val state: State<NavigationState> = _state
@@ -67,7 +69,6 @@ class NavigationViewModel @Inject constructor(
         }
         getSettings()
     }
-
 
     fun onEvent(event: NavigationEvent) {
         when (event) {
@@ -121,7 +122,6 @@ class NavigationViewModel @Inject constructor(
                 setCurrentEpisodeAndPodcast(event.episode, event.podcast)
                 loadSponsorSections(episodeUrl = episode.episodeUrl)
                 setEpisodeAsMediaItem(episode, podcast)
-
             }
 
             is NavigationEvent.SeekTo -> {
@@ -320,6 +320,10 @@ class NavigationViewModel @Inject constructor(
                                 episode.imagePath ?: episode.imageUrl
                             )
                         )
+                        .setExtras(Bundle().apply {
+                            putString("episodeUrl", episode.episodeUrl)
+                            putInt("podcastId", podcast.podcast.id)
+                        })
                         .build()
                 )
                 .build()
@@ -329,17 +333,19 @@ class NavigationViewModel @Inject constructor(
         if (startPlaying) state.value.mediaController?.play()
     }
 
-    private fun loadSponsorSections(episodeUrl: String) {
+    private fun loadSponsorSections(episodeUrl: String, schedulePlaybackAction: Boolean = true) {
         viewModelScope.launch {
             episodeUseCases.getSponsorSectionsUseCase(episodeUrl).firstOrNull()
                 ?.let { sponsorSections ->
                     setSponsorSections(sponsorSections)
-                    sponsorSections.forEach { sponsorSection ->
-                        if (!sponsorSection.isProvisional && sponsorSection.rated != -1) {
-                            schedulePlaybackAction(
-                                startPositionMs = sponsorSection.startPosition,
-                                endPositionMs = sponsorSection.endPosition,
-                            )
+                    if (schedulePlaybackAction) {
+                        sponsorSections.forEach { sponsorSection ->
+                            if (!sponsorSection.isProvisional && sponsorSection.rated != -1) {
+                                schedulePlaybackAction(
+                                    startPositionMs = sponsorSection.startPosition,
+                                    endPositionMs = sponsorSection.endPosition,
+                                )
+                            }
                         }
                     }
                 }
@@ -464,6 +470,38 @@ class NavigationViewModel @Inject constructor(
             {
                 val mediaController = controllerFuture.get()
                 setMediaController(mediaController)
+
+                val mediaItem = mediaController.currentMediaItem
+                if (mediaItem != null) {
+                    val extras = mediaItem.mediaMetadata.extras
+                    Log.i("AAA", "mediaItem $extras")
+                    viewModelScope.launch {
+                        extras?.getString("episodeUrl")?.let {
+                            val episode =
+                                episodeUseCases.getEpisodeUseCase(episodeUrl = it).firstOrNull()
+
+                            val podcast = podcastsUseCases.getLocalPodcastByIdUseCase(
+                                podcastId = extras.getInt(
+                                    "podcastId"
+                                )
+                            ).firstOrNull()
+
+                            if (podcast != null && episode != null) {
+                                setCurrentEpisodeAndPodcast(
+                                    episode = episode,
+                                    podcast = podcast,
+                                )
+                                updateDuration()
+                                startUpdatingPosition()
+                                setIsPlaying(mediaController.isPlaying)
+                                loadSponsorSections(
+                                    episodeUrl = episode.episodeUrl,
+                                    schedulePlaybackAction = false,
+                                )
+                            }
+                        }
+                    }
+                }
 
                 mediaController.addListener(object : Player.Listener {
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
