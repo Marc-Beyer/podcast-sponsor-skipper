@@ -309,7 +309,7 @@ class NavigationViewModel @Inject constructor(
     ) {
         val mediaItem =
             MediaItem.Builder()
-                .setMediaId("media-1")
+                .setMediaId(episode.episodeUrl)
                 .setUri(episode.episodePath)
                 .setMediaMetadata(
                     MediaMetadata.Builder()

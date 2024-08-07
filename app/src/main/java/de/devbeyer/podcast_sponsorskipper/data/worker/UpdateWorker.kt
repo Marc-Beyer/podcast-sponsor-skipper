@@ -9,7 +9,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.devbeyer.podcast_sponsorskipper.domain.models.Settings
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SettingsUseCases
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +21,8 @@ import kotlinx.coroutines.flow.firstOrNull
 class UpdateWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val podcastsUseCases: PodcastsUseCases
+    private val podcastsUseCases: PodcastsUseCases,
+    private val settingsUseCases: SettingsUseCases,
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -34,15 +37,24 @@ class UpdateWorker @AssistedInject constructor(
             val shouldWork = UpdateManager.increment(url = url, title = title)
             updateNotification(notificationManager, title)
 
+            val settings = if (shouldWork) {
+                settingsUseCases.getSettingsUseCase().firstOrNull() ?: Settings()
+            } else {
+                Settings()
+            }
+
             while (shouldWork) {
                 val currentUrl = UpdateManager.decrement()
                 updateNotification(notificationManager, title)
-                Log.i("Work","currentUrl $currentUrl")
+                Log.i("Work", "currentUrl $currentUrl")
                 if (currentUrl == null) {
                     break
                 }
                 podcastsUseCases.getRSSFeedUseCase(currentUrl).firstOrNull()?.let {
-                    podcastsUseCases.insertPodcastUseCase(it)
+                    podcastsUseCases.insertPodcastUseCase(
+                        podcastAndEpisodes = it,
+                        downloadImages = settings.downloadImages,
+                    )
                 }
             }
 

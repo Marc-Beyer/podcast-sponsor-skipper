@@ -15,15 +15,21 @@ class InsertPodcastUseCase(
     private val episodeDao: EpisodeDao,
     private val fileUseCases: FileUseCases,
 ) {
-    suspend operator fun invoke(podcastAndEpisodes: PodcastAndEpisodes) {
-        val podcastWithRelations = podcastDao.getPodcastFromUrl(podcastAndEpisodes.podcastWithRelations.podcast.url).firstOrNull()
+    suspend operator fun invoke(
+        podcastAndEpisodes: PodcastAndEpisodes,
+        downloadImages: Boolean,
+    ) {
+        val podcastWithRelations =
+            podcastDao.getPodcastFromUrl(podcastAndEpisodes.podcastWithRelations.podcast.url)
+                .firstOrNull()
         var podcastId = 0
-        if(podcastWithRelations == null){
+        var podcastImagePath = ""
+        if (podcastWithRelations == null) {
             Log.i("AAA", "Podcast does not exists!")
-            val podcastImagePath = fileUseCases.downloadFileUseCase.invoke(
+            podcastImagePath = fileUseCases.downloadFileUseCase.invoke(
                 extension = "jpg",
                 url = podcastAndEpisodes.podcastWithRelations.podcast.imageUrl
-            ).firstOrNull()
+            ).firstOrNull() ?: ""
             val podcast = podcastAndEpisodes.podcastWithRelations.podcast.copy(
                 id = 0,
                 imagePath = podcastImagePath
@@ -47,9 +53,10 @@ class InsertPodcastUseCase(
                     )
                 )
             }
-        }else{
+        } else {
             Log.i("AAA", "Podcast already exists!")
             podcastId = podcastWithRelations.podcast.id
+            podcastImagePath = podcastWithRelations.podcast.imagePath ?: ""
         }
 
         val imageCache = mutableMapOf<String, String?>()
@@ -58,16 +65,25 @@ class InsertPodcastUseCase(
             Log.i("AAA", "ADD episode ${episode.title}")
 
             val foundEpisode = episodeDao.getEpisodeByUrl(episode.episodeUrl).firstOrNull()
-            if(foundEpisode == null){
-                val episodeImagePath =
+            if (foundEpisode == null) {
+                val episodeImagePath = if (downloadImages) {
                     imageCache[episode.imageUrl] ?: fileUseCases.downloadFileUseCase.invoke(
                         extension = "jpg",
                         url = episode.imageUrl
-                    ).firstOrNull()
+                    ).firstOrNull().let { downloadedPath ->
+                        if (!downloadedPath.isNullOrBlank()) {
+                            downloadedPath
+                        } else {
+                            podcastImagePath
+                        }
+                    }
+                } else {
+                    podcastImagePath
+                }
 
                 imageCache[episode.imageUrl] = episodeImagePath
                 episodeDao.insert(episode.copy(podcastId = podcastId, imagePath = episodeImagePath))
-            }else if(foundEpisode.imagePath != null){
+            } else if (foundEpisode.imagePath != null) {
                 imageCache[foundEpisode.imageUrl] = foundEpisode.imagePath
             }
         }
