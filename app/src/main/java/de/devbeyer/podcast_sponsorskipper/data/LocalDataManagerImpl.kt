@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
+import de.devbeyer.podcast_sponsorskipper.domain.SettingKey
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -49,6 +50,18 @@ class LocalDataManagerImpl(
     override fun readToken(): Flow<String?> {
         return context.dataStore.data.map {
             it[PreferencesKeys.TOKEN]
+        }
+    }
+
+    override suspend fun saveBooleanSetting(setting: Pair<SettingKey, Boolean>) {
+        context.dataStore.edit {
+            it[booleanPreferencesKey(setting.first.name)] = setting.second
+        }
+    }
+
+    override fun readBooleanSetting(settingKey: SettingKey): Flow<Boolean?> {
+        return context.dataStore.data.map {
+            it[booleanPreferencesKey(settingKey.name)]
         }
     }
 }

@@ -23,8 +23,8 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 import de.devbeyer.podcast_sponsorskipper.ui.common.CustomSlider
 import de.devbeyer.podcast_sponsorskipper.ui.common.shadowTopOnly
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.formatMillisecondsToTime

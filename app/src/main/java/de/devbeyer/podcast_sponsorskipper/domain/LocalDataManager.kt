@@ -10,4 +10,11 @@ interface LocalDataManager {
     fun readUsername(): Flow<String?>
     suspend fun saveToken(token: String)
     fun readToken(): Flow<String?>
+
+    suspend fun saveBooleanSetting(setting: Pair<SettingKey, Boolean>)
+    fun readBooleanSetting(settingKey: SettingKey): Flow<Boolean?>
+}
+
+enum class SettingKey{
+    DOWNLOAD_IMAGES
 }

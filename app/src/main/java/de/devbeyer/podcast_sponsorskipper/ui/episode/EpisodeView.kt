@@ -25,8 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.info.IconWithText
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.formatLocalDateTime
 import de.devbeyer.podcast_sponsorskipper.util.formatMillisecondsToTime

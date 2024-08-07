@@ -20,6 +20,7 @@ object Constants {
         val EXTRA_LARGE = 80.dp
         val LARGE = 32.dp
         val MEDIUM = 16.dp
+        val SMALL_MEDIUM = 12.dp
         val SMALL = 8.dp
         val EXTRA_SMALL = 4.dp
     }

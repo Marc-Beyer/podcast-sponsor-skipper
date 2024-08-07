@@ -7,6 +7,7 @@ sealed class NavRoute(val path: String) {
     object Episode : NavRoute("episode")
     object Search : NavRoute("search")
     object Info : NavRoute("info")
+    object Settings : NavRoute("Settings")
 
     object Start : NavRoute("start")
     object Main : NavRoute("main")

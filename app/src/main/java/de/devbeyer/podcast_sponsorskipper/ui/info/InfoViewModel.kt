@@ -49,7 +49,7 @@ class InfoViewModel @Inject constructor(
 
     fun setPodcast(podcastWithRelations: PodcastWithRelations) {
         viewModelScope.launch {
-            podcastsUseCases.getLocalPodcastByUrl(podcastWithRelations.podcast.url)
+            podcastsUseCases.getLocalPodcastByUrlUseCase(podcastWithRelations.podcast.url)
                 .collect { localePodcastWithRelations ->
                     val subscribedToPodcast = localePodcastWithRelations != null
                     _state.value = state.value.copy(

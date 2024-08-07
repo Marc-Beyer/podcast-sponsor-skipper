@@ -44,8 +44,8 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.formatDateByDistance
 import de.devbeyer.podcast_sponsorskipper.util.formatDuration

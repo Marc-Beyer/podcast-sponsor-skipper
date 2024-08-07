@@ -6,33 +6,27 @@ import de.devbeyer.podcast_sponsorskipper.R
 data class Page(
     val title: String,
     val description: String,
-    @DrawableRes val image: Int,
+    @DrawableRes val imageDark: Int,
+    @DrawableRes val imageLight: Int,
 )
 
 val pages = listOf(
     Page(
-        title = "Test 1",
-        description = "This is a test!",
-        R.drawable.podcasts_black
+        title = "Welcome",
+        description = "Easily skip over sponsor sections and enjoy uninterrupted listening.",
+        imageDark = R.drawable.podcasts_white,
+        imageLight = R.drawable.podcasts_black,
     ),
     Page(
-        title = "Test 2",
-        description = "This is a test!",
-        R.drawable.podcasts_black
+        title = "Sponsor Skipping",
+        description = "The app allows you to mark sponsor segments and automatically skip them during playback, providing a seamless podcast experience.",
+        imageDark = R.drawable.podcasts_white,
+        imageLight = R.drawable.podcasts_black,
     ),
     Page(
-        title = "Test 3",
-        description = "This is a test!",
-        R.drawable.podcasts_black
-    ),
-    Page(
-        title = "Test 4",
-        description = "This is a test!",
-        R.drawable.podcasts_black
-    ),
-    Page(
-        title = "Test 5",
-        description = "This is a test!",
-        R.drawable.podcasts_black
+        title = "Notifications",
+        description = "Enable notifications to maintain uninterrupted playback and to control your podcasts even when your phone is locked.",
+        imageDark = R.drawable.notifications_white,
+        imageLight = R.drawable.notifications_black,
     ),
 )

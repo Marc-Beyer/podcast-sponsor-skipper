@@ -31,8 +31,9 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.DropDown
 import de.devbeyer.podcast_sponsorskipper.ui.common.RefreshColumn
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.isNotOlderThanAWeek
 import de.devbeyer.podcast_sponsorskipper.util.openLink
 
@@ -62,7 +63,7 @@ fun EpisodesView(
             modifier = Modifier.padding(start = 8.dp, top = 8.dp),
             verticalArrangement = Arrangement.Center,
         ) {
-            Row {
+            Row(modifier = Modifier.padding(end = Constants.Dimensions.SMALL)) {
                 Box(
                     modifier = Modifier
                         .height(98.dp)

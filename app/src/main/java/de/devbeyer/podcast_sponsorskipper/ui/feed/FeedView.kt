@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.sp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.PodcastItem
 import de.devbeyer.podcast_sponsorskipper.ui.common.RefreshColumn
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationEvent
-import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavigationState
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @Composable

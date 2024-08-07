@@ -1,10 +1,11 @@
-package de.devbeyer.podcast_sponsorskipper.ui.navigation
+package de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation
 
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SettingsUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.UserUseCases
 import de.devbeyer.podcast_sponsorskipper.service.PlaybackService
 import de.devbeyer.podcast_sponsorskipper.util.Constants
@@ -47,6 +49,7 @@ class NavigationViewModel @Inject constructor(
     private val podcastsUseCases: PodcastsUseCases,
     private val episodeUseCases: EpisodeUseCases,
     private val userUseCases: UserUseCases,
+    private val settingsUseCases: SettingsUseCases,
     private val workManager: WorkManager,
     private val application: Application,
 ) : ViewModel() {
@@ -62,10 +65,22 @@ class NavigationViewModel @Inject constructor(
                 _state.value = state.value.copy(activeUpdateUrls = activeUrls)
             }
         }
+        getSettings()
     }
+
 
     fun onEvent(event: NavigationEvent) {
         when (event) {
+            is NavigationEvent.ChangeBooleanSettings -> {
+                viewModelScope.launch {
+                    settingsUseCases.setSettingUseCase(
+                        settingKey = event.settingKey,
+                        value = event.value,
+                    )
+                    getSettings()
+                }
+            }
+
             is NavigationEvent.ChangeCurNavEpisode -> {
                 _state.value = state.value.copy(
                     currentNavEpisode = event.episode,
@@ -274,6 +289,17 @@ class NavigationViewModel @Inject constructor(
             }
         }
 
+    }
+
+    private fun getSettings() {
+        viewModelScope.launch {
+            settingsUseCases.getSettingsUseCase().firstOrNull()?.let {
+                Log.i("SETTINGS", "getSettingsUseCase $it")
+                _state.value = state.value.copy(
+                    settings = it
+                )
+            }
+        }
     }
 
     private fun setEpisodeAsMediaItem(

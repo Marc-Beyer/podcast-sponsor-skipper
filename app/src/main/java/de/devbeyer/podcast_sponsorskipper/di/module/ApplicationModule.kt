@@ -40,14 +40,17 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetComple
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.SetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.DeleteLocalPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetEpisodesOfPodcastUseCase
-import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastByUrl
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastByUrlUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetLocalPodcastsUseCase
-import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRSSFeed
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRSSFeedUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRemotePodcastsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.InsertPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.RateSponsorSectionUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.SubmitSponsorSectionUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.GetSettingsUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SetSettingUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SettingsUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.GetUserUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.RegisterUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.UserUseCases
@@ -160,8 +163,8 @@ object ApplicationModule {
                 episodeDao = episodeDao,
                 fileUseCases = fileUseCases,
             ),
-            getLocalPodcastByUrl = GetLocalPodcastByUrl(podcastDao),
-            getRSSFeed = GetRSSFeed(backendRepository),
+            getLocalPodcastByUrlUseCase = GetLocalPodcastByUrlUseCase(podcastDao),
+            getRSSFeedUseCase = GetRSSFeedUseCase(backendRepository),
             getEpisodesOfPodcastUseCase = GetEpisodesOfPodcastUseCase(episodeDao),
             submitSponsorSectionUseCase = SubmitSponsorSectionUseCase(
                 backendRepository = backendRepository,
@@ -219,6 +222,16 @@ object ApplicationModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun provideSettingsUseCases(
+        localDataManager: LocalDataManager,
+    ): SettingsUseCases {
+        return SettingsUseCases(
+            GetSettingsUseCase(localDataManager = localDataManager),
+            SetSettingUseCase(localDataManager = localDataManager),
+        )
+    }
 
     @Provides
     @Singleton
@@ -232,7 +245,6 @@ object ApplicationModule {
             .fallbackToDestructiveMigration()
             .build()
     }
-
 
     @Provides
     @Singleton

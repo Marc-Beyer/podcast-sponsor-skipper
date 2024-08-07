@@ -1,6 +1,7 @@
-package de.devbeyer.podcast_sponsorskipper.ui.navigation
+package de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation
 
 import androidx.media3.session.MediaController
+import de.devbeyer.podcast_sponsorskipper.domain.models.Settings
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
@@ -19,6 +20,7 @@ data class NavigationState (
     val sponsorSections: List<SponsorSection> = emptyList(),
     val currentNavEpisode: Episode? = null,
     val activeUpdateUrls: List<String> = emptyList(),
+    val settings: Settings = Settings(),
 )
 
 enum class PreviewState{

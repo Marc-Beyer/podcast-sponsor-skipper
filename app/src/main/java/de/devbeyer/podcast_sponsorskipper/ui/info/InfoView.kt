@@ -169,7 +169,7 @@ private fun PodcastInfo(
                     modifier = Modifier
                         .padding(1.dp)
                         .rotationEffect(),
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             } else {
                 Text(text = "Subscribe")

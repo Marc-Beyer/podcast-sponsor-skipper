@@ -6,8 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.Navigation
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.tourguide.TourGuideViewModel
-import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuide
+import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuideView
 
 @Composable
 fun NavGraph(
@@ -27,7 +29,7 @@ fun NavGraph(
                 route = NavRoute.TourGuide.path,
             ){
                 val viewModel: TourGuideViewModel = hiltViewModel()
-                TourGuide(
+                TourGuideView(
                     onEvent = viewModel::onEvent
                 )
             }

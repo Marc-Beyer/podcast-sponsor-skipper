@@ -1,4 +1,4 @@
-package de.devbeyer.podcast_sponsorskipper.ui.navigation
+package de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
@@ -9,11 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -49,9 +44,13 @@ import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedView
 import de.devbeyer.podcast_sponsorskipper.ui.feed.FeedViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.info.InfoView
 import de.devbeyer.podcast_sponsorskipper.ui.info.InfoViewModel
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavRoute
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.playbackController.PlaybackController
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchView
 import de.devbeyer.podcast_sponsorskipper.ui.search.SearchViewModel
+import de.devbeyer.podcast_sponsorskipper.ui.settings.SettingsView
+import de.devbeyer.podcast_sponsorskipper.ui.settings.SettingsViewModel
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -72,10 +71,7 @@ fun Navigation(
     }
 
     val isBackArrowVisible = remember(key1 = backStackState) {
-        backStackState?.destination?.route == NavRoute.Search.path ||
-                backStackState?.destination?.route == NavRoute.Info.path ||
-                backStackState?.destination?.route == NavRoute.Episodes.path ||
-                backStackState?.destination?.route == NavRoute.Episode.path
+        backStackState?.destination?.route != NavRoute.Feed.path
     }
 
     var isAddRSSFeedDialogOpen by remember { mutableStateOf(false) }
@@ -99,6 +95,7 @@ fun Navigation(
                             NavRoute.Info.path -> currentPodcast?.podcast?.title ?: "Podcast"
                             NavRoute.Episodes.path -> currentPodcast?.podcast?.title ?: "Podcast"
                             NavRoute.Episode.path -> state.currentNavEpisode?.title ?: "Episode"
+                            NavRoute.Settings.path -> "Settings"
                             else -> ""
                         },
                         maxLines = 1,
@@ -111,80 +108,15 @@ fun Navigation(
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
                 ),
                 actions = {
-                    when (backStackState?.destination?.route) {
-                        NavRoute.Feed.path -> {
-                            Icon(
-                                imageVector = Icons.Filled.Refresh,
-                                contentDescription = "Update",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clickable {
-                                        onEvent(NavigationEvent.UpdatePodcasts)
-                                    }
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = "Add Podcast",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clickable {
-                                        navigateToSearch(navController)
-                                    }
-                            )
-                        }
-
-                        NavRoute.Episodes.path -> {
-                            Icon(
-                                imageVector = Icons.Filled.Refresh,
-                                contentDescription = "Update",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clickable {
-                                        currentPodcast?.let {
-                                            onEvent(NavigationEvent.UpdatePodcast(it.podcast))
-                                        }
-                                    }
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "Unsubscribe",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clickable {
-                                        onEvent(NavigationEvent.Unsubscribe(currentPodcast))
-                                        navController.navigateUp()
-                                    }
-                            )
-                        }
-
-                        NavRoute.Episode.path -> {
-                            Icon(
-                                imageVector = if (state.currentNavEpisode?.favorite == true) {
-                                    Icons.Filled.Favorite
-                                } else {
-                                    Icons.Filled.FavoriteBorder
-                                },
-                                contentDescription = "Favorite",
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .clickable {
-                                        state.currentNavEpisode?.let {
-                                            onEvent(
-                                                NavigationEvent.Favorite(
-                                                    episode = state.currentNavEpisode,
-                                                    favorite = !state.currentNavEpisode.favorite
-                                                )
-                                            )
-                                        }
-                                    }
-                            )
-                        }
-                    }
+                    NavigationActions(
+                        backStackState = backStackState,
+                        onEvent = onEvent,
+                        currentPodcast = currentPodcast,
+                        state = state,
+                        navigateToSearch = { navigateToSearch(navController) },
+                        navigateToSettings = { navController.navigate(route = NavRoute.Settings.path) },
+                        navigateUp = { navController.navigateUp() }
+                    )
                 },
                 navigationIcon = {
                     if (isBackArrowVisible) {
@@ -207,7 +139,7 @@ fun Navigation(
                 NavRoute.Search.path -> {
                     FloatingActionButton(onClick = { isAddRSSFeedDialogOpen = true }) {
                         Row(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.padding(Constants.Dimensions.MEDIUM),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(Icons.Default.RssFeed, contentDescription = "Add RSS Feed")
@@ -287,6 +219,15 @@ fun Navigation(
                         )
                     }
 
+            }
+            composable(route = NavRoute.Settings.path) {
+                val viewModel: SettingsViewModel = hiltViewModel()
+                SettingsView(
+                    state = viewModel.state.value,
+                    onEvent = viewModel::onEvent,
+                    navigationState = state,
+                    onNavigationEvent = onEvent,
+                )
             }
             composable(route = NavRoute.Episodes.path) {
                 val viewModel: EpisodesViewModel = hiltViewModel()

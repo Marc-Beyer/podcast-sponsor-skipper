@@ -41,7 +41,7 @@ class UpdateWorker @AssistedInject constructor(
                 if (currentUrl == null) {
                     break
                 }
-                podcastsUseCases.getRSSFeed(currentUrl).firstOrNull()?.let {
+                podcastsUseCases.getRSSFeedUseCase(currentUrl).firstOrNull()?.let {
                     podcastsUseCases.insertPodcastUseCase(it)
                 }
             }

@@ -1,5 +1,6 @@
-package de.devbeyer.podcast_sponsorskipper.ui.navigation
+package de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation
 
+import de.devbeyer.podcast_sponsorskipper.domain.SettingKey
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
@@ -35,6 +36,11 @@ sealed class NavigationEvent {
 
     data class ChangeCurNavEpisode(
         val episode: Episode,
+    ) : NavigationEvent()
+
+    data class ChangeBooleanSettings(
+        val settingKey: SettingKey,
+        val value: Boolean,
     ) : NavigationEvent()
 
     object Play : NavigationEvent()
