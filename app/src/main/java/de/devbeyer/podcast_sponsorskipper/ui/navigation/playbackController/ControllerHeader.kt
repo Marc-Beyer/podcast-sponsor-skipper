@@ -3,7 +3,6 @@ package de.devbeyer.podcast_sponsorskipper.ui.navigation.playbackController
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
+import de.devbeyer.podcast_sponsorskipper.ui.common.useMarquee
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -36,6 +37,7 @@ fun ControllerHeader(
     context: Context,
     selectedEpisode: Episode,
     selectedPodcast: PodcastWithRelations,
+    state: NavigationState,
     onEvent: (NavigationEvent) -> Unit
 ) {
     Row(
@@ -79,7 +81,7 @@ fun ControllerHeader(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.basicMarquee()
+                modifier = Modifier.useMarquee(state.settings.enableMarqueeInPlayer),
             )
             Text(
                 text = selectedPodcast.podcast.title,

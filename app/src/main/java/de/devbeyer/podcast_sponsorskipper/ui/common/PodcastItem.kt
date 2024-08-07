@@ -3,7 +3,6 @@ package de.devbeyer.podcast_sponsorskipper.ui.common
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,7 +32,11 @@ import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PodcastItem(podcastWithRelations: PodcastWithRelations, onClick: () -> Unit) {
+fun PodcastItem(
+    podcastWithRelations: PodcastWithRelations,
+    enableMarquee: Boolean,
+    onClick: () -> Unit
+) {
     val context = LocalContext.current
     val podcast = podcastWithRelations.podcast
 
@@ -73,9 +76,9 @@ fun PodcastItem(podcastWithRelations: PodcastWithRelations, onClick: () -> Unit)
                 text = podcast.title,
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.basicMarquee(),
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.useMarquee(enableMarquee),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -166,7 +169,8 @@ fun PodcastItemPreview() {
                     imagePath = null,
                 ),
                 categories = listOf(Category(1, "Test")),
-            )
+            ),
+            enableMarquee = false,
         ) {
 
         }
@@ -199,7 +203,8 @@ fun PodcastItemPreviewDark() {
                     imagePath = null,
                 ),
                 categories = listOf(Category(1, "Test")),
-            )
+            ),
+            enableMarquee = false,
         ) {
 
         }

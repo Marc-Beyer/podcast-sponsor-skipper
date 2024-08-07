@@ -10,22 +10,29 @@ class CompleteEpisodeUseCase(
     private val episodeDao: EpisodeDao,
     private val fileUseCases: FileUseCases,
 ) {
-    suspend operator fun invoke(episode: Episode, podcast: Podcast) {
+    suspend operator fun invoke(
+        episode: Episode,
+        podcast: Podcast,
+        autoDeleteCompletedEpisodes: Boolean,
+    ) {
         val oldImagePath = episode.imagePath
 
-        episode.episodePath?.let {
-            fileUseCases.deleteFileUseCase(it).firstOrNull()
+        if(autoDeleteCompletedEpisodes){
+            episode.episodePath?.let {
+                fileUseCases.deleteFileUseCase(it).firstOrNull()
+            }
         }
+
         episodeDao.update(
             episode.copy(
-                episodePath = null,
+                episodePath = if(autoDeleteCompletedEpisodes) null else episode.episodePath,
                 imagePath = podcast.imagePath,
                 isCompleted = true
             )
         )
         oldImagePath?.let {
             val episodesWithThisImage = episodeDao.getEpisodesByImagePath(it).firstOrNull()
-            if(episodesWithThisImage.isNullOrEmpty()){
+            if (episodesWithThisImage.isNullOrEmpty()) {
                 fileUseCases.deleteFileUseCase(it).firstOrNull()
             }
         }

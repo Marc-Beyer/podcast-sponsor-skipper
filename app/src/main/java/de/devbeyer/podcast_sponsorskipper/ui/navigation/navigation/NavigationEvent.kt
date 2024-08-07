@@ -43,6 +43,11 @@ sealed class NavigationEvent {
         val value: Boolean,
     ) : NavigationEvent()
 
+    data class ChangeIntSettings(
+        val settingKey: SettingKey,
+        val value: Int,
+    ) : NavigationEvent()
+
     object Play : NavigationEvent()
     object Stop : NavigationEvent()
     object SkipForward : NavigationEvent()

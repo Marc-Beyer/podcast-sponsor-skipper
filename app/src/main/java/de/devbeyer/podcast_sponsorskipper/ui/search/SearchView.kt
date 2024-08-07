@@ -20,12 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchView(
     state: SearchState,
     onEvent: (SearchEvent) -> Unit,
+    navigationState: NavigationState,
     isAddRSSFeedDialogOpen: Boolean,
     closeAddRSSFeedDialog: () -> Unit,
     navigateToInfo: (PodcastWithRelations) -> Unit,
@@ -69,6 +71,7 @@ fun SearchView(
             PodcastList(
                 modifier = Modifier.padding(0.dp),
                 podcastsWithRelations = state.podcastsWithRelations.collectAsLazyPagingItems(),
+                enableMarquee = navigationState.settings.enableMarquee,
                 onClick = {
                     navigateToInfo(it)
                 }

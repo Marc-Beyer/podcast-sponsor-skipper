@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
@@ -62,6 +63,18 @@ class LocalDataManagerImpl(
     override fun readBooleanSetting(settingKey: SettingKey): Flow<Boolean?> {
         return context.dataStore.data.map {
             it[booleanPreferencesKey(settingKey.name)]
+        }
+    }
+
+    override suspend fun saveIntSetting(setting: Pair<SettingKey, Int>) {
+        context.dataStore.edit {
+            it[intPreferencesKey(setting.first.name)] = setting.second
+        }
+    }
+
+    override fun readIntSetting(settingKey: SettingKey): Flow<Int?> {
+        return context.dataStore.data.map {
+            it[intPreferencesKey(settingKey.name)]
         }
     }
 }

@@ -58,7 +58,7 @@ fun FeedView(
             }
         }
     } else {
-        if(navigationState.settings.feedGridLayout){
+        if (navigationState.settings.feedGridLayout) {
 
             RefreshColumn<Triple<PodcastWithRelations?, PodcastWithRelations?, PodcastWithRelations?>>(
                 items = state.podcastsWithRelations.toTripleList(),
@@ -68,14 +68,17 @@ fun FeedView(
             ) { triple ->
                 GridPodcastItem(triple = triple, navigateToEpisodes = navigateToEpisodes)
             }
-        }else{
+        } else {
             RefreshColumn<PodcastWithRelations>(
                 items = state.podcastsWithRelations,
                 isRefreshing = navigationState.activeUpdateUrls.isNotEmpty(),
                 onRefresh = { onNavigationEvent(NavigationEvent.UpdatePodcasts) },
                 modifier = modifier,
             ) {
-                PodcastItem(podcastWithRelations = it) {
+                PodcastItem(
+                    podcastWithRelations = it,
+                    enableMarquee = navigationState.settings.enableMarquee
+                ) {
                     navigateToEpisodes(it)
                 }
             }

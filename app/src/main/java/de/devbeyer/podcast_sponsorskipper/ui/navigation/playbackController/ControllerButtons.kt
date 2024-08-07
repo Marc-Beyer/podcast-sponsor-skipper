@@ -6,13 +6,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Square
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,10 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.devbeyer.podcast_sponsorskipper.R
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
+import de.devbeyer.podcast_sponsorskipper.util.Constants
 
 @Composable
 fun ControllerButtons(
@@ -37,7 +39,20 @@ fun ControllerButtons(
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
         IconButton(onClick = { onEvent(NavigationEvent.SkipBack) }) {
-            Icon(imageVector = Icons.Filled.SkipPrevious, contentDescription = null)
+            Icon(
+                painter = painterResource(id = R.drawable.rewind_media),
+                contentDescription = "rewind",
+                modifier = Modifier.size(Constants.Dimensions.EXTRA_LARGE)
+            )
+            Text(
+                text = if(state.settings.rewindTime in 1..99){
+                    state.settings.rewindTime.toString()
+                } else{
+                    ""
+                },
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(top = Constants.Dimensions.EXTRA_SMALL)
+            )
         }
         if (state.isPlaying) {
             IconButton(
@@ -66,8 +81,24 @@ fun ControllerButtons(
                 )
             }
         }
-        IconButton(onClick = { onEvent(NavigationEvent.SkipForward) }) {
-            Icon(imageVector = Icons.Filled.SkipNext, contentDescription = null)
+        IconButton(
+            modifier = Modifier.padding(Constants.Dimensions.MEDIUM),
+            onClick = { onEvent(NavigationEvent.SkipForward) },
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.forward_media),
+                contentDescription = "rewind",
+                modifier = Modifier.size(Constants.Dimensions.EXTRA_LARGE)
+            )
+            Text(
+                text = if(state.settings.forwardTime in 1..99){
+                    state.settings.forwardTime.toString()
+                } else{
+                    ""
+                },
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(top = Constants.Dimensions.EXTRA_SMALL)
+            )
         }
         if (state.sponsorSectionStart == null || state.sponsorSectionEnd != null) {
             IconButton(

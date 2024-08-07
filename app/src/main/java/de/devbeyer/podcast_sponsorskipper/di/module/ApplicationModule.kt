@@ -50,7 +50,8 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCa
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.RateSponsorSectionUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.SubmitSponsorSectionUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.GetSettingsUseCase
-import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SetSettingUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SetBooleanSettingUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SetIntSettingUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SettingsUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.GetUserUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.RegisterUseCase
@@ -232,8 +233,15 @@ object ApplicationModule {
         localDataManager: LocalDataManager,
     ): SettingsUseCases {
         return SettingsUseCases(
-            GetSettingsUseCase(localDataManager = localDataManager),
-            SetSettingUseCase(localDataManager = localDataManager),
+            getSettingsUseCase = GetSettingsUseCase(
+                localDataManager = localDataManager
+            ),
+            setBooleanSettingUseCase = SetBooleanSettingUseCase(
+                localDataManager = localDataManager
+            ),
+            setIntSettingUseCase = SetIntSettingUseCase(
+                localDataManager = localDataManager
+            ),
         )
     }
 

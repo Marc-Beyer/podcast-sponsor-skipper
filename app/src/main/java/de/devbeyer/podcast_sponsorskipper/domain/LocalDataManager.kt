@@ -13,9 +13,17 @@ interface LocalDataManager {
 
     suspend fun saveBooleanSetting(setting: Pair<SettingKey, Boolean>)
     fun readBooleanSetting(settingKey: SettingKey): Flow<Boolean?>
+    suspend fun saveIntSetting(setting: Pair<SettingKey, Int>)
+    fun readIntSetting(settingKey: SettingKey): Flow<Int?>
 }
 
 enum class SettingKey{
     DOWNLOAD_IMAGES,
     FEED_GRID_LAYOUT,
+    SET_NOTIFICATION_IMAGE,
+    FORWARD_TIME,
+    REWIND_TIME,
+    AUTO_DELETE_COMPLETED_EPISODES,
+    ENABLE_MARQUEE,
+    ENABLE_MARQUEE_IN_PLAYER,
 }

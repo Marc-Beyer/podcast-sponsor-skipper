@@ -55,6 +55,7 @@ fun PlaybackController(
                 context,
                 state.selectedEpisode,
                 state.selectedPodcast,
+                state,
                 onEvent,
             )
 

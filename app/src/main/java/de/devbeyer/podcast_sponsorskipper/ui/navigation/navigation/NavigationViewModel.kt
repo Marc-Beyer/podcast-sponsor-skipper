@@ -74,7 +74,17 @@ class NavigationViewModel @Inject constructor(
         when (event) {
             is NavigationEvent.ChangeBooleanSettings -> {
                 viewModelScope.launch {
-                    settingsUseCases.setSettingUseCase(
+                    settingsUseCases.setBooleanSettingUseCase(
+                        settingKey = event.settingKey,
+                        value = event.value,
+                    )
+                    getSettings()
+                }
+            }
+
+            is NavigationEvent.ChangeIntSettings -> {
+                viewModelScope.launch {
+                    settingsUseCases.setIntSettingUseCase(
                         settingKey = event.settingKey,
                         value = event.value,
                     )
@@ -129,11 +139,25 @@ class NavigationViewModel @Inject constructor(
             }
 
             is NavigationEvent.SkipBack -> {
-                state.value.mediaController?.seekBack()
+                val rewindTime = state.value.settings.rewindTime
+                if (rewindTime > 0) {
+                    state.value.mediaController?.let {
+                        it.seekTo(it.currentPosition - rewindTime * 1000)
+                    }
+                } else {
+                    state.value.mediaController?.seekBack()
+                }
             }
 
             is NavigationEvent.SkipForward -> {
-                state.value.mediaController?.seekForward()
+                val forwardTime = state.value.settings.forwardTime
+                if (forwardTime > 0) {
+                    state.value.mediaController?.let {
+                        it.seekTo(it.currentPosition + forwardTime * 1000)
+                    }
+                } else {
+                    state.value.mediaController?.seekForward()
+                }
             }
 
             is NavigationEvent.Play -> {
@@ -316,9 +340,13 @@ class NavigationViewModel @Inject constructor(
                         .setArtist(podcast.podcast.title)
                         .setTitle(episode.title)
                         .setArtworkUri(
-                            Uri.parse(
-                                episode.imagePath ?: episode.imageUrl
-                            )
+                            if (state.value.settings.setNotificationImage) {
+                                Uri.parse(
+                                    episode.imagePath ?: episode.imageUrl
+                                )
+                            } else {
+                                Uri.EMPTY
+                            }
                         )
                         .setExtras(Bundle().apply {
                             putString("episodeUrl", episode.episodeUrl)
@@ -449,7 +477,8 @@ class NavigationViewModel @Inject constructor(
                 state.value.selectedPodcast?.let { podcastWithRelations ->
                     episodeUseCases.completeEpisodeUseCase(
                         episode = episode,
-                        podcast = podcastWithRelations.podcast
+                        podcast = podcastWithRelations.podcast,
+                        autoDeleteCompletedEpisodes = state.value.settings.autoDeleteCompletedEpisodes,
                     )
                 }
             }

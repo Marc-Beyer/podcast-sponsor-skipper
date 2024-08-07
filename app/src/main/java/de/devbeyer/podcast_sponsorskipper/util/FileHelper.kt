@@ -29,3 +29,7 @@ fun formatFileSize(sizeInBytes: Long): String {
         else -> "$sizeInBytes B"
     }
 }
+
+fun removePTags(input: String): String {
+    return input.replace(Regex("</?p>"), "")
+}

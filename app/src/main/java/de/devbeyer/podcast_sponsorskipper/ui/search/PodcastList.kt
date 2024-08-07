@@ -23,6 +23,7 @@ import de.devbeyer.podcast_sponsorskipper.util.Constants
 @Composable
 fun PodcastList(
     podcastsWithRelations: LazyPagingItems<PodcastWithRelations>,
+    enableMarquee: Boolean,
     onClick: (PodcastWithRelations) -> Unit,
     modifier: Modifier,
 ) {
@@ -45,7 +46,10 @@ fun PodcastList(
 
                 items(count = podcastsWithRelations.itemCount) {
                     podcastsWithRelations[it]?.let { podcastWithRelations ->
-                        PodcastItem(podcastWithRelations = podcastWithRelations) {
+                        PodcastItem(
+                            podcastWithRelations = podcastWithRelations,
+                            enableMarquee = enableMarquee,
+                        ) {
                             onClick(podcastWithRelations)
                         }
                     }

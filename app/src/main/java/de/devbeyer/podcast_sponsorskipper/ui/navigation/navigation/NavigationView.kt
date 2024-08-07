@@ -1,7 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.common.useMarquee
 import de.devbeyer.podcast_sponsorskipper.ui.episode.EpisodeView
 import de.devbeyer.podcast_sponsorskipper.ui.episode.EpisodeViewModel
 import de.devbeyer.podcast_sponsorskipper.ui.episodes.EpisodesView
@@ -100,7 +100,7 @@ fun NavigationView(
                         },
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.basicMarquee(),
+                        modifier = Modifier.useMarquee(state.settings.enableMarquee),
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -195,6 +195,7 @@ fun NavigationView(
                 SearchView(
                     state = viewModel.state.value,
                     onEvent = viewModel::onEvent,
+                    navigationState = state,
                     isAddRSSFeedDialogOpen = isAddRSSFeedDialogOpen,
                     closeAddRSSFeedDialog = { isAddRSSFeedDialogOpen = false },
                     navigateToInfo = { podcastWithRelations ->

@@ -19,6 +19,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.util.getCurrentISO8601Time
+import de.devbeyer.podcast_sponsorskipper.util.removePTags
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.w3c.dom.Document
@@ -181,7 +182,7 @@ class BackendRepositoryImpl(
             val node = childNodes?.item(i)
             when (node?.nodeName) {
                 "title" -> title = node.textContent
-                "description" -> description = node.textContent
+                "description" -> description = removePTags(node.textContent)
                 "link" -> link = node.textContent
                 "copyright" -> copyright = node.textContent
                 "language" -> language = node.textContent
@@ -264,7 +265,7 @@ class BackendRepositoryImpl(
                 "title" -> title = node.textContent
                 "link" -> link = node.textContent
                 "guid" -> guid = node.textContent
-                "description" -> description = node.textContent
+                "description" -> description = removePTags(node.textContent)
                 "itunes:explicit" -> explicit = node.textContent != "false"
                 "itunes:block" -> block = node.textContent == "yes"
                 "itunes:duration" -> duration = node.textContent

@@ -3,7 +3,6 @@ package de.devbeyer.podcast_sponsorskipper.ui.episodes
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +43,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
 import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
+import de.devbeyer.podcast_sponsorskipper.ui.common.useMarquee
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
@@ -172,7 +172,7 @@ fun EpisodeItem(
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.basicMarquee(),
+                modifier = Modifier.useMarquee(navigationState.settings.enableMarquee),
             )
 
             Spacer(modifier = Modifier.height(8.dp))

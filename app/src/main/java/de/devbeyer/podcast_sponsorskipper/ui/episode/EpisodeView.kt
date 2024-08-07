@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -88,17 +89,26 @@ fun EpisodeView(
                 Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
 
 
-                if(episode.episodePath != null){
+                if (episode.episodePath != null) {
                     Text(
                         text = "Sponsor Sections:",
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
-                    if(state.sponsorSections.isEmpty()){
-                        Text(text = "None yet")
-                    }else{
-                        for (sponsorSection in state.sponsorSections){
-                            Text(text = formatMillisecondsToTime(sponsorSection.startPosition) + " - " + formatMillisecondsToTime(sponsorSection.endPosition))
+                    if (state.sponsorSections.isEmpty()) {
+                        Text(
+                            text = "None yet",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    } else {
+                        for (sponsorSection in state.sponsorSections) {
+                            Text(
+                                text = formatMillisecondsToTime(sponsorSection.startPosition) + " - " + formatMillisecondsToTime(
+                                    sponsorSection.endPosition
+                                ),
+                                modifier = Modifier.fillMaxWidth(),
+                            )
                         }
                     }
                 }
@@ -113,8 +123,8 @@ fun PlayDownloadButton(
     state: EpisodeState,
     isDownloading: Boolean,
     onEvent: (EpisodeEvent) -> Unit,
-    onNavigationEvent:(NavigationEvent) -> Unit,
-){
+    onNavigationEvent: (NavigationEvent) -> Unit,
+) {
     val episode = state.episode ?: return
     val podcastWithRelations = state.podcastWithRelations ?: return
     val episodePath = episode.episodePath
