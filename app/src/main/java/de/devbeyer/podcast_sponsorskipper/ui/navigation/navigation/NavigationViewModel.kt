@@ -92,6 +92,10 @@ class NavigationViewModel @Inject constructor(
                 }
             }
 
+            is NavigationEvent.UpdateSettings -> {
+                getSettings()
+            }
+
             is NavigationEvent.ChangeCurNavEpisode -> {
                 _state.value = state.value.copy(
                     currentNavEpisode = event.episode,

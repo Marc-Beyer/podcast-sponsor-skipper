@@ -59,5 +59,6 @@ sealed class NavigationEvent {
     object SubmitSegment : NavigationEvent()
     object DiscardSegment : NavigationEvent()
     object UpdatePodcasts : NavigationEvent()
+    object UpdateSettings : NavigationEvent()
 
 }

@@ -1,9 +1,11 @@
 package de.devbeyer.podcast_sponsorskipper.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -183,6 +185,23 @@ fun SettingsView(
                     onEvent(SettingsEvent.ChangeRewindTimeInputValue(it))
                 }
             )
+        }
+
+
+        item {
+            OutlinedButton(
+                onClick = { onEvent(SettingsEvent.ResetSettings{
+                    onNavigationEvent(NavigationEvent.UpdateSettings)
+                }) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Constants.Dimensions.MEDIUM),
+            ) {
+                Text(
+                    text = "Reset to Default",
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
         }
     }
 }
