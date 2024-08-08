@@ -147,7 +147,6 @@ fun NavigationActions(
                     .padding(Constants.Dimensions.SMALL_MEDIUM)
                     .clickable {
                         onEvent(NavigationEvent.Unsubscribe(currentPodcast))
-                        navigateUp()
                     }
             )
         }

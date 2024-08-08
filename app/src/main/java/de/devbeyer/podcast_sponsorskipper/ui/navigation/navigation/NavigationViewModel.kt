@@ -92,6 +92,12 @@ class NavigationViewModel @Inject constructor(
                 }
             }
 
+            is NavigationEvent.SetNavigateUp -> {
+                _state.value = state.value.copy(
+                    navigateUp = event.navigateUp,
+                )
+            }
+
             is NavigationEvent.UpdateSettings -> {
                 getSettings()
             }
@@ -177,10 +183,20 @@ class NavigationViewModel @Inject constructor(
             }
 
             is NavigationEvent.Unsubscribe -> {
+                _state.value = state.value.copy(
+                    selectedPodcastForUnsubscribe = event.podcastWithRelations?.podcast,
+                )
+            }
+
+            is NavigationEvent.ConfirmUnsubscribe -> {
                 viewModelScope.launch {
-                    event.podcastWithRelations?.let {
-                        podcastsUseCases.deleteLocalPodcastUseCase(it.podcast)
+                    state.value.selectedPodcastForUnsubscribe?.let {
+                        podcastsUseCases.deleteLocalPodcastUseCase(it)
                     }
+                    _state.value = state.value.copy(
+                        selectedPodcastForUnsubscribe = null,
+                    )
+                    state.value.navigateUp()
                 }
             }
 

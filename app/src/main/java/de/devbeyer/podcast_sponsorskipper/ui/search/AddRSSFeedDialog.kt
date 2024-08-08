@@ -33,8 +33,8 @@ fun AddRSSFeedDialog(
                     closeAddRSSFeedDialog()
                 }
             },
-            acceptButtonText = "add",
-            dismissButtonText = "cancel",
+            acceptButtonText = "Add",
+            dismissButtonText = "Cancel",
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically

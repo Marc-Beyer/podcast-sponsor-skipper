@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.ui.common.dialog.ConfirmUnsubscribeDialog
 import de.devbeyer.podcast_sponsorskipper.ui.common.useMarquee
 import de.devbeyer.podcast_sponsorskipper.ui.episode.EpisodeView
 import de.devbeyer.podcast_sponsorskipper.ui.episode.EpisodeViewModel
@@ -59,16 +59,8 @@ fun NavigationView(
     onEvent: (NavigationEvent) -> Unit,
 ) {
     val navController = rememberNavController()
+    onEvent(NavigationEvent.SetNavigateUp(navigateUp = { navController.navigateUp() }))
     val backStackState = navController.currentBackStackEntryAsState().value
-    var selectedItem by rememberSaveable {
-        mutableStateOf(0)
-    }
-    selectedItem = when (backStackState?.destination?.route) {
-        NavRoute.Feed.path -> 0
-        NavRoute.Search.path -> 1
-        NavRoute.Info.path -> 2
-        else -> 0
-    }
 
     val isBackArrowVisible = remember(key1 = backStackState) {
         backStackState?.destination?.route != NavRoute.Feed.path
@@ -231,6 +223,11 @@ fun NavigationView(
                 )
             }
             composable(route = NavRoute.Episodes.path) {
+                ConfirmUnsubscribeDialog(
+                    state = state,
+                    onEvent = onEvent,
+                )
+
                 val viewModel: EpisodesViewModel = hiltViewModel()
                 navController.previousBackStackEntry?.savedStateHandle?.get<PodcastWithRelations?>(
                     "podcastWithRelations"

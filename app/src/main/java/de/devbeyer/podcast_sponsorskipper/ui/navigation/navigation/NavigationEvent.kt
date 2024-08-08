@@ -48,6 +48,10 @@ sealed class NavigationEvent {
         val value: Int,
     ) : NavigationEvent()
 
+    data class SetNavigateUp(
+        val navigateUp: () -> Unit,
+    ) : NavigationEvent()
+
     object Play : NavigationEvent()
     object Stop : NavigationEvent()
     object SkipForward : NavigationEvent()
@@ -60,5 +64,6 @@ sealed class NavigationEvent {
     object DiscardSegment : NavigationEvent()
     object UpdatePodcasts : NavigationEvent()
     object UpdateSettings : NavigationEvent()
+    object ConfirmUnsubscribe : NavigationEvent()
 
 }
