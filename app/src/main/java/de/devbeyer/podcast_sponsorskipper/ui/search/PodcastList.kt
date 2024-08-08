@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -25,19 +27,48 @@ fun PodcastList(
     podcastsWithRelations: LazyPagingItems<PodcastWithRelations>,
     enableMarquee: Boolean,
     onClick: (PodcastWithRelations) -> Unit,
+    onEvent: (SearchEvent) -> Unit,
     modifier: Modifier,
 ) {
+    val context = LocalContext.current
     val hasNoError = handelPagingResults(podcastsWithRelations)
     if (hasNoError) {
         if (podcastsWithRelations.itemCount == 0) {
             Text(
-                text = "No Podcasts found!",
+                text = "No Results Found",
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
             )
+            Text(
+                text = "It looks like we couldn't find any podcasts matching your search.\n" +
+                        "\n" +
+                        "If you have an RSS feed for the podcast you'd like to add, you can easily add it to our app!" +
+                        "\n\n" +
+                        "How to Add a Podcast by RSS Feed:\n" +
+                        "\n" +
+                        "1. Copy the RSS feed URL of the podcast.\n" +
+                        "2. Press the 'Add RSS Feed' button below.\n" +
+                        "3. Paste the RSS feed URL into the provided field.\n" +
+                        "4. Click 'add' to start listening!",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+            OutlinedButton(
+                onClick = { onEvent(SearchEvent.SearchOnline) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Constants.Dimensions.MEDIUM),
+            ) {
+                Text(
+                    text = "Search Online",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         } else {
             LazyColumn(
                 modifier = modifier,

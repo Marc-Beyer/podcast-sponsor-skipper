@@ -6,4 +6,5 @@ sealed class SearchEvent(){
 
     object SearchPodcast: SearchEvent()
     object AddRSSFeed: SearchEvent()
+    object SearchOnline: SearchEvent()
 }

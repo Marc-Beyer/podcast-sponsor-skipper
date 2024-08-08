@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.ui.settings
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -43,7 +42,6 @@ class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.ResetSettings -> {
-                Log.i("AAA", "RESET SETTINGS TO DEFAULT")
                 val default = Settings()
                 viewModelScope.launch {
                     settingsUseCases.setBooleanSettingUseCase(

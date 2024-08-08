@@ -74,7 +74,8 @@ fun SearchView(
                 enableMarquee = navigationState.settings.enableMarquee,
                 onClick = {
                     navigateToInfo(it)
-                }
+                },
+                onEvent = onEvent,
             )
         }
     }
