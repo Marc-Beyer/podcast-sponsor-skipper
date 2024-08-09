@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.sp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.PodcastItem
@@ -29,12 +31,15 @@ import de.devbeyer.podcast_sponsorskipper.util.toTripleList
 @Composable
 fun FeedView(
     state: FeedState,
+    onEvent: (FeedEvent) -> Unit,
     navigationState: NavigationState,
     onNavigationEvent: (NavigationEvent) -> Unit,
     navigateToEpisodes: (PodcastWithRelations) -> Unit,
     navigateToSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val haptics = LocalHapticFeedback.current
+
     if (state.podcastsWithRelations.isEmpty()) {
         Column(
             modifier = Modifier
@@ -66,7 +71,12 @@ fun FeedView(
                 onRefresh = { onNavigationEvent(NavigationEvent.UpdatePodcasts) },
                 modifier = modifier,
             ) { triple ->
-                GridPodcastItem(triple = triple, navigateToEpisodes = navigateToEpisodes)
+                GridPodcastRow(
+                    triple = triple,
+                    navigateToEpisodes = navigateToEpisodes,
+                    state = state,
+                    onEvent = onEvent,
+                )
             }
         } else {
             RefreshColumn<PodcastWithRelations>(
@@ -75,11 +85,29 @@ fun FeedView(
                 onRefresh = { onNavigationEvent(NavigationEvent.UpdatePodcasts) },
                 modifier = modifier,
             ) {
-                PodcastItem(
-                    podcastWithRelations = it,
-                    enableMarquee = navigationState.settings.enableMarquee
-                ) {
-                    navigateToEpisodes(it)
+                Column {
+                    DropdownWrapper(
+                        podcastWithRelations = it,
+                        state = state,
+                        onEvent = onEvent,
+                        offset = DpOffset.Zero,
+                    ) {
+                        PodcastItem(
+                            podcastWithRelations = it,
+                            enableMarquee = navigationState.settings.enableMarquee,
+                            onClick = { navigateToEpisodes(it) },
+                            onLongClick = {
+                                haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+
+                                onEvent(
+                                    FeedEvent.OpenMenu(
+                                        selectedPodcast = it,
+                                        menuOffset = DpOffset.Zero,
+                                    )
+                                )
+                            },
+                        )
+                    }
                 }
             }
         }

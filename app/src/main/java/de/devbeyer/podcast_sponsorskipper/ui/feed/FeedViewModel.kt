@@ -21,6 +21,25 @@ class FeedViewModel @Inject constructor(
         getPodcasts()
     }
 
+    fun onEvent(event: FeedEvent) {
+        when (event) {
+            is FeedEvent.DismissMenu -> {
+                _state.value = state.value.copy(
+                    isMenuExpanded = false,
+                )
+            }
+
+            is FeedEvent.OpenMenu -> {
+                _state.value = state.value.copy(
+                    isMenuExpanded = true,
+                    menuOffset = event.menuOffset,
+                    selectedPodcast = event.selectedPodcast,
+                )
+            }
+        }
+
+    }
+
     private fun getPodcasts() {
         podcastsUseCases.getLocalPodcastsUseCase().onEach {
             _state.value = state.value.copy(podcastsWithRelations = it)

@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import de.devbeyer.podcast_sponsorskipper.data.remote.BackendAPI
 import de.devbeyer.podcast_sponsorskipper.data.remote.PodcastPagingSource
 import de.devbeyer.podcast_sponsorskipper.data.remote.RSSAPI
+import de.devbeyer.podcast_sponsorskipper.data.remote.dto.PodcastRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.RateSponsorSectionRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SponsorSectionRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SubmitSponsorSectionBody
@@ -56,6 +57,15 @@ class BackendRepositoryImpl(
                 PodcastPagingSource(backendAPI, search)
             }
         ).flow
+    }
+
+    override suspend fun registerPodcast(url: String) {
+        val response = backendAPI.registerPodcast(
+            podcastRequest = PodcastRequest(
+                url = url,
+            )
+        )
+        Log.i("AAA", "Added podcast ${response.title}")
     }
 
     override fun getRSSFeed(rssUrl: String): Flow<PodcastAndEpisodes?> = flow {

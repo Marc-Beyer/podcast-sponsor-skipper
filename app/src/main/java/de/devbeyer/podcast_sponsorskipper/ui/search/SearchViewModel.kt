@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import de.devbeyer.podcast_sponsorskipper.data.worker.UpdateWorker
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import de.devbeyer.podcast_sponsorskipper.util.openLink
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,5 +73,8 @@ class SearchViewModel @Inject constructor(
             .setInputData(workData)
             .build()
         workManager.enqueue(updateWorkRequest)
+        viewModelScope.launch {
+            podcastsUseCases.registerPodcastUseCase(url = state.value.rssFeedUrl)
+        }
     }
 }

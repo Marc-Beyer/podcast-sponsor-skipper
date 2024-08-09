@@ -48,6 +48,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetRemotePodc
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.InsertPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.RateSponsorSectionUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.RegisterPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.SubmitSponsorSectionUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.GetSettingsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SetBooleanSettingUseCase
@@ -180,6 +181,9 @@ object ApplicationModule {
             ),
             getLocalPodcastByIdUseCase = GetLocalPodcastByIdUseCase(
                 podcastDao = podcastDao,
+            ),
+            registerPodcastUseCase = RegisterPodcastUseCase(
+                backendRepository = backendRepository,
             )
         )
     }

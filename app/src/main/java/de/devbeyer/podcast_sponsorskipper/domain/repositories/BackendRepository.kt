@@ -38,4 +38,6 @@ interface BackendRepository {
         username: String,
         token: String
     ): Flow<Long?>
+
+    suspend fun registerPodcast(url: String)
 }

@@ -2,13 +2,13 @@ package de.devbeyer.podcast_sponsorskipper.data.remote.dto
 
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Category
 
-data class PodcastResponse(
-    val podcasts: List<PodcastsResponse>,
+data class PodcastsResponse(
+    val podcasts: List<PodcastResponse>,
     val nrOfPages: Int,
 )
 
 
-data class PodcastsResponse(
+data class PodcastResponse(
     val id: Int,
     val url: String,
     val title: String,

@@ -11,4 +11,5 @@ data class PodcastsUseCases(
     val submitSponsorSectionUseCase: SubmitSponsorSectionUseCase,
     val rateSponsorSectionUseCase: RateSponsorSectionUseCase,
     val getLocalPodcastByIdUseCase: GetLocalPodcastByIdUseCase,
+    val registerPodcastUseCase: RegisterPodcastUseCase,
 )

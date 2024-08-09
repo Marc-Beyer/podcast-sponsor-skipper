@@ -166,6 +166,7 @@ fun NavigationView(
                 val viewModel: FeedViewModel = hiltViewModel()
                 FeedView(
                     state = viewModel.state.value,
+                    onEvent = viewModel::onEvent,
                     navigationState = state,
                     onNavigationEvent = onEvent,
                     navigateToEpisodes = { podcastWithRelations ->

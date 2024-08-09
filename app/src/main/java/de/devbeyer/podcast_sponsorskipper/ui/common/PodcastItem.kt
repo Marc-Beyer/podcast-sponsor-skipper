@@ -35,7 +35,8 @@ import de.devbeyer.podcast_sponsorskipper.util.Constants
 fun PodcastItem(
     podcastWithRelations: PodcastWithRelations,
     enableMarquee: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val podcast = podcastWithRelations.podcast
@@ -43,10 +44,8 @@ fun PodcastItem(
     Row(
         modifier = Modifier
             .combinedClickable(
-                onLongClick = {
-
-                },
-                onClick = onClick
+                onLongClick = onLongClick,
+                onClick = onClick,
             )
             .background(MaterialTheme.colorScheme.inverseOnSurface)
             .padding(Constants.Dimensions.SMALL)
@@ -171,9 +170,8 @@ fun PodcastItemPreview() {
                 categories = listOf(Category(1, "Test")),
             ),
             enableMarquee = false,
-        ) {
-
-        }
+            onClick = {},
+        )
     }
 }
 
@@ -205,9 +203,8 @@ fun PodcastItemPreviewDark() {
                 categories = listOf(Category(1, "Test")),
             ),
             enableMarquee = false,
-        ) {
-
-        }
+            onClick = {},
+        )
     }
 }
 

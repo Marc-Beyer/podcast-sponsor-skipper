@@ -80,9 +80,8 @@ fun PodcastList(
                         PodcastItem(
                             podcastWithRelations = podcastWithRelations,
                             enableMarquee = enableMarquee,
-                        ) {
-                            onClick(podcastWithRelations)
-                        }
+                            onClick = { onClick(podcastWithRelations) },
+                        )
                     }
                 }
             }

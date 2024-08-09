@@ -1,6 +1,8 @@
 package de.devbeyer.podcast_sponsorskipper.data.remote
 
+import de.devbeyer.podcast_sponsorskipper.data.remote.dto.PodcastRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.PodcastResponse
+import de.devbeyer.podcast_sponsorskipper.data.remote.dto.PodcastsResponse
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.RateSponsorSectionRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SponsorSectionRequest
 import de.devbeyer.podcast_sponsorskipper.data.remote.dto.SubmitSponsorSectionBody
@@ -16,12 +18,17 @@ interface BackendAPI {
     @GET("podcasts")
     suspend fun getPodcasts(
         @Query("page")page:Int,
-    ): PodcastResponse
+    ): PodcastsResponse
 
     @GET("podcasts")
     suspend fun searchPodcasts(
         @Query("page")page:Int,
         @Query("search")search:String,
+    ): PodcastsResponse
+
+    @POST("podcast")
+    suspend fun registerPodcast(
+        @Body podcastRequest: PodcastRequest,
     ): PodcastResponse
 
     @POST("submit-sponsor-section")
