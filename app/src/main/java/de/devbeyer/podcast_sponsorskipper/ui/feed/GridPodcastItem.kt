@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.DpOffset
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -23,6 +24,7 @@ fun GridPodcastItem(
     navigateToEpisodes: (PodcastWithRelations) -> Unit,
     state: FeedState,
     onEvent: (FeedEvent) -> Unit,
+    onNavigationEvent: (NavigationEvent) -> Unit,
     offset: DpOffset,
     modifier: Modifier = Modifier,
 ) {
@@ -33,6 +35,7 @@ fun GridPodcastItem(
             podcastWithRelations = podcastWithRelations,
             state = state,
             onEvent = onEvent,
+            onNavigationEvent = onNavigationEvent,
             offset = offset,
         ) {
             Box(

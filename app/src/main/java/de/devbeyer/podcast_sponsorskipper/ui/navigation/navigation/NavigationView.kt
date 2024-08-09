@@ -163,6 +163,11 @@ fun NavigationView(
             modifier = Modifier.padding(innerPadding),
         ) {
             composable(route = NavRoute.Feed.path) {
+                ConfirmUnsubscribeDialog(
+                    state = state,
+                    onEvent = onEvent,
+                )
+
                 val viewModel: FeedViewModel = hiltViewModel()
                 FeedView(
                     state = viewModel.state.value,

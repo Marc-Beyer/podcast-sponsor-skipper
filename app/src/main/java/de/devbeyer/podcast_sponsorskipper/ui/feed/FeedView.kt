@@ -76,6 +76,7 @@ fun FeedView(
                     navigateToEpisodes = navigateToEpisodes,
                     state = state,
                     onEvent = onEvent,
+                    onNavigationEvent = onNavigationEvent,
                 )
             }
         } else {
@@ -90,6 +91,7 @@ fun FeedView(
                         podcastWithRelations = it,
                         state = state,
                         onEvent = onEvent,
+                        onNavigationEvent = onNavigationEvent,
                         offset = DpOffset.Zero,
                     ) {
                         PodcastItem(
