@@ -41,7 +41,7 @@ fun <T> RefreshColumn(
 
         if (pullToRefreshState.isRefreshing) {
             LaunchedEffect(key1 = true) {
-                onRefresh()
+                if(!isRefreshing) onRefresh()
             }
         }
 
