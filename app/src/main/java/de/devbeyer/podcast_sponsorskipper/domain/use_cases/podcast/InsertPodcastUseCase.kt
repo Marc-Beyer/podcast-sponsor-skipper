@@ -66,7 +66,7 @@ class InsertPodcastUseCase(
 
             val foundEpisode = episodeDao.getEpisodeByUrl(episode.episodeUrl).firstOrNull()
             if (foundEpisode == null) {
-                val episodeImagePath = if (downloadImages) {
+                val episodeImagePath = if (downloadImages && episode.imageUrl.isNotBlank()) {
                     imageCache[episode.imageUrl] ?: fileUseCases.downloadFileUseCase.invoke(
                         extension = "jpg",
                         url = episode.imageUrl
