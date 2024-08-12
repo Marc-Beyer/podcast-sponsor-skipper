@@ -5,8 +5,6 @@ import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,16 +28,7 @@ class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<MainViewModel>()
 
     private val notificationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (!isGranted) {
-                Log.i("AAA", "PERMISSION NOT GRANTED")
-                Toast.makeText(
-                    applicationContext,
-                    "Notification permission is required!",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
     @Inject
     lateinit var podcastDao: PodcastDao
