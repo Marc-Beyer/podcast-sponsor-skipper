@@ -14,6 +14,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -146,7 +147,7 @@ class EpisodesViewModel @Inject constructor(
     fun setPodcast(podcastWithRelations: PodcastWithRelations) {
         viewModelScope.launch {
             podcastsUseCases.getEpisodesOfPodcastUseCase(podcastWithRelations.podcast.id)
-                .collect { episodes ->
+                .firstOrNull()?.let { episodes ->
                     _state.value = state.value.copy(
                         podcastWithRelations = podcastWithRelations,
                         episodes = episodes,
