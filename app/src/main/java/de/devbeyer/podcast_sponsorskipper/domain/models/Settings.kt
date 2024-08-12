@@ -7,6 +7,7 @@ data class Settings(
     val enableMarqueeInPlayer: Boolean = true,
 
     val downloadImages: Boolean = true,
+    val coverImageSize: Int = 512,
     val autoDeleteCompletedEpisodes: Boolean = true,
 
     val forwardTime: Int = 15,

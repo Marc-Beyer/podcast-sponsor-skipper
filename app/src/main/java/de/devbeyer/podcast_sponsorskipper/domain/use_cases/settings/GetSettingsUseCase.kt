@@ -25,19 +25,22 @@ class GetSettingsUseCase(
         val enableMarqueeInPlayer =
             localDataManager.readBooleanSetting(SettingKey.ENABLE_MARQUEE_IN_PLAYER).firstOrNull()
 
-        val forwardTime = localDataManager.readIntSetting(SettingKey.FORWARD_TIME).firstOrNull()
+        val coverImageSize = localDataManager.readIntSetting(SettingKey.COVER_IMG_SIZE).firstOrNull()
         val rewindTime = localDataManager.readIntSetting(SettingKey.REWIND_TIME).firstOrNull()
+        val forwardTime = localDataManager.readIntSetting(SettingKey.FORWARD_TIME).firstOrNull()
 
         val defaultSettings = Settings()
 
         emit(
             Settings(
-                downloadImages = downloadImages ?: defaultSettings.downloadImages,
                 feedGridLayout = feedGridLayout ?: defaultSettings.feedGridLayout,
                 setNotificationImage = setNotificationImage ?: defaultSettings.setNotificationImage,
-                autoDeleteCompletedEpisodes = autoDeleteCompletedEpisodes ?: defaultSettings.autoDeleteCompletedEpisodes,
                 enableMarquee = enableMarquee ?: defaultSettings.enableMarquee,
                 enableMarqueeInPlayer = enableMarqueeInPlayer ?: defaultSettings.enableMarqueeInPlayer,
+
+                downloadImages = downloadImages ?: defaultSettings.downloadImages,
+                coverImageSize = coverImageSize ?: defaultSettings.coverImageSize,
+                autoDeleteCompletedEpisodes = autoDeleteCompletedEpisodes ?: defaultSettings.autoDeleteCompletedEpisodes,
 
                 forwardTime = forwardTime ?: defaultSettings.forwardTime,
                 rewindTime = rewindTime ?: defaultSettings.rewindTime,

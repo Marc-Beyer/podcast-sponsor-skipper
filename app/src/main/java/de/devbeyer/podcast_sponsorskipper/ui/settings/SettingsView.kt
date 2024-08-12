@@ -117,6 +117,29 @@ fun SettingsView(
             )
         }
         item {
+            SettingsIntItem(
+                text = "Artwork Size",
+                description = "Set the size of the artwork",
+                value = state.coverImageSizeInputValue,
+                onDone = {
+                    val value = state.coverImageSizeInputValue.toIntOrNull()
+                    if (value != null) {
+                        onNavigationEvent(
+                            NavigationEvent.ChangeIntSettings(
+                                settingKey = SettingKey.COVER_IMG_SIZE,
+                                value = value,
+                            )
+                        )
+                    } else {
+                        onEvent(SettingsEvent.UpdateSettings)
+                    }
+                },
+                onValueChange = {
+                    onEvent(SettingsEvent.ChangeCoverImageSizeInputValue(it))
+                }
+            )
+        }
+        item {
             SettingsBooleanItem(
                 text = "Auto-Delete Completed Episodes",
                 description = "Automatically delete episodes after they have been played to completion",

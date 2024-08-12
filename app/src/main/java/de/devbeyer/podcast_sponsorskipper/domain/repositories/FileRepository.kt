@@ -7,4 +7,10 @@ interface FileRepository {
     fun downloadAudioFile(extension: String, url: String): Flow<String?>
     fun deleteFile(filePath: String): Flow<String?>
 
+    fun downloadImage(
+        extension: String,
+        url: String,
+        folder: String,
+        size: Int = 512,
+    ): Flow<String?>
 }

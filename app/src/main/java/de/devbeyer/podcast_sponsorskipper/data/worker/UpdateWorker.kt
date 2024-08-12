@@ -54,6 +54,7 @@ class UpdateWorker @AssistedInject constructor(
                     podcastsUseCases.insertPodcastUseCase(
                         podcastAndEpisodes = it,
                         downloadImages = settings.downloadImages,
+                        coverImageSize = settings.coverImageSize,
                     )
                 }
             }

@@ -18,7 +18,9 @@ class InsertPodcastUseCase(
     suspend operator fun invoke(
         podcastAndEpisodes: PodcastAndEpisodes,
         downloadImages: Boolean,
+        coverImageSize: Int = 512,
     ) {
+        Log.i("AAA", "coverImageSize $coverImageSize")
         val podcastWithRelations =
             podcastDao.getPodcastFromUrl(podcastAndEpisodes.podcastWithRelations.podcast.url)
                 .firstOrNull()
@@ -26,9 +28,10 @@ class InsertPodcastUseCase(
         var podcastImagePath = ""
         if (podcastWithRelations == null) {
             Log.i("AAA", "Podcast does not exists!")
-            podcastImagePath = fileUseCases.downloadFileUseCase.invoke(
+            podcastImagePath = fileUseCases.downloadImageUseCase.invoke(
                 extension = "jpg",
-                url = podcastAndEpisodes.podcastWithRelations.podcast.imageUrl
+                url = podcastAndEpisodes.podcastWithRelations.podcast.imageUrl,
+                size = coverImageSize,
             ).firstOrNull() ?: ""
             val podcast = podcastAndEpisodes.podcastWithRelations.podcast.copy(
                 id = 0,
@@ -67,9 +70,10 @@ class InsertPodcastUseCase(
             val foundEpisode = episodeDao.getEpisodeByUrl(episode.episodeUrl).firstOrNull()
             if (foundEpisode == null) {
                 val episodeImagePath = if (downloadImages && episode.imageUrl.isNotBlank()) {
-                    imageCache[episode.imageUrl] ?: fileUseCases.downloadFileUseCase.invoke(
+                    imageCache[episode.imageUrl] ?: fileUseCases.downloadImageUseCase.invoke(
                         extension = "jpg",
-                        url = episode.imageUrl
+                        url = episode.imageUrl,
+                        size = coverImageSize,
                     ).firstOrNull().let { downloadedPath ->
                         if (!downloadedPath.isNullOrBlank()) {
                             downloadedPath

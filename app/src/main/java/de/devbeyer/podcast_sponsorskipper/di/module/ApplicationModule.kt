@@ -34,6 +34,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.GetSponsorSec
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.MarkEpisodeCompleteUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DeleteFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DownloadFileUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DownloadImageUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.CompletedGuidedTourUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetCompletedGuidedTourUseCase
@@ -133,6 +134,7 @@ object ApplicationModule {
         return FileUseCases(
             downloadFileUseCase = DownloadFileUseCase(fileRepository),
             deleteFileUseCase = DeleteFileUseCase(fileRepository),
+            downloadImageUseCase = DownloadImageUseCase(fileRepository),
         )
     }
 

@@ -41,6 +41,12 @@ class SettingsViewModel @Inject constructor(
                 )
             }
 
+            is SettingsEvent.ChangeCoverImageSizeInputValue -> {
+                _state.value = state.value.copy(
+                    coverImageSizeInputValue = event.value
+                )
+            }
+
             is SettingsEvent.ResetSettings -> {
                 val default = Settings()
                 viewModelScope.launch {
@@ -66,10 +72,15 @@ class SettingsViewModel @Inject constructor(
                         settingKey = SettingKey.DOWNLOAD_IMAGES,
                         value = default.downloadImages,
                     )
+                    settingsUseCases.setIntSettingUseCase(
+                        settingKey = SettingKey.COVER_IMG_SIZE,
+                        value = default.coverImageSize,
+                    )
                     settingsUseCases.setBooleanSettingUseCase(
                         settingKey = SettingKey.AUTO_DELETE_COMPLETED_EPISODES,
                         value = default.autoDeleteCompletedEpisodes,
                     )
+
 
                     settingsUseCases.setIntSettingUseCase(
                         settingKey = SettingKey.FORWARD_TIME,
@@ -97,6 +108,7 @@ class SettingsViewModel @Inject constructor(
                 _state.value = state.value.copy(
                     forwardTimeInputValue = settings.forwardTime.toString(),
                     rewindTimeInputValue = settings.rewindTime.toString(),
+                    coverImageSizeInputValue = settings.coverImageSize.toString(),
                 )
             }
         }
