@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Podcasts
@@ -19,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,11 +33,9 @@ import coil.request.ImageRequest
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.DropDown
-import de.devbeyer.podcast_sponsorskipper.ui.common.RefreshColumn
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
 import de.devbeyer.podcast_sponsorskipper.util.Constants
-import de.devbeyer.podcast_sponsorskipper.util.isNotOlderThanAWeek
 import de.devbeyer.podcast_sponsorskipper.util.openLink
 
 @Composable
@@ -46,9 +47,12 @@ fun EpisodesView(
     navigateToEpisode: (Episode, PodcastWithRelations) -> Unit,
 ) {
     val context = LocalContext.current
-    val podcast = state.podcastWithRelations?.podcast
-    val categories = state.podcastWithRelations?.categories ?: emptyList()
-    val episodes = state.episodes.filter {
+    val podcast = remember(state.podcastWithRelations?.podcast) { state.podcastWithRelations?.podcast }
+    val categories = remember(state.podcastWithRelations?.categories) { state.podcastWithRelations?.categories ?: emptyList() }
+    val episodes = remember(state.episodes) { state.episodes }
+    //Log.i("AAA", "RECOMPOSE!!!!!!!!!!!!!!!!!!!!!!!")
+        /*
+        .filter {
         when (state.activeFilter) {
             EpisodeFilter.ALL -> true
             EpisodeFilter.DOWNLOADED -> it.episodePath != null
@@ -57,6 +61,7 @@ fun EpisodesView(
             EpisodeFilter.FAVORITE -> it.favorite
         }
     }
+         */
 
     if (podcast != null) {
         Column(
@@ -170,6 +175,12 @@ fun EpisodesView(
             }
 
             if (state.episodes.isNotEmpty()) {
+                LazyColumn {
+                    items(items = episodes, key = { episode -> episode.episodeUrl }){ episode ->
+                        Text(text = episode.title)
+                    }
+                }
+                /*
                 RefreshColumn(
                     items = episodes,
                     isRefreshing = navigationState.activeUpdateUrls.contains(podcast.url),
@@ -177,18 +188,20 @@ fun EpisodesView(
                         onNavigationEvent(NavigationEvent.UpdatePodcast(podcast = podcast))
                     },
                 ) { episode ->
-                    EpisodeItem(
-                        episode = episode,
-                        isDownloading = state.activeDownloadUrls.contains(episode.episodeUrl),
-                        state = state,
-                        podcastWithRelations = state.podcastWithRelations,
-                        navigationState = navigationState,
-                        context = context,
-                        onEvent = onEvent,
-                        onNavigationEvent = onNavigationEvent,
-                        navigateToEpisode = navigateToEpisode,
-                    )
+                    Text(text = episode.title)
+                    //EpisodeItem(
+                    //    episode = episode,
+                    //    isDownloading = state.activeDownloadUrls.contains(episode.episodeUrl),
+                    //    state = state,
+                    //    podcastWithRelations = state.podcastWithRelations,
+                    //    navigationState = navigationState,
+                    //    context = context,
+                    //    onEvent = onEvent,
+                    //    onNavigationEvent = onNavigationEvent,
+                    //    navigateToEpisode = navigateToEpisode,
+                    //)
                 }
+                 */
 
             } else {
                 Text(

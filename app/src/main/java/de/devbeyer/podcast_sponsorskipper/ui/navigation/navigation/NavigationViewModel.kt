@@ -490,22 +490,6 @@ class NavigationViewModel @Inject constructor(
         )
     }
 
-
-    private fun endPodcast() {
-        viewModelScope.launch {
-            state.value.selectedEpisode?.let { episode ->
-                state.value.selectedPodcast?.let { podcastWithRelations ->
-                    episodeUseCases.completeEpisodeUseCase(
-                        episode = episode,
-                        podcast = podcastWithRelations.podcast,
-                        autoDeleteCompletedEpisodes = state.value.settings.autoDeleteCompletedEpisodes,
-                    )
-                }
-            }
-            closePodcastEpisode()
-        }
-    }
-
     private fun stopUpdatingPosition() {
         updatePositionJob?.cancel()
     }
@@ -561,15 +545,10 @@ class NavigationViewModel @Inject constructor(
                         updateCurrentPosition()
                         when (playbackState) {
                             Player.STATE_IDLE -> setIsPlaying(false)
-                            Player.STATE_BUFFERING -> {} // Handle buffering state if needed
+                            Player.STATE_BUFFERING -> {} // TODO Add buffering
                             Player.STATE_READY -> setIsPlaying(mediaController.playWhenReady)
-                            Player.STATE_ENDED -> {
-                                setIsPlaying(false)
-                                endPodcast()
-                            }
-
+                            Player.STATE_ENDED -> closePodcastEpisode()
                             else -> setIsPlaying(false)
-
                         }
                     }
 

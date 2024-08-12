@@ -1,5 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.episodes
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -38,16 +39,22 @@ class EpisodesViewModel @Inject constructor(
             }
 
             is EpisodesEvent.Download -> {
-                val workData = workDataOf(
-                    "url" to event.episode.episodeUrl,
-                    "title" to event.episode.title
-                )
-                val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadEpisodeWorker>()
-                    .setInputData(workData)
-                    .build()
-                workManager.enqueue(
-                    downloadWorkRequest
-                )
+                if (DownloadManager.increment(
+                        url = event.episode.episodeUrl,
+                        title = event.episode.title
+                    )
+                ) {
+                    val workData = workDataOf(
+                        "url" to event.episode.episodeUrl,
+                        "title" to event.episode.title
+                    )
+                    val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadEpisodeWorker>()
+                        .setInputData(workData)
+                        .build()
+                    workManager.enqueue(
+                        downloadWorkRequest
+                    )
+                }
                 updateActiveDownloadUrls(event.episode.episodeUrl)
             }
 
@@ -147,6 +154,8 @@ class EpisodesViewModel @Inject constructor(
         viewModelScope.launch {
             podcastsUseCases.getEpisodesOfPodcastUseCase(podcastWithRelations.podcast.id)
                 .collect { episodes ->
+                    if (episodes != _state.value.episodes)
+                        Log.i("DDD", "collect getEpisodesOfPodcastUseCas")
                     _state.value = state.value.copy(
                         podcastWithRelations = podcastWithRelations,
                         episodes = episodes,

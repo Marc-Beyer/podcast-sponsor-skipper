@@ -9,4 +9,5 @@ data class EpisodeUseCases(
     val deleteEpisodeUseCase: DeleteEpisodeUseCase,
     val favoriteEpisodeUseCase: FavoriteEpisodeUseCase,
     val getEpisodeUseCase: GetEpisodeUseCase,
+    val updateEpisodeUseCase: UpdateEpisodeUseCase,
 )

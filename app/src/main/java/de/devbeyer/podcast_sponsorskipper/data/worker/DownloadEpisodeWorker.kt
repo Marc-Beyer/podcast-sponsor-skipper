@@ -11,12 +11,13 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.util.Constants
+import kotlinx.coroutines.delay
 
 @HiltWorker
 class DownloadEpisodeWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val episodeUseCases: EpisodeUseCases
+    private val episodeUseCases: EpisodeUseCases,
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -29,18 +30,24 @@ class DownloadEpisodeWorker @AssistedInject constructor(
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         return try {
-            val shouldWork = DownloadManager.increment(url = url, title = title)
+            //val shouldWork = DownloadManager.increment(url = url, title = title)
             updateNotification(notificationManager, title)
 
-            while (shouldWork) {
+            while (true) {
                 val currentUrl = DownloadManager.decrement()
                 updateNotification(notificationManager, title)
                 if (currentUrl == null) {
                     break
                 }
-
-                episodeUseCases.downloadEpisodeUseCase(currentUrl)
-                episodeUseCases.downloadSponsorSectionsUseCase(currentUrl, -1)
+                try {
+                    episodeUseCases.downloadEpisodeUseCase(currentUrl)
+                }catch (e: Exception){
+                    Log.i("AAA", "ERROR $e")
+                }
+                Log.i("AAA", "DELAY START")
+                delay(5000)
+                Log.i("AAA", "DELAY END")
+                //episodeUseCases.downloadSponsorSectionsUseCase(currentUrl, -1)
             }
 
             Result.success()

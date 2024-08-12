@@ -100,6 +100,40 @@ class FileRepositoryImpl(
         }
     }
 
+
+    override suspend fun streamFile(
+        url: String,
+        extension: String,
+        folder: String,
+    ): String {
+        val imageDir = File(context.filesDir, folder)
+        if (!imageDir.exists()) {
+            imageDir.mkdir()
+        }
+
+        var filename: String
+        var file: File
+
+        do {
+            filename = "${UUID.randomUUID()}.${extension}"
+            file = File(imageDir, filename)
+        } while (file.exists())
+
+        val responseBody = fileAPI.streamFile(url)
+        withContext(Dispatchers.IO) {
+            FileOutputStream(file).use { outputStream ->
+                responseBody.byteStream().use { inputStream ->
+                    val buffer = ByteArray(4 * 1024)
+                    var bytesRead: Int
+                    while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                        outputStream.write(buffer, 0, bytesRead)
+                    }
+                }
+            }
+        }
+        return file.absolutePath
+    }
+
     override fun downloadFile(
         extension: String,
         url: String,

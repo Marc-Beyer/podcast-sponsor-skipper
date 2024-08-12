@@ -27,7 +27,8 @@ class CompleteEpisodeUseCase(
             episode.copy(
                 episodePath = if(autoDeleteCompletedEpisodes) null else episode.episodePath,
                 imagePath = podcast.imagePath,
-                isCompleted = true
+                isCompleted = true,
+                lastPosition = 0,
             )
         )
         oldImagePath?.let {

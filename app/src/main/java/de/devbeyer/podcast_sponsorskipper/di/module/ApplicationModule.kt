@@ -32,9 +32,11 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.FavoriteEpiso
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.GetEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.GetSponsorSectionsUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.MarkEpisodeCompleteUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.UpdateEpisodeUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DeleteFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DownloadFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.StreamFileUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.CompletedGuidedTourUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.SetCompletedGuidedTourUseCase
@@ -58,9 +60,12 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.GetUserUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.RegisterUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.UserUseCases
 import de.devbeyer.podcast_sponsorskipper.util.Constants
+import okhttp3.ConnectionPool
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -110,14 +115,30 @@ object ApplicationModule {
             .create(RSSAPI::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES))
+            .build()
+    }
 
     @Provides
     @Singleton
-    fun provideFileAPI(): FileAPI {
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://placeholder.com/")
+            .client(okHttpClient)
             .build()
-            .create(FileAPI::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFileAPI(retrofit: Retrofit): FileAPI {
+        return retrofit.create(FileAPI::class.java)
     }
 
     @Provides
@@ -133,6 +154,7 @@ object ApplicationModule {
         return FileUseCases(
             downloadFileUseCase = DownloadFileUseCase(fileRepository),
             deleteFileUseCase = DeleteFileUseCase(fileRepository),
+            streamFileUseCase = StreamFileUseCase(fileRepository),
         )
     }
 
@@ -226,6 +248,9 @@ object ApplicationModule {
                 episodeDao = episodeDao,
             ),
             getEpisodeUseCase = GetEpisodeUseCase(
+                episodeDao = episodeDao,
+            ),
+            updateEpisodeUseCase = UpdateEpisodeUseCase(
                 episodeDao = episodeDao,
             ),
         )

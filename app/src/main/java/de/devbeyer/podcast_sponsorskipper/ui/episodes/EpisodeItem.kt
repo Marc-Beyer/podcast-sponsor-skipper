@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -42,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Episode
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.common.CoverImage
-import de.devbeyer.podcast_sponsorskipper.ui.common.rotationEffect
 import de.devbeyer.podcast_sponsorskipper.ui.common.useMarquee
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
@@ -120,14 +117,14 @@ fun EpisodeItem(
                 context = context,
                 imagePath = imagePath
             )
-            val offset = with(LocalDensity.current) { 32.dp.toPx() }
-            val triangleShape = GenericShape { size, _ ->
-                moveTo(size.width - offset, 0f)
-                lineTo(size.width, 0f)
-                lineTo(size.width, offset)
-                close()
-            }
             if (episode.isCompleted) {
+                val offset = with(LocalDensity.current) { 32.dp.toPx() }
+                val triangleShape = GenericShape { size, _ ->
+                    moveTo(size.width - offset, 0f)
+                    lineTo(size.width, 0f)
+                    lineTo(size.width, offset)
+                    close()
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -144,22 +141,22 @@ fun EpisodeItem(
                     )
                 }
             }
-            if (episodePath == null && isDownloading) {
-                Box(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.secondary, shape = CircleShape),
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Sync,
-                        contentDescription = "Episode",
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .rotationEffect(),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+            //if (episodePath == null && isDownloading) {
+            //    Box(
+            //        modifier = Modifier
+            //            .background(MaterialTheme.colorScheme.secondary, shape = CircleShape),
+            //        contentAlignment = Alignment.TopEnd
+            //    ) {
+            //        Icon(
+            //            imageVector = Icons.Outlined.Sync,
+            //            contentDescription = "Episode",
+            //            modifier = Modifier
+            //                .padding(8.dp)
+            //                .rotationEffect(),
+            //            tint = MaterialTheme.colorScheme.onSurface,
+            //        )
+            //    }
+            //}
         }
         Column(
             modifier = Modifier
