@@ -16,7 +16,7 @@ import de.devbeyer.podcast_sponsorskipper.util.Constants
 class DownloadEpisodeWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val episodeUseCases: EpisodeUseCases
+    private val episodeUseCases: EpisodeUseCases,
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -38,9 +38,12 @@ class DownloadEpisodeWorker @AssistedInject constructor(
                 if (currentUrl == null) {
                     break
                 }
-
-                episodeUseCases.downloadEpisodeUseCase(currentUrl)
-                episodeUseCases.downloadSponsorSectionsUseCase(currentUrl, -1)
+                try {
+                    episodeUseCases.downloadEpisodeUseCase(currentUrl)
+                    episodeUseCases.downloadSponsorSectionsUseCase(currentUrl, -1)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
 
             Result.success()

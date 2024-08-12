@@ -50,12 +50,17 @@ class UpdateWorker @AssistedInject constructor(
                 if (currentUrl == null) {
                     break
                 }
-                podcastsUseCases.getRSSFeedUseCase(currentUrl).firstOrNull()?.let {
-                    podcastsUseCases.insertPodcastUseCase(
-                        podcastAndEpisodes = it,
-                        downloadImages = settings.downloadImages,
-                        coverImageSize = settings.coverImageSize,
-                    )
+
+                try {
+                    podcastsUseCases.getRSSFeedUseCase(currentUrl).firstOrNull()?.let {
+                        podcastsUseCases.insertPodcastUseCase(
+                            podcastAndEpisodes = it,
+                            downloadImages = settings.downloadImages,
+                            coverImageSize = settings.coverImageSize,
+                        )
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
 
