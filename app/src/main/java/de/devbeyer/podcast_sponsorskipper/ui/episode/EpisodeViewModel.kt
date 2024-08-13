@@ -87,7 +87,9 @@ class EpisodeViewModel @Inject constructor(
     private fun observeEpisodeChanges(episodeUrl: String) {
         viewModelScope.launch {
             episodeUseCases.getEpisodeUseCase(episodeUrl).collect { updatedEpisode ->
-                _state.value = state.value.copy(episode = updatedEpisode)
+                if(updatedEpisode?.episodePath != state.value.episode?.episodePath){
+                    _state.value = state.value.copy(episode = updatedEpisode)
+                }
             }
         }
     }
