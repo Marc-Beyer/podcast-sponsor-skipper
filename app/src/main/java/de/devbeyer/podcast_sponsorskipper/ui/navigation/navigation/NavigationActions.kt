@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.navigation.NavBackStackEntry
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavRoute
@@ -48,30 +50,33 @@ fun NavigationActions(
                 contentDescription = "Update",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
-                    .padding(Constants.Dimensions.SMALL_MEDIUM)
+                    .clip(CircleShape)
                     .clickable {
                         onEvent(NavigationEvent.UpdatePodcasts)
                     }
+                    .padding(Constants.Dimensions.SMALL_MEDIUM),
             )
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Add Podcast",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
-                    .padding(Constants.Dimensions.SMALL_MEDIUM)
+                    .clip(CircleShape)
                     .clickable {
                         navigateToSearch()
                     }
+                    .padding(Constants.Dimensions.SMALL_MEDIUM),
             )
             Icon(
                 imageVector = Icons.Filled.MoreVert,
                 contentDescription = "Add Podcast",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
-                    .padding(Constants.Dimensions.SMALL_MEDIUM)
+                    .clip(CircleShape)
                     .clickable {
                         expanded = true
                     }
+                    .padding(Constants.Dimensions.SMALL_MEDIUM)
             )
             DropdownMenu(
                 expanded = expanded,
@@ -132,22 +137,24 @@ fun NavigationActions(
                 contentDescription = "Update",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
-                    .padding(Constants.Dimensions.SMALL_MEDIUM)
+                    .clip(CircleShape)
                     .clickable {
                         currentPodcast?.let {
                             onEvent(NavigationEvent.UpdatePodcast(it.podcast))
                         }
                     }
+                    .padding(Constants.Dimensions.SMALL_MEDIUM),
             )
             Icon(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = "Unsubscribe",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
-                    .padding(Constants.Dimensions.SMALL_MEDIUM)
+                    .clip(CircleShape)
                     .clickable {
                         onEvent(NavigationEvent.Unsubscribe(currentPodcast))
                     }
+                    .padding(Constants.Dimensions.SMALL_MEDIUM),
             )
         }
 
@@ -161,7 +168,7 @@ fun NavigationActions(
                 contentDescription = "Favorite",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
-                    .padding(Constants.Dimensions.SMALL_MEDIUM)
+                    .clip(CircleShape)
                     .clickable {
                         state.currentNavEpisode?.let {
                             onEvent(
@@ -172,6 +179,7 @@ fun NavigationActions(
                             )
                         }
                     }
+                    .padding(Constants.Dimensions.SMALL_MEDIUM),
             )
         }
     }

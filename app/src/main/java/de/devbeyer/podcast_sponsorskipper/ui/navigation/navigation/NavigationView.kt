@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.RssFeed
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -115,10 +117,11 @@ fun NavigationView(
                             contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier
-                                .padding(16.dp)
+                                .clip(CircleShape)
                                 .clickable {
                                     navController.navigateUp()
                                 }
+                                .padding(Constants.Dimensions.MEDIUM),
                         )
                     }
                 }
