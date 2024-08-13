@@ -240,7 +240,9 @@ fun NavigationView(
                     "podcastWithRelations"
                 )
                     ?.let { podcastWithRelations ->
-                        viewModel.setPodcast(podcastWithRelations)
+                        LaunchedEffect(podcastWithRelations) {
+                            viewModel.setPodcast(podcastWithRelations)
+                        }
                         EpisodesView(
                             state = viewModel.state.value,
                             navigationState = state,
