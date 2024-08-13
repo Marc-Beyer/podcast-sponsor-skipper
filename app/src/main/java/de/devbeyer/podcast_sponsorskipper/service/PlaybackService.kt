@@ -73,9 +73,8 @@ class PlaybackService : MediaSessionService() {
                 if (playbackState == Player.STATE_ENDED) {
                     Log.i("AAA", "Player.STATE_ENDED")
                     endPodcast()
-                }else{
+                } else {
                     updateEpisodesLastPosition()
-                    Log.i("AAA","updateEpisodesLastPosition updateEpisodesLastPosition updateEpisodesLastPosition $playbackState")
                 }
             }
         })
@@ -100,7 +99,7 @@ class PlaybackService : MediaSessionService() {
             session: MediaSession,
             controller: MediaSession.ControllerInfo,
             customCommand: SessionCommand,
-            args: Bundle
+            args: Bundle,
         ): ListenableFuture<SessionResult> {
             Log.i("AAA", "customCommand.customAction ${customCommand.customAction}")
             if (customCommand.customAction == Constants.COMMAND_SCHEDULE_EVENT) {
@@ -189,11 +188,15 @@ class PlaybackService : MediaSessionService() {
     }
 
     private fun removeCurrentMediaItem() {
-        player.removeMediaItem(0)
+        try {
+            player.removeMediaItem(0)
 
-        if (player.mediaItemCount == 0) {
-            Log.i("AAA", "No more MediaItems, stopping player.")
-            stopSelf() // Stop the service if needed
+            if (player.mediaItemCount == 0) {
+                Log.i("AAA", "No more MediaItems, stopping player.")
+                stopSelf()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -212,11 +215,12 @@ class PlaybackService : MediaSessionService() {
                                             podcast = podcastWithRelations.podcast,
                                             autoDeleteCompletedEpisodes = settings.autoDeleteCompletedEpisodes,
                                         )
-                                        removeCurrentMediaItem()
                                     }
                             }
                     }
             }
+
+            removeCurrentMediaItem()
         }
     }
 }
