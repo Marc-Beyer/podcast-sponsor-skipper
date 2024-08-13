@@ -1,14 +1,25 @@
 package de.devbeyer.podcast_sponsorskipper.ui.settings
 
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import de.devbeyer.podcast_sponsorskipper.domain.SettingKey
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
@@ -21,6 +32,9 @@ fun SettingsView(
     navigationState: NavigationState,
     onNavigationEvent: (NavigationEvent) -> Unit,
 ) {
+    val context = LocalContext.current
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(Constants.Dimensions.EXTRA_SMALL),
     ) {
@@ -103,7 +117,7 @@ fun SettingsView(
         }
         item {
             SettingsBooleanItem(
-                text = "Download Episode Artwork",
+                text = "Download Episode Images",
                 description = "Automatically download images for episodes",
                 checked = navigationState.settings.downloadImages,
                 onCheckedChange = {
@@ -118,8 +132,8 @@ fun SettingsView(
         }
         item {
             SettingsIntItem(
-                text = "Artwork Size",
-                description = "Set the size of the artwork",
+                text = "Image Size",
+                description = "Adjust the size of podcast and episode images (in pixels)",
                 value = state.coverImageSizeInputValue,
                 onDone = {
                     val value = state.coverImageSizeInputValue.toIntOrNull()
@@ -211,11 +225,79 @@ fun SettingsView(
         }
 
 
+
+        item {
+            Text(
+                text = "User Information",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(Constants.Dimensions.EXTRA_SMALL),
+            )
+        }
+
+
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                    .clickable {
+                        clipboardManager.setText(AnnotatedString((state.username)))
+                        Toast.makeText(context, "Username copied to clipboard", Toast.LENGTH_SHORT).show()
+                    }
+                    .padding(Constants.Dimensions.MEDIUM),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = "Username: ",
+                    modifier = Modifier.weight(1f),
+                )
+                Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+                Text(
+                    text = state.username,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                    .clickable {
+                        clipboardManager.setText(AnnotatedString((state.token)))
+                        Toast.makeText(context, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
+                    }
+                    .padding(Constants.Dimensions.MEDIUM),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text(
+                    text = "Token: ",
+                    modifier = Modifier.weight(1f),
+                )
+                Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+                Text(
+                    text = state.token,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+
+
         item {
             OutlinedButton(
-                onClick = { onEvent(SettingsEvent.ResetSettings{
-                    onNavigationEvent(NavigationEvent.UpdateSettings)
-                }) },
+                onClick = {
+                    onEvent(SettingsEvent.ResetSettings {
+                        onNavigationEvent(NavigationEvent.UpdateSettings)
+                    })
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(Constants.Dimensions.MEDIUM),

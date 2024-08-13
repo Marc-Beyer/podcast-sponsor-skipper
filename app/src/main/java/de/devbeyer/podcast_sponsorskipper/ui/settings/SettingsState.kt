@@ -4,4 +4,7 @@ data class SettingsState(
     val forwardTimeInputValue: String = "",
     val rewindTimeInputValue: String = "",
     val coverImageSizeInputValue: String = "",
+
+    val username: String = "",
+    val token: String = "",
 )

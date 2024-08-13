@@ -10,6 +10,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.SettingKey
 import de.devbeyer.podcast_sponsorskipper.domain.models.Settings
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SettingsUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.UserUseCases
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,12 +20,14 @@ class SettingsViewModel @Inject constructor(
     private val podcastsUseCases: PodcastsUseCases,
     private val workManager: WorkManager,
     private val settingsUseCases: SettingsUseCases,
+    private val userUseCases: UserUseCases,
 ) : ViewModel() {
     private val _state = mutableStateOf(SettingsState())
     val state: State<SettingsState> = _state
 
     init {
         setSettings()
+        setUser()
     }
 
     fun onEvent(event: SettingsEvent) {
@@ -98,6 +101,17 @@ class SettingsViewModel @Inject constructor(
 
             SettingsEvent.UpdateSettings -> {
                 setSettings()
+            }
+        }
+    }
+
+    private fun setUser() {
+        viewModelScope.launch {
+            userUseCases.getUserUseCase().firstOrNull()?.let { userData ->
+                _state.value = state.value.copy(
+                    username = userData.username,
+                    token = userData.token,
+                )
             }
         }
     }
