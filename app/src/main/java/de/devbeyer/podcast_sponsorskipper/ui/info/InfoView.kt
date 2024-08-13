@@ -134,14 +134,6 @@ private fun PodcastInfo(
 
     Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
 
-    Text(
-        text = podcast.description,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurface,
-    )
-
-    Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
-
     if (isSubscribed) {
         OutlinedButton(
             onClick = {
@@ -176,6 +168,15 @@ private fun PodcastInfo(
             }
         }
     }
+
+
+    Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+
+    Text(
+        text = podcast.description,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
 }
 
 @Composable
