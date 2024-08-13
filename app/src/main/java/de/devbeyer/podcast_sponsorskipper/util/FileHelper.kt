@@ -30,6 +30,6 @@ fun formatFileSize(sizeInBytes: Long): String {
     }
 }
 
-fun removePTags(input: String): String {
-    return input.replace(Regex("</?p>"), "")
+fun removeHTMLTags(input: String): String {
+    return input.replace(Regex("<[^>]*>"), "")
 }

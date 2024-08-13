@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.PodcastWithRelations
+import de.devbeyer.podcast_sponsorskipper.util.removeHTMLTags
 
 class PodcastPagingSource(
     private val backendAPI: BackendAPI,
@@ -31,7 +32,7 @@ class PodcastPagingSource(
                             id = it.id,
                             url = it.url,
                             title = it.title,
-                            description = it.description,
+                            description = removeHTMLTags(it.description),
                             link = it.link,
                             language = it.language,
                             imageUrl = it.imageUrl,
