@@ -38,6 +38,11 @@ sealed class NavigationEvent {
         val episode: Episode,
     ) : NavigationEvent()
 
+    data class ChangeCurNavPodcast(
+        val podcastWithRelations: PodcastWithRelations?,
+    ) : NavigationEvent()
+
+
     data class ChangeBooleanSettings(
         val settingKey: SettingKey,
         val value: Boolean,

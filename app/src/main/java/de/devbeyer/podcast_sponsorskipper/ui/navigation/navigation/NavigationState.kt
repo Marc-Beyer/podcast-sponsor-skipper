@@ -19,11 +19,13 @@ data class NavigationState (
     val sponsorSectionEnd: Long? = null,
     val isPreviewing: PreviewState = PreviewState.NONE,
     val sponsorSections: List<SponsorSection> = emptyList(),
-    val currentNavEpisode: Episode? = null,
     val activeUpdateUrls: List<String> = emptyList(),
     val settings: Settings = Settings(),
     val selectedPodcastForUnsubscribe: Podcast? = null,
     val navigateUp: () -> Unit = {},
+
+    val currentNavEpisode: Episode? = null,
+    val currentNavPodcast: PodcastWithRelations? = null,
 )
 
 enum class PreviewState{

@@ -108,6 +108,12 @@ class NavigationViewModel @Inject constructor(
                 )
             }
 
+            is NavigationEvent.ChangeCurNavPodcast -> {
+                _state.value = state.value.copy(
+                    currentNavPodcast = event.podcastWithRelations,
+                )
+            }
+
             is NavigationEvent.UpdatePodcast -> {
                 val workData = workDataOf(
                     "url" to event.podcast.url,

@@ -1,5 +1,6 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -69,14 +70,6 @@ fun NavigationView(
 
     var isAddRSSFeedDialogOpen by remember { mutableStateOf(false) }
 
-    val currentPodcast = navController
-        .previousBackStackEntry
-        ?.savedStateHandle
-        ?.get<PodcastWithRelations?>(
-            "podcastWithRelations"
-        )
-
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,8 +78,12 @@ fun NavigationView(
                         text = when (backStackState?.destination?.route) {
                             NavRoute.Feed.path -> "Podcasts"
                             NavRoute.Search.path -> "Add podcast"
-                            NavRoute.Info.path -> currentPodcast?.podcast?.title ?: "Podcast"
-                            NavRoute.Episodes.path -> currentPodcast?.podcast?.title ?: "Podcast"
+                            NavRoute.Info.path -> state.currentNavPodcast?.podcast?.title
+                                ?: "Podcast"
+
+                            NavRoute.Episodes.path -> state.currentNavPodcast?.podcast?.title
+                                ?: "Podcast"
+
                             NavRoute.Episode.path -> state.currentNavEpisode?.title ?: "Episode"
                             NavRoute.Settings.path -> "Settings"
                             else -> ""
@@ -104,7 +101,7 @@ fun NavigationView(
                     NavigationActions(
                         backStackState = backStackState,
                         onEvent = onEvent,
-                        currentPodcast = currentPodcast,
+                        currentPodcast = state.currentNavPodcast,
                         state = state,
                         navigateToSearch = { navigateToSearch(navController) },
                         navigateToSettings = { navController.navigate(route = NavRoute.Settings.path) },
@@ -178,7 +175,8 @@ fun NavigationView(
                     navigateToEpisodes = { podcastWithRelations ->
                         navigateToEpisodes(
                             navController = navController,
-                            podcastWithRelations = podcastWithRelations
+                            podcastWithRelations = podcastWithRelations,
+                            onEvent = onEvent,
                         )
                     },
                     navigateToSearch = {
@@ -217,7 +215,14 @@ fun NavigationView(
                         InfoView(
                             state = viewModel.state.value,
                             onEvent = viewModel::onEvent,
-                            //navigateUp = { navController.navigateUp() }
+                            gotoEpisodes = { podcastWithRelations ->
+                                navigateToEpisodes(
+                                    navController = navController,
+                                    podcastWithRelations = podcastWithRelations,
+                                    onEvent = onEvent,
+                                    popAll = true,
+                                )
+                            },
                         )
                     }
 
@@ -232,35 +237,31 @@ fun NavigationView(
                 )
             }
             composable(route = NavRoute.Episodes.path) {
-                ConfirmUnsubscribeDialog(
-                    state = state,
-                    onEvent = onEvent,
-                )
+                state.currentNavPodcast?.let { podcastWithRelations ->
+                    ConfirmUnsubscribeDialog(
+                        state = state,
+                        onEvent = onEvent,
+                    )
 
-                val viewModel: EpisodesViewModel = hiltViewModel()
-                navController.previousBackStackEntry?.savedStateHandle?.get<PodcastWithRelations?>(
-                    "podcastWithRelations"
-                )
-                    ?.let { podcastWithRelations ->
-                        LaunchedEffect(podcastWithRelations) {
-                            viewModel.setPodcast(podcastWithRelations)
-                        }
-                        EpisodesView(
-                            state = viewModel.state.value,
-                            navigationState = state,
-                            onEvent = viewModel::onEvent,
-                            onNavigationEvent = onEvent,
-                            navigateToEpisode = { episode, podcastWithRelations ->
-                                navigateToEpisode(
-                                    navController = navController,
-                                    episode = episode,
-                                    podcastWithRelations = podcastWithRelations,
-                                    onEvent = onEvent,
-                                )
-                            },
-                        )
+                    val viewModel: EpisodesViewModel = hiltViewModel()
+                    LaunchedEffect(podcastWithRelations) {
+                        viewModel.setPodcast(podcastWithRelations = podcastWithRelations)
                     }
-
+                    EpisodesView(
+                        state = viewModel.state.value,
+                        navigationState = state,
+                        onEvent = viewModel::onEvent,
+                        onNavigationEvent = onEvent,
+                        navigateToEpisode = { episode, podcastWithRelations ->
+                            navigateToEpisode(
+                                navController = navController,
+                                episode = episode,
+                                podcastWithRelations = podcastWithRelations,
+                                onEvent = onEvent,
+                            )
+                        },
+                    )
+                } ?: run { navController.navigateUp() }
             }
             composable(route = NavRoute.Episode.path) {
                 val viewModel: EpisodeViewModel = hiltViewModel()
@@ -282,7 +283,6 @@ fun NavigationView(
                         onNavigationEvent = onEvent,
                     )
                 }
-
             }
         }
     }
@@ -308,7 +308,7 @@ private fun navigateToEpisode(
 
 private fun navigateToInfo(
     navController: NavController,
-    podcastWithRelations: PodcastWithRelations
+    podcastWithRelations: PodcastWithRelations,
 ) {
     navController.currentBackStackEntry?.savedStateHandle?.set(
         "podcastWithRelations",
@@ -319,13 +319,19 @@ private fun navigateToInfo(
 
 private fun navigateToEpisodes(
     navController: NavController,
-    podcastWithRelations: PodcastWithRelations
+    podcastWithRelations: PodcastWithRelations,
+    onEvent: (NavigationEvent) -> Unit,
+    popAll: Boolean = false,
 ) {
-    navController.currentBackStackEntry?.savedStateHandle?.set(
-        "podcastWithRelations",
-        podcastWithRelations
-    )
-    navController.navigate(route = NavRoute.Episodes.path)
+    Log.i("AAA", NavRoute.Episodes.path)
+    onEvent(NavigationEvent.ChangeCurNavPodcast(podcastWithRelations = podcastWithRelations))
+    navController.navigate(route = NavRoute.Episodes.path) {
+        if (popAll) {
+            popUpTo(route = NavRoute.Feed.path) {
+                inclusive = false
+            }
+        }
+    }
 }
 
 private fun navigateToSearch(

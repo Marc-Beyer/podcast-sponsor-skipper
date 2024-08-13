@@ -45,6 +45,7 @@ import de.devbeyer.podcast_sponsorskipper.util.Constants
 fun InfoView(
     state: InfoState,
     onEvent: (InfoEvent) -> Unit,
+    gotoEpisodes: (PodcastWithRelations) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -58,6 +59,7 @@ fun InfoView(
                     isSubscribed = state.subscribedToPodcast,
                     isLoading = state.isLoading,
                     onEvent = onEvent,
+                    gotoEpisodes = gotoEpisodes,
                 )
             } else {
                 Text(text = "An error occurred", textAlign = TextAlign.Center)
@@ -72,6 +74,7 @@ private fun PodcastInfo(
     isSubscribed: Boolean,
     isLoading: Boolean,
     onEvent: (InfoEvent) -> Unit,
+    gotoEpisodes: (PodcastWithRelations) -> Unit,
 ) {
     val context = LocalContext.current
     val podcast = podcastWithRelations.podcast
@@ -143,6 +146,16 @@ private fun PodcastInfo(
                 .fillMaxWidth(),
         ) {
             Text(text = "Unsubscribe", color = MaterialTheme.colorScheme.onSurface)
+
+        }
+        OutlinedButton(
+            onClick = {
+                gotoEpisodes(podcastWithRelations)
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+        ) {
+            Text(text = "Goto Podcast Episodes", color = MaterialTheme.colorScheme.onSurface)
 
         }
     } else {
@@ -238,8 +251,10 @@ fun PodcastInfoPreview() {
                         ),
                     ),
                     false,
-                    false
-                ) {}
+                    false,
+                    onEvent = {},
+                    gotoEpisodes = {},
+                )
             }
         }
     }
