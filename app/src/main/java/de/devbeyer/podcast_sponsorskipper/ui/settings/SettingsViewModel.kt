@@ -102,6 +102,12 @@ class SettingsViewModel @Inject constructor(
             SettingsEvent.UpdateSettings -> {
                 setSettings()
             }
+
+            SettingsEvent.ToggleShowUserInfo -> {
+                _state.value = state.value.copy(
+                    showUserInfo = !state.value.showUserInfo,
+                )
+            }
         }
     }
 

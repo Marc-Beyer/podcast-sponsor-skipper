@@ -7,4 +7,5 @@ sealed class SettingsEvent {
     data class ResetSettings(val callback: () -> Unit) : SettingsEvent()
 
     object UpdateSettings : SettingsEvent()
+    object ToggleShowUserInfo : SettingsEvent()
 }

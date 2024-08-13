@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -235,57 +236,79 @@ fun SettingsView(
             )
         }
 
+        if (state.showUserInfo) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                        .clickable {
+                            clipboardManager.setText(AnnotatedString((state.username)))
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Username copied to clipboard",
+                                    Toast.LENGTH_SHORT
+                                )
+                                .show()
+                        }
+                        .padding(Constants.Dimensions.MEDIUM),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = "Username: ",
+                        modifier = Modifier.weight(1f),
+                    )
+                    Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+                    Text(
+                        text = state.username,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
 
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                    .clickable {
-                        clipboardManager.setText(AnnotatedString((state.username)))
-                        Toast.makeText(context, "Username copied to clipboard", Toast.LENGTH_SHORT).show()
-                    }
-                    .padding(Constants.Dimensions.MEDIUM),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = "Username: ",
-                    modifier = Modifier.weight(1f),
-                )
-                Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
-                Text(
-                    text = state.username,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.inverseOnSurface)
+                        .clickable {
+                            clipboardManager.setText(AnnotatedString((state.token)))
+                            Toast
+                                .makeText(context, "Token copied to clipboard", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        .padding(Constants.Dimensions.MEDIUM),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = "Token: ",
+                        modifier = Modifier.weight(1f),
+                    )
+                    Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+                    Text(
+                        text = state.token,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
         }
 
-        item {
-            Row(
+        item{
+            TextButton(
+                onClick = { onEvent(SettingsEvent.ToggleShowUserInfo) },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colorScheme.inverseOnSurface)
-                    .clickable {
-                        clipboardManager.setText(AnnotatedString((state.token)))
-                        Toast.makeText(context, "Token copied to clipboard", Toast.LENGTH_SHORT).show()
-                    }
-                    .padding(Constants.Dimensions.MEDIUM),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .fillMaxWidth(),
             ) {
                 Text(
-                    text = "Token: ",
-                    modifier = Modifier.weight(1f),
-                )
-                Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
-                Text(
-                    text = state.token,
-                    style = MaterialTheme.typography.bodySmall,
+                    text = if(state.showUserInfo)"Hide User Information" else "Show User Information",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
                 )
             }
         }
