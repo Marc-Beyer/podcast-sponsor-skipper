@@ -79,7 +79,7 @@ fun SettingsView(
         }
         item {
             SettingsBooleanItem(
-                text = "Enable Marquee Effect",
+                text = "Enable Scrolling Text",
                 description = "Scroll long text horizontally to fit within the available space",
                 checked = navigationState.settings.enableMarquee,
                 onCheckedChange = {
@@ -94,8 +94,8 @@ fun SettingsView(
         }
         item {
             SettingsBooleanItem(
-                text = "Enable Marquee in Player",
-                description = "Enable scrolling text for long titles in the podcast player to ensure all content is visible",
+                text = "Enable Scrolling Text in Player",
+                description = "Enable scrolling text for long episode titles in the player to ensure all content is visible",
                 checked = navigationState.settings.enableMarqueeInPlayer,
                 onCheckedChange = {
                     onNavigationEvent(
@@ -133,8 +133,8 @@ fun SettingsView(
         }
         item {
             SettingsIntItem(
-                text = "Image Size",
-                description = "Adjust the size of podcast and episode images (in pixels)",
+                text = "Maximum Image Size",
+                description = "Set the maximum size (in pixels) for podcast and episode images to conserve memory",
                 value = state.coverImageSizeInputValue,
                 onDone = {
                     val value = state.coverImageSizeInputValue.toIntOrNull()
