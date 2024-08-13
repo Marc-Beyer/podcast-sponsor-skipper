@@ -265,23 +265,18 @@ fun NavigationView(
             }
             composable(route = NavRoute.Episode.path) {
                 val viewModel: EpisodeViewModel = hiltViewModel()
-                val podcastWithRelations =
-                    navController.previousBackStackEntry?.savedStateHandle?.get<PodcastWithRelations?>(
-                        "podcastWithRelations"
-                    )
-                val episode = navController.previousBackStackEntry?.savedStateHandle?.get<Episode?>(
-                    "episode"
-                )
-                if (podcastWithRelations != null && episode != null) {
-                    LaunchedEffect(episode, podcastWithRelations) {
-                        viewModel.setEpisode(episode, podcastWithRelations)
+                state.currentNavPodcast?.let { podcastWithRelations ->
+                    state.currentNavEpisode?.let { episode ->
+                        LaunchedEffect(episode, podcastWithRelations) {
+                            viewModel.setEpisode(episode, podcastWithRelations)
+                        }
+                        EpisodeView(
+                            state = viewModel.state.value,
+                            navigationState = state,
+                            onEvent = viewModel::onEvent,
+                            onNavigationEvent = onEvent,
+                        )
                     }
-                    EpisodeView(
-                        state = viewModel.state.value,
-                        navigationState = state,
-                        onEvent = viewModel::onEvent,
-                        onNavigationEvent = onEvent,
-                    )
                 }
             }
         }
@@ -294,16 +289,10 @@ private fun navigateToEpisode(
     podcastWithRelations: PodcastWithRelations,
     onEvent: (NavigationEvent) -> Unit,
 ) {
-    navController.currentBackStackEntry?.savedStateHandle?.set(
-        "podcastWithRelations",
-        podcastWithRelations
-    )
-    navController.currentBackStackEntry?.savedStateHandle?.set(
-        "episode",
-        episode
-    )
     onEvent(NavigationEvent.ChangeCurNavEpisode(episode))
-    navController.navigate(route = NavRoute.Episode.path)
+    if(navController.currentBackStackEntry?.destination?.route != NavRoute.Episode.path){
+        navController.navigate(route = NavRoute.Episode.path)
+    }
 }
 
 private fun navigateToInfo(
