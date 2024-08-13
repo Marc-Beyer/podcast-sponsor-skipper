@@ -3,6 +3,7 @@ package de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast
 import android.util.Log
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.EpisodeDao
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.PodcastDao
+import de.devbeyer.podcast_sponsorskipper.data.worker.DownloadManager
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.Podcast
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
 import kotlinx.coroutines.flow.firstOrNull
@@ -23,6 +24,10 @@ class DeleteLocalPodcastUseCase(
                 val returnedFilePath = fileUseCases.deleteFileUseCase(episodePath).firstOrNull()
                 Log.i("AAA", "DELETED $returnedFilePath")
             }
+            DownloadManager.cancel(
+                title = episode.title,
+                url = episode.episodeUrl,
+            )
         }
         podcast.imagePath?.let {
             val returnedFilePath = fileUseCases.deleteFileUseCase(it).firstOrNull()
