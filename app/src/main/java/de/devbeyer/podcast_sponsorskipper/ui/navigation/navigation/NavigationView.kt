@@ -211,7 +211,9 @@ fun NavigationView(
                     "podcastWithRelations"
                 )
                     ?.let { podcastWithRelations ->
-                        viewModel.setPodcast(podcastWithRelations)
+                        LaunchedEffect(podcastWithRelations) {
+                            viewModel.setPodcast(podcastWithRelations)
+                        }
                         InfoView(
                             state = viewModel.state.value,
                             onEvent = viewModel::onEvent,

@@ -61,7 +61,7 @@ class InfoViewModel @Inject constructor(
         }
     }
 
-    fun setLoading(value: Boolean) {
+    private fun setLoading(value: Boolean) {
         _state.value = state.value.copy(
             isLoading = value
         )
