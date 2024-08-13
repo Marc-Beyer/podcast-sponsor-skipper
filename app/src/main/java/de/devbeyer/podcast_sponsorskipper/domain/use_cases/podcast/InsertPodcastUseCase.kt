@@ -84,9 +84,19 @@ class InsertPodcastUseCase(
                 } else {
                     podcastImagePath
                 }
-
-                imageCache[episode.imageUrl] = episodeImagePath
-                episodeDao.insert(episode.copy(podcastId = podcastId, imagePath = episodeImagePath))
+                try {
+                    episodeDao.insert(
+                        episode.copy(
+                            podcastId = podcastId,
+                            imagePath = episodeImagePath
+                        )
+                    )
+                    imageCache[episode.imageUrl] = episodeImagePath
+                } catch (e: Exception) {
+                    Log.i("AAA", "Could not insert episode deleting image")
+                    fileUseCases.deleteFileUseCase(episodeImagePath).firstOrNull()
+                    throw e
+                }
             } else if (foundEpisode.imagePath != null) {
                 imageCache[foundEpisode.imageUrl] = foundEpisode.imagePath
             }
