@@ -17,7 +17,7 @@ interface EpisodeDao {
     suspend fun update(episode: Episode)
 
     @Query("UPDATE episode SET episodePath = :episodePath WHERE episodeUrl = :episodeUrl")
-    suspend fun updateEpisodePath(episodeUrl: String, episodePath: String)
+    suspend fun updateEpisodePath(episodeUrl: String, episodePath: String): Int
 
     @Query("UPDATE episode SET isCompleted = :isCompleted WHERE episodeUrl = :episodeUrl")
     suspend fun updateEpisodeIsCompleted(episodeUrl: String, isCompleted: Boolean)

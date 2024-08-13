@@ -18,7 +18,15 @@ class DownloadEpisodeUseCase(
         ).firstOrNull()
         Log.i("AAA", "Downloaded $episodePath")
         if(episodePath != null){
-            episodeDao.updateEpisodePath(episodeUrl = episodeUrl, episodePath = episodePath)
+            try {
+                val rowsUpdated = episodeDao.updateEpisodePath(episodeUrl = episodeUrl, episodePath = episodePath)
+                if(rowsUpdated == 0) throw Exception()
+                Log.i("AAA", "Downloaded rowsUpdated $rowsUpdated")
+            }catch (e: Exception){
+                e.printStackTrace()
+                Log.i("AAA", "Updating the episode failed! Deleting file.")
+                fileUseCases.deleteFileUseCase(filePath = episodePath).firstOrNull()
+            }
         }
     }
 }
