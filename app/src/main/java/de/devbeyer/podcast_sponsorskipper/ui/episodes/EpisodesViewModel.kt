@@ -151,6 +151,7 @@ class EpisodesViewModel @Inject constructor(
                         podcastWithRelations = podcastWithRelations,
                         episodes = episodes,
                     )
+                    updateActiveDownloadUrls()
                 }
         }
     }
