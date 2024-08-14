@@ -152,7 +152,7 @@ fun EpisodeItem(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Sync,
-                        contentDescription = "Episode",
+                        contentDescription = null,
                         modifier = Modifier
                             .padding(8.dp)
                             .rotationEffect(),
@@ -205,7 +205,7 @@ fun EpisodeItem(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Close,
-                            contentDescription = "Cancel download",
+                            contentDescription = "Cancel",
                             modifier = Modifier
                                 .padding(8.dp),
                             tint = MaterialTheme.colorScheme.onSurface,
@@ -217,7 +217,7 @@ fun EpisodeItem(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Download,
-                            contentDescription = "Episode",
+                            contentDescription = "Download",
                             modifier = Modifier.padding(8.dp),
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
@@ -230,7 +230,7 @@ fun EpisodeItem(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Pause,
-                            contentDescription = "Episode",
+                            contentDescription = "Pause",
                             modifier = Modifier.padding(8.dp),
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
@@ -246,7 +246,7 @@ fun EpisodeItem(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Episode",
+                            contentDescription = "Play",
                             modifier = Modifier.padding(8.dp),
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
