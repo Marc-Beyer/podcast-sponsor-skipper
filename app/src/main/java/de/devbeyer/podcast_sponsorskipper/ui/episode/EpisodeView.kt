@@ -81,8 +81,16 @@ fun EpisodeView(
                     )
                 }
 
-
                 Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+
+                Text(
+                    text = episode.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
 
                 Text(text = episode.description)
 
@@ -93,6 +101,7 @@ fun EpisodeView(
                     Text(
                         text = "Sponsor Sections:",
                         style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
