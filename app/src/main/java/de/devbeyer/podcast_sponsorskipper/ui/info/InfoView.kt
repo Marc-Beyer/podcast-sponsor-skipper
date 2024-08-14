@@ -155,7 +155,7 @@ private fun PodcastInfo(
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            Text(text = "Goto Podcast Episodes", color = MaterialTheme.colorScheme.onSurface)
+            Text(text = "View Episodes", color = MaterialTheme.colorScheme.onSurface)
 
         }
     } else {
@@ -250,7 +250,7 @@ fun PodcastInfoPreview() {
                             Category(3, "Tech News")
                         ),
                     ),
-                    false,
+                    true,
                     false,
                     onEvent = {},
                     gotoEpisodes = {},
