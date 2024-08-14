@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -57,7 +58,8 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         startDestination = startDestination,
                         startWithNotificationPermission = {
-                            startWithNotificationPermission(callback = {})
+                            Log.i("AAA", "startWithNotificationPermission ----")
+                            startWithNotificationPermission()
                         }
                     )
                 }
@@ -65,7 +67,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun startWithNotificationPermission(callback: () -> Unit) {
+    private fun startWithNotificationPermission() {
         if (ContextCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.POST_NOTIFICATIONS
@@ -74,8 +76,6 @@ class MainActivity : ComponentActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
-        } else {
-            callback()
         }
     }
 
