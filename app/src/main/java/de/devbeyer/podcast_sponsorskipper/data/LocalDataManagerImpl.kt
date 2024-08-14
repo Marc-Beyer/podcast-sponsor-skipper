@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.map
 class LocalDataManagerImpl(
     private val context: Context,
 ) : LocalDataManager {
-    override suspend fun saveCompletedGuidedTour() {
+    override suspend fun saveCompletedGuidedTour(completed: Boolean) {
         context.dataStore.edit {
-            it[PreferencesKeys.COMPLETED_GUIDED_TOUR] = true
+            it[PreferencesKeys.COMPLETED_GUIDED_TOUR] = completed
         }
     }
 

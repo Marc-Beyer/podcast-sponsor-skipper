@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface LocalDataManager {
-    suspend fun saveCompletedGuidedTour()
+    suspend fun saveCompletedGuidedTour(completed: Boolean = true)
     fun readCompletedGuidedTour(): Flow<Boolean>
     suspend fun saveUsername(username: String)
     fun readUsername(): Flow<String?>

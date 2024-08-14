@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -58,9 +57,9 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         startDestination = startDestination,
                         startWithNotificationPermission = {
-                            Log.i("AAA", "startWithNotificationPermission ----")
                             startWithNotificationPermission()
-                        }
+                        },
+                        navigateToTourGuide = viewModel::navigateToTourGuide,
                     )
                 }
             }

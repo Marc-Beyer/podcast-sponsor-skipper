@@ -61,6 +61,7 @@ import de.devbeyer.podcast_sponsorskipper.util.Constants
 fun NavigationView(
     state: NavigationState,
     onEvent: (NavigationEvent) -> Unit,
+    navigateToTourGuide: () -> Unit,
 ) {
     val navController = rememberNavController()
     onEvent(NavigationEvent.SetNavigateUp(navigateUp = { navController.navigateUp() }))
@@ -107,7 +108,8 @@ fun NavigationView(
                         state = state,
                         navigateToSearch = { navigateToSearch(navController) },
                         navigateToSettings = { navController.navigate(route = NavRoute.Settings.path) },
-                        navigateUp = { navController.navigateUp() }
+                        navigateUp = { navController.navigateUp() },
+                        navigateToTourGuide = navigateToTourGuide,
                     )
                 },
                 navigationIcon = {
@@ -293,7 +295,7 @@ private fun navigateToEpisode(
     onEvent: (NavigationEvent) -> Unit,
 ) {
     onEvent(NavigationEvent.ChangeCurNavEpisode(episode))
-    if(navController.currentBackStackEntry?.destination?.route != NavRoute.Episode.path){
+    if (navController.currentBackStackEntry?.destination?.route != NavRoute.Episode.path) {
         navController.navigate(route = NavRoute.Episode.path)
     }
 }

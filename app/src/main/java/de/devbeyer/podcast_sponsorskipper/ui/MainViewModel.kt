@@ -11,6 +11,7 @@ import de.devbeyer.podcast_sponsorskipper.ui.navigation.NavRoute
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,14 +25,20 @@ class MainViewModel @Inject constructor(
         private set
 
     init{
-        completedGuidedTourUseCases.getCompletedGuidedTourUseCase().onEach {
-            if(it){
-                startDestination = NavRoute.Main.path
+        completedGuidedTourUseCases.getCompletedGuidedTourUseCase().onEach { completed ->
+            startDestination = if(completed){
+                NavRoute.Main.path
             }else{
-                startDestination = NavRoute.Start.path
+                NavRoute.Start.path
             }
             delay(300)
             isSplashScreenActive = false
         }.launchIn(viewModelScope)
+    }
+
+    fun navigateToTourGuide(){
+        viewModelScope.launch {
+            completedGuidedTourUseCases.resetCompletedGuidedTourUseCase()
+        }
     }
 }

@@ -39,6 +39,7 @@ import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.DownloadImageUse
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.file.FileUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.CompletedGuidedTourUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.GetCompletedGuidedTourUseCase
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.ResetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.guided_tour.SetCompletedGuidedTourUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.DeleteLocalPodcastUseCase
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.GetEpisodesOfPodcastUseCase
@@ -81,7 +82,8 @@ object ApplicationModule {
         localDataManager: LocalDataManager
     ) = CompletedGuidedTourUseCases(
         GetCompletedGuidedTourUseCase(localDataManager),
-        SetCompletedGuidedTourUseCase(localDataManager)
+        SetCompletedGuidedTourUseCase(localDataManager),
+        ResetCompletedGuidedTourUseCase(localDataManager),
     )
 
     @Provides

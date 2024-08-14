@@ -16,19 +16,20 @@ import de.devbeyer.podcast_sponsorskipper.ui.tourguide.components.TourGuideView
 fun NavGraph(
     startDestination: String,
     startWithNotificationPermission: () -> Unit,
+    navigateToTourGuide: () -> Unit,
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = startDestination
-    ){
+    ) {
         navigation(
             route = NavRoute.Start.path,
             startDestination = NavRoute.TourGuide.path
-        ){
+        ) {
             composable(
                 route = NavRoute.TourGuide.path,
-            ){
+            ) {
                 val viewModel: TourGuideViewModel = hiltViewModel()
                 TourGuideView(
                     onEvent = viewModel::onEvent
@@ -38,18 +39,19 @@ fun NavGraph(
 
         navigation(
             route = NavRoute.Main.path,
-            startDestination = NavRoute.Feed.path
-        ){
+            startDestination = NavRoute.Feed.path,
+        ) {
             composable(
                 route = NavRoute.Feed.path,
-            ){
+            ) {
                 LaunchedEffect(key1 = true) {
                     startWithNotificationPermission()
                 }
                 val viewModel: NavigationViewModel = hiltViewModel()
                 NavigationView(
                     state = viewModel.state.value,
-                    onEvent = viewModel::onEvent
+                    onEvent = viewModel::onEvent,
+                    navigateToTourGuide = navigateToTourGuide,
                 )
             }
         }

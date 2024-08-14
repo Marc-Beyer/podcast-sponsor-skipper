@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Help
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -41,6 +42,7 @@ fun NavigationActions(
     navigateToSearch: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateUp: () -> Unit,
+    navigateToTourGuide: () -> Unit,
 ) {
     when (backStackState?.destination?.route) {
         NavRoute.Feed.path -> {
@@ -58,7 +60,7 @@ fun NavigationActions(
             )
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "Add Podcast",
+                contentDescription = "Add",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .clip(CircleShape)
@@ -69,7 +71,7 @@ fun NavigationActions(
             )
             Icon(
                 imageVector = Icons.Filled.MoreVert,
-                contentDescription = "Add Podcast",
+                contentDescription = "More",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .clip(CircleShape)
@@ -91,7 +93,10 @@ fun NavigationActions(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(imageVector = Icons.Filled.Settings, contentDescription = null)
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = "Settings"
+                            )
                             Spacer(modifier = Modifier.width(Constants.Dimensions.SMALL))
                             Text(text = "Settings")
                         }
@@ -106,7 +111,7 @@ fun NavigationActions(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                            Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
                             Spacer(modifier = Modifier.width(Constants.Dimensions.SMALL))
                             Text(text = "Add Podcasts")
                         }
@@ -121,13 +126,27 @@ fun NavigationActions(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(imageVector = Icons.Filled.Refresh, contentDescription = null)
+                            Icon(imageVector = Icons.Filled.Refresh, contentDescription = "Update")
                             Spacer(modifier = Modifier.width(Constants.Dimensions.SMALL))
                             Text(text = "Update Podcasts")
                         }
                     },
                 )
-
+                DropdownMenuItem(
+                    onClick = {
+                        expanded = false
+                        navigateToTourGuide()
+                    },
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(imageVector = Icons.AutoMirrored.Outlined.Help, contentDescription = "Help")
+                            Spacer(modifier = Modifier.width(Constants.Dimensions.SMALL))
+                            Text(text = "Help")
+                        }
+                    },
+                )
             }
         }
 
