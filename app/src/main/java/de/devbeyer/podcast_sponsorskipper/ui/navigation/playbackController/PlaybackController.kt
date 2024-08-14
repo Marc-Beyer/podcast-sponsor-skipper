@@ -25,6 +25,7 @@ import de.devbeyer.podcast_sponsorskipper.ui.common.CustomSlider
 import de.devbeyer.podcast_sponsorskipper.ui.common.shadowTopOnly
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationEvent
 import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.NavigationState
+import de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation.PreviewState
 import de.devbeyer.podcast_sponsorskipper.ui.theme.PodcastSponsorSkipperTheme
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.formatMillisecondsToTime
@@ -34,7 +35,7 @@ import java.time.LocalDateTime
 fun PlaybackController(
     state: NavigationState,
     onEvent: (NavigationEvent) -> Unit,
-    navigateToEpisode: (Episode, PodcastWithRelations) -> Unit
+    navigateToEpisode: (Episode, PodcastWithRelations) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -82,18 +83,24 @@ fun PlaybackController(
                 sponsorSections = sponsorSections,
                 currentPosition = state.currentPosition
             )
-            if(sponsorSectionAtPosition != null && sponsorSectionAtPosition.rated == 0){
-                FeedbackBar(
-                    sponsorSection = sponsorSectionAtPosition,
-                    onEvent = onEvent,
-                )
+            if (sponsorSectionAtPosition != null && sponsorSectionAtPosition.rated == 0) {
+                if (state.sponsorSectionStart == null && state.sponsorSectionEnd == null) {
+                    FeedbackBar(
+                        sponsorSection = sponsorSectionAtPosition,
+                        onEvent = onEvent,
+                    )
+                }
             }
             CustomSlider(
                 value = if (state.currentPosition < state.duration) state.currentPosition.toFloat() else 0f,
-                onValueChange = { onEvent(NavigationEvent.SeekTo(it.toLong())) },
+                onValueChange = {
+                    if (state.isPreviewing == PreviewState.NONE && state.sponsorSectionEnd == null) {
+                        onEvent(NavigationEvent.SeekTo(it.toLong()))
+                    }
+                },
                 valueRange = 0f..if (state.duration.toFloat() < 0f) 100f else state.duration.toFloat(),
                 sponsorSections = sponsorSections,
-                isInsideOfSponsorSection = sponsorSectionAtPosition != null && sponsorSectionAtPosition.rated != -1,
+                sponsorSectionAtPosition = sponsorSectionAtPosition,
                 sponsorSectionStart = sponsorSectionStart,
             )
             val curPos = formatMillisecondsToTime(state.currentPosition)
@@ -108,7 +115,9 @@ fun PlaybackController(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            ControllerButtons(onEvent, state)
+            if (state.isPreviewing == PreviewState.NONE && state.sponsorSectionEnd == null) {
+                ControllerButtons(onEvent, state)
+            }
 
             if (state.sponsorSectionStart != null && state.sponsorSectionEnd != null) {
                 ControllerPreview(state, onEvent)

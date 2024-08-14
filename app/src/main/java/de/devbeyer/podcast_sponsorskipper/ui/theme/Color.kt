@@ -15,10 +15,13 @@ val StrongBlueDark = Color(0xff005da3)
 val StrongRed = Color(0xFFEC3C2F)
 val StrongRedDark = Color(0xFFFF1200)
 
+
+val StrongOrange = Color(255, 165, 0)
+val StrongOrangeDark = Color(189, 128, 19, 255)
+
 val colorArray = arrayOf(
     Color(255, 0, 0),
     Color(255, 165, 0),
-    Color(255, 255, 0),
     Color(0, 255, 0),
     Color(0, 0, 255),
     Color(75, 0, 130),

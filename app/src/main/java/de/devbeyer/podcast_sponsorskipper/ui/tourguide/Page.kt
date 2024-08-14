@@ -18,10 +18,22 @@ val pages = listOf(
         imageLight = R.drawable.podcasts_black,
     ),
     Page(
-        title = "Sponsor Skipping",
-        description = "The app allows you to mark sponsor segments and automatically skip them during playback, providing a seamless podcast experience.",
-        imageDark = R.drawable.podcasts_white,
-        imageLight = R.drawable.podcasts_black,
+        title = "Approved Sponsor Segments",
+        description = "The red section highlights sponsor segments that have been approved by enough users. These segments will be automatically skipped during playback.",
+        imageDark = R.drawable.player_explain_red_dark,
+        imageLight = R.drawable.player_explain_red,
+    ),
+    Page(
+        title = "Unapproved Sponsor Segments",
+        description = "The gray section marks sponsor segments that are not yet approved. These segments will not be skipped automatically. You can give them a thumbs up to help them get approved and skipped in the future.",
+        imageDark = R.drawable.player_explain_gray_dark,
+        imageLight = R.drawable.player_explain_gray,
+    ),
+    Page(
+        title = "Mark Sponsor Segments",
+        description = "Press the \"AD\" button during playback to mark sponsor sections. Your input helps improve automatic skipping for everyone.",
+        imageDark = R.drawable.player_explain_ad_dark,
+        imageLight = R.drawable.player_explain_ad,
     ),
     Page(
         title = "Notifications",
