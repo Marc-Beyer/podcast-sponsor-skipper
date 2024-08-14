@@ -30,7 +30,20 @@ fun ControllerPreview(
     state: NavigationState,
     onEvent: (NavigationEvent) -> Unit
 ) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
+        Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
+        Text(
+            text = "Please review the highlighted sections before submitting your sponsor segment.",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+
     Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
+
     Text(
         text = "Sponsor section",
         style = MaterialTheme.typography.titleLarge,
@@ -119,17 +132,5 @@ fun ControllerPreview(
                 )
             }
         }
-    }
-    Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
-        Spacer(modifier = Modifier.width(Constants.Dimensions.MEDIUM))
-        Text(
-            text = "Please review the highlighted sections before submitting your sponsor segment.",
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurface
-        )
     }
 }

@@ -23,11 +23,12 @@ fun CustomSlider(
     onValueChange: (Float) -> Unit,
     valueRange: ClosedFloatingPointRange<Float>,
     sponsorSections: List<SponsorSection>,
-    isInsideOfSponsorSection: Boolean,
+    sponsorSectionAtPosition: SponsorSection?,
     sponsorSectionStart: Long?,
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val sponsorColor = MaterialTheme.colorScheme.error
+    val sponsorProvisionalColor = MaterialTheme.colorScheme.tertiary
 
 
     Box(
@@ -52,7 +53,7 @@ fun CustomSlider(
             )
 
             sponsorSections.forEach { sponsorSection ->
-                if(sponsorSection.rated != -1){
+                if (sponsorSection.rated != -1) {
                     val sectionStart =
                         ((sponsorSection.startPosition - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * totalWidth
                     val sectionEnd =
@@ -60,7 +61,7 @@ fun CustomSlider(
                     val sectionWidth = sectionEnd - sectionStart
 
                     drawRect(
-                        color = sponsorColor,
+                        color = if (sponsorSection.isProvisional) sponsorProvisionalColor else sponsorColor,
                         topLeft = Offset(x = sectionStart, y = 0f),
                         size = Size(width = sectionWidth, height = height)
                     )
@@ -89,7 +90,10 @@ fun CustomSlider(
                 .fillMaxWidth()
                 .align(Alignment.Center),
             colors = SliderDefaults.colors(
-                thumbColor = determineThumbColor(isInsideOfSponsorSection, sponsorSectionStart),
+                thumbColor = determineThumbColor(
+                    sponsorSectionAtPosition = sponsorSectionAtPosition,
+                    sponsorSectionStart = sponsorSectionStart,
+                ),
                 activeTrackColor = Color.Transparent,
                 inactiveTrackColor = Color.Transparent
             )
@@ -99,9 +103,16 @@ fun CustomSlider(
 
 @Composable
 fun determineThumbColor(
-    isInsideOfSponsorSection: Boolean,
-    sponsorSectionStart: Long?
+    sponsorSectionAtPosition: SponsorSection?,
+    sponsorSectionStart: Long?,
 ): Color {
-    if (sponsorSectionStart != null || isInsideOfSponsorSection) return MaterialTheme.colorScheme.error
+    if (sponsorSectionStart != null) return MaterialTheme.colorScheme.error
+    if (sponsorSectionAtPosition != null && sponsorSectionAtPosition.rated != -1) {
+        if (sponsorSectionAtPosition.isProvisional) {
+            return MaterialTheme.colorScheme.tertiary
+        } else {
+            return MaterialTheme.colorScheme.error
+        }
+    }
     return MaterialTheme.colorScheme.primary
 }

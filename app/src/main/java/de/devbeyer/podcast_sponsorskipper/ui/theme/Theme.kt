@@ -45,12 +45,25 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+
+data class CustomColorScheme(
+    val warning: Color = Color.Unspecified,
+)
+
+private val DarkCustomColorScheme = CustomColorScheme(
+    warning = StrongOrangeDark
+)
+
+private val LightCustomColorScheme = CustomColorScheme(
+    warning = StrongOrange
+)
+
 @Composable
 fun PodcastSponsorSkipperTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -62,6 +75,9 @@ fun PodcastSponsorSkipperTheme(
         else -> LightColorScheme
     }
 
+    val customColorScheme =
+        if (darkTheme) DarkCustomColorScheme
+        else LightCustomColorScheme
 
     val view = LocalView.current
     if (!view.isInEditMode) {
