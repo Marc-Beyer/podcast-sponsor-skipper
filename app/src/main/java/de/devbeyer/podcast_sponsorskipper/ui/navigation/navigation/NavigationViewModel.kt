@@ -232,16 +232,23 @@ class NavigationViewModel @Inject constructor(
             is NavigationEvent.EndSponsorSection -> {
                 state.value.mediaController?.let { mediaController ->
                     setIsPreviewing(PreviewState.NONE)
-                    val sponsorSectionEnd = mediaController.currentPosition
-                    _state.value = state.value.copy(
-                        sponsorSectionEnd = sponsorSectionEnd,
-                        duration = mediaController.duration,
-                    )
                     state.value.sponsorSectionStart?.let {
+                        var startPositionMs = it
+                        var endPositionMs =  mediaController.currentPosition
+                        if (startPositionMs > endPositionMs) {
+                            val tmp = startPositionMs
+                            startPositionMs = endPositionMs
+                            endPositionMs = tmp
+                        }
+                        _state.value = state.value.copy(
+                            sponsorSectionStart = startPositionMs,
+                            sponsorSectionEnd = endPositionMs,
+                            duration = mediaController.duration,
+                        )
                         mediaController.stop()
                         schedulePlaybackAction(
-                            startPositionMs = it,
-                            endPositionMs = sponsorSectionEnd
+                            startPositionMs = startPositionMs,
+                            endPositionMs = endPositionMs,
                         )
                     }
                 }
@@ -579,7 +586,7 @@ class NavigationViewModel @Inject constructor(
                     override fun onPositionDiscontinuity(
                         oldPosition: Player.PositionInfo,
                         newPosition: Player.PositionInfo,
-                        reason: Int
+                        reason: Int,
                     ) {
                         updateCurrentPosition()
                     }
