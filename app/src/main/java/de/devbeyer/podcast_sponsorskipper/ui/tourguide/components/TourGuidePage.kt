@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,19 +43,23 @@ fun TourGuidePage(
                 .fillMaxHeight(fraction = 0.6f),
         )
         Spacer(modifier = Modifier.height(Constants.Dimensions.MEDIUM))
-        Text(
-            text = page.title,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(horizontal = Dimensions.large),
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-        Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
-        Text(
-            text = page.description,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(horizontal = Dimensions.large),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        LazyColumn {
+            item {
+                Text(
+                    text = page.title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(horizontal = Dimensions.large),
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(modifier = Modifier.height(Constants.Dimensions.SMALL))
+                Text(
+                    text = page.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = Dimensions.large),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }
 
