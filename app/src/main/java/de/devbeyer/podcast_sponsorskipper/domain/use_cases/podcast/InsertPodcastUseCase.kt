@@ -19,13 +19,15 @@ class InsertPodcastUseCase(
         podcastAndEpisodes: PodcastAndEpisodes,
         downloadImages: Boolean,
         coverImageSize: Int = 512,
-    ) {
+    ): Int {
         Log.i("AAA", "coverImageSize $coverImageSize")
         val podcastWithRelations =
             podcastDao.getPodcastFromUrl(podcastAndEpisodes.podcastWithRelations.podcast.url)
                 .firstOrNull()
         var podcastId = 0
         var podcastImagePath = ""
+        var newEpisodes = 0
+
         if (podcastWithRelations == null) {
             Log.i("AAA", "Podcast does not exists!")
             podcastImagePath = fileUseCases.downloadImageUseCase.invoke(
@@ -69,6 +71,7 @@ class InsertPodcastUseCase(
 
             val foundEpisode = episodeDao.getEpisodeByUrl(episode.episodeUrl).firstOrNull()
             if (foundEpisode == null) {
+                newEpisodes++
                 val episodeImagePath = if (downloadImages && episode.imageUrl.isNotBlank()) {
                     imageCache[episode.imageUrl] ?: fileUseCases.downloadImageUseCase.invoke(
                         extension = "jpg",
@@ -101,5 +104,7 @@ class InsertPodcastUseCase(
                 imageCache[foundEpisode.imageUrl] = foundEpisode.imagePath
             }
         }
+
+        return newEpisodes
     }
 }
