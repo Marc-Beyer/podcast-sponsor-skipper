@@ -28,8 +28,13 @@ class InfoViewModel @Inject constructor(
             is InfoEvent.SubscribeToPodcast -> {
                 setLoading(true)
 
+                val podcastUrl = event.podcastWithRelations.podcast.url
+                viewModelScope.launch {
+                    podcastsUseCases.registerPodcastUseCase(url = podcastUrl)
+                }
+
                 val workData = workDataOf(
-                    "url" to event.podcastWithRelations.podcast.url,
+                    "url" to podcastUrl,
                     "title" to event.podcastWithRelations.podcast.title,
                 )
                 val updateWorkRequest = OneTimeWorkRequestBuilder<UpdateWorker>()
