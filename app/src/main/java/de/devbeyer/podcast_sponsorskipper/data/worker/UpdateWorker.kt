@@ -82,10 +82,10 @@ class UpdateWorker @AssistedInject constructor(
     private fun updateNotification(notificationManager: NotificationManager, title: String) {
         val activeUpdates = UpdateManager.getActiveUpdates()
         val complete = activeUpdates.nrOfUpdated == activeUpdates.nrOfUpdates
-        //if (activeUpdates.second == 0) {
-        //notificationManager.cancel(Constants.UPDATE_NOTIFICATION_ID)
-        //  return
-        //}
+        if (activeUpdates.text.isBlank()) {
+            notificationManager.cancel(Constants.UPDATE_NOTIFICATION_ID)
+            return
+        }
 
         val notificationBuilder =
             NotificationCompat.Builder(applicationContext, Constants.UPDATE_CHANNEL_ID)
@@ -206,11 +206,11 @@ object UpdateManager {
             val relevantUpdates = activeUpdates.filter { it.third != 0 }
             return ActiveUpdatesData(
                 nrOfUpdated = activeUpdateUrl,
-               nrOfUpdates =  activeUpdates.size,
+                nrOfUpdates = activeUpdates.size,
                 text = relevantUpdates.joinToString("\n") {
                     it.second + if (it.third >= 0) " ${it.third} new episodes" else ""
                 },
-                    newEpisodes = relevantUpdates.sumOf { it.third }
+                newEpisodes = relevantUpdates.sumOf { it.third }
             )
         }
     }
