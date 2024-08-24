@@ -172,6 +172,30 @@ fun SettingsView(
 
         item {
             Text(
+                text = "Download Settings",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(Constants.Dimensions.EXTRA_SMALL),
+            )
+        }
+        item {
+            SettingsBooleanItem(
+                text = "Download Over Wi-Fi Only",
+                description = "Restrict downloads of episodes to unmetered Wi-Fi networks to save mobile data",
+                checked = navigationState.settings.onlyUseWifi,
+                onCheckedChange = {
+                    onNavigationEvent(
+                        NavigationEvent.ChangeBooleanSettings(
+                            settingKey = SettingKey.ONLY_USE_WIFI,
+                            value = it,
+                        )
+                    )
+                }
+            )
+        }
+
+        item {
+            Text(
                 text = "Playback Settings",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

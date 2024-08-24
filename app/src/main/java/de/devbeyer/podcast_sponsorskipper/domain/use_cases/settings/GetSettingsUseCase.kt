@@ -25,6 +25,8 @@ class GetSettingsUseCase(
         val enableMarqueeInPlayer =
             localDataManager.readBooleanSetting(SettingKey.ENABLE_MARQUEE_IN_PLAYER).firstOrNull()
 
+        val onlyUseWifi = localDataManager.readBooleanSetting(SettingKey.ONLY_USE_WIFI).firstOrNull()
+
         val coverImageSize = localDataManager.readIntSetting(SettingKey.COVER_IMG_SIZE).firstOrNull()
         val rewindTime = localDataManager.readIntSetting(SettingKey.REWIND_TIME).firstOrNull()
         val forwardTime = localDataManager.readIntSetting(SettingKey.FORWARD_TIME).firstOrNull()
@@ -41,6 +43,8 @@ class GetSettingsUseCase(
                 downloadImages = downloadImages ?: defaultSettings.downloadImages,
                 coverImageSize = coverImageSize ?: defaultSettings.coverImageSize,
                 autoDeleteCompletedEpisodes = autoDeleteCompletedEpisodes ?: defaultSettings.autoDeleteCompletedEpisodes,
+
+                onlyUseWifi = onlyUseWifi ?: defaultSettings.onlyUseWifi,
 
                 forwardTime = forwardTime ?: defaultSettings.forwardTime,
                 rewindTime = rewindTime ?: defaultSettings.rewindTime,

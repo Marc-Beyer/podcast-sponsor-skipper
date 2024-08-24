@@ -27,4 +27,5 @@ enum class SettingKey{
     ENABLE_MARQUEE,
     ENABLE_MARQUEE_IN_PLAYER,
     COVER_IMG_SIZE,
+    ONLY_USE_WIFI,
 }

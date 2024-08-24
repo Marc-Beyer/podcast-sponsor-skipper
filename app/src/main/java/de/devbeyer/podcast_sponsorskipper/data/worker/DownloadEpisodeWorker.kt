@@ -9,15 +9,19 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import de.devbeyer.podcast_sponsorskipper.domain.models.Settings
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
+import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SettingsUseCases
 import de.devbeyer.podcast_sponsorskipper.util.Constants
 import de.devbeyer.podcast_sponsorskipper.util.isWifiOrNotMetered
+import kotlinx.coroutines.flow.firstOrNull
 
 @HiltWorker
 class DownloadEpisodeWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val episodeUseCases: EpisodeUseCases,
+    private val settingsUseCases: SettingsUseCases,
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -42,7 +46,10 @@ class DownloadEpisodeWorker @AssistedInject constructor(
 
                 val wifi = applicationContext.isWifiOrNotMetered()
                 Log.i("AAA", "Not metered wifi $wifi")
-                if (!wifi) {
+
+                val settings = settingsUseCases.getSettingsUseCase().firstOrNull() ?: Settings()
+
+                if (settings.onlyUseWifi && !wifi) {
                     if (DownloadManager.getRetryCount() >= Constants.MAX_RETRY_COUNT) {
                         DownloadManager.reset()
                         notificationManager.cancel(Constants.DOWNLOAD_EPISODE_NOTIFICATION_ID)

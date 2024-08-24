@@ -10,6 +10,8 @@ data class Settings(
     val coverImageSize: Int = 512,
     val autoDeleteCompletedEpisodes: Boolean = true,
 
+    val onlyUseWifi: Boolean = true,
+
     val forwardTime: Int = 15,
     val rewindTime: Int = 5,
 )

@@ -84,6 +84,10 @@ class SettingsViewModel @Inject constructor(
                         value = default.autoDeleteCompletedEpisodes,
                     )
 
+                    settingsUseCases.setBooleanSettingUseCase(
+                        settingKey = SettingKey.ONLY_USE_WIFI,
+                        value = default.onlyUseWifi,
+                    )
 
                     settingsUseCases.setIntSettingUseCase(
                         settingKey = SettingKey.FORWARD_TIME,
