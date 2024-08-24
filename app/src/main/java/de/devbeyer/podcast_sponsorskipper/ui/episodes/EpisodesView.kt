@@ -60,10 +60,10 @@ fun EpisodesView(
 
     if (podcast != null) {
         Column(
-            modifier = Modifier.padding(start = 8.dp, top = 8.dp),
+            modifier = Modifier.padding( top = Constants.Dimensions.SMALL),
             verticalArrangement = Arrangement.Center,
         ) {
-            Row(modifier = Modifier.padding(end = Constants.Dimensions.SMALL)) {
+            Row(modifier = Modifier.padding(start = Constants.Dimensions.SMALL, end = Constants.Dimensions.SMALL)) {
                 Box(
                     modifier = Modifier
                         .height(98.dp)
@@ -145,7 +145,8 @@ fun EpisodesView(
                     EpisodeFilter.FAVORITE -> "Favorite Episodes (${episodes.size})"
                 },
                 expanded = state.isFilterMenuExpanded,
-                onExpandedChanged = { onEvent(EpisodesEvent.SetFilterMenuExpanded(it)) }
+                onExpandedChanged = { onEvent(EpisodesEvent.SetFilterMenuExpanded(it)) },
+                modifier = Modifier.padding(horizontal = Constants.Dimensions.SMALL)
             ) {
                 DropdownMenuItem(
                     text = { Text("All Episodes") },

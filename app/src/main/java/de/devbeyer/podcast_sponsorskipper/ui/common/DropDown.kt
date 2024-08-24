@@ -22,13 +22,14 @@ fun DropDown(
     text: String,
     expanded: Boolean,
     onExpandedChanged: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
 
 
     IconButton(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         onClick = { onExpandedChanged(!expanded) }
     ) {
         Row(

@@ -11,6 +11,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.util.Constants
+import de.devbeyer.podcast_sponsorskipper.util.isWifiOrNotMetered
 
 @HiltWorker
 class DownloadEpisodeWorker @AssistedInject constructor(
@@ -28,7 +29,7 @@ class DownloadEpisodeWorker @AssistedInject constructor(
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        return try {
+        try {
             val shouldWork = DownloadManager.increment(url = url, title = title)
             updateNotification(notificationManager, title)
 
@@ -38,6 +39,22 @@ class DownloadEpisodeWorker @AssistedInject constructor(
                 if (currentUrl == null) {
                     break
                 }
+
+                val wifi = applicationContext.isWifiOrNotMetered()
+                Log.i("AAA", "Not metered wifi $wifi")
+                if (!wifi) {
+                    if (DownloadManager.getRetryCount() >= Constants.MAX_RETRY_COUNT) {
+                        DownloadManager.reset()
+                        notificationManager.cancel(Constants.DOWNLOAD_EPISODE_NOTIFICATION_ID)
+                        Log.e("AAA", "Too many retry attempts (${DownloadManager.getRetryCount()}) stopping work.")
+                        return Result.failure()
+                    }
+                    DownloadManager.retryLater(currentUrl)
+                    Log.e("AAA", "Network not suitable for download. Retry Later. Retry ${DownloadManager.getRetryCount()}")
+
+                    return Result.retry()
+                }
+
                 try {
                     episodeUseCases.downloadEpisodeUseCase(currentUrl)
                     episodeUseCases.downloadSponsorSectionsUseCase(currentUrl, -1)
@@ -45,13 +62,13 @@ class DownloadEpisodeWorker @AssistedInject constructor(
                     e.printStackTrace()
                 }
             }
-
-            Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
             notificationManager.cancel(Constants.DOWNLOAD_EPISODE_NOTIFICATION_ID)
-            Result.failure()
+            return Result.failure()
         }
+
+        return Result.success()
     }
 
     private fun updateNotification(notificationManager: NotificationManager, title: String) {
@@ -94,18 +111,26 @@ object DownloadManager {
     private var activeDownloadUrl: String? = null
     private val activeDownloadUrls = mutableListOf<String>()
     private val activeDownloadTitles = mutableListOf<String>()
+    private var hasWorker: Boolean = false
+    private var retryCount = 0
     private val lock = Any()
 
     // Return if the worker should start the work or stop
     fun increment(url: String, title: String): Boolean {
         synchronized(lock) {
-            if (activeDownloadUrls.contains(url)) {
+            if (!activeDownloadUrls.contains(url)) {
+                activeDownloadUrls.add(url)
+            }
+            if (!activeDownloadTitles.contains(title)) {
+                activeDownloadTitles.add(title)
+            }
+            Log.i("AAA", "activeDownloadTitles.size ${activeDownloadTitles.size}")
+            if(!hasWorker){
+                hasWorker = true
+                return true
+            }else{
                 return false
             }
-            activeDownloadTitles.add(title)
-            activeDownloadUrls.add(url)
-            Log.i("AAA", "activeDownloadTitles.size ${activeDownloadTitles.size}")
-            return activeDownloadTitles.size == 1
         }
     }
 
@@ -117,8 +142,7 @@ object DownloadManager {
                 activeDownloadUrl = url
                 return url
             } else {
-                activeDownloadUrl = null
-                activeDownloadTitles.clear()
+                reset()
                 return null
             }
         }
@@ -132,6 +156,22 @@ object DownloadManager {
                 return true
             }
             return false
+        }
+    }
+
+    fun reset(){
+        activeDownloadUrl = null
+        activeDownloadTitles.clear()
+        activeDownloadUrls.clear()
+        hasWorker = false
+        retryCount = 0
+    }
+
+    fun retryLater(url: String){
+        synchronized(lock) {
+            activeDownloadUrls.add(url)
+            retryCount++
+            hasWorker = false
         }
     }
 
@@ -154,4 +194,6 @@ object DownloadManager {
             }
         }
     }
+
+    fun getRetryCount() = retryCount
 }

@@ -24,9 +24,7 @@ import java.time.LocalDateTime
 data class Episode(
     @PrimaryKey
     val episodeUrl: String,
-
     val podcastId: Int,
-
     var episodePath: String?,
     var episodeLength: Int,
     var episodeType: String,

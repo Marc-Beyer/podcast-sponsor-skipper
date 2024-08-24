@@ -156,7 +156,7 @@ fun EpisodeItem(
                         modifier = Modifier
                             .padding(8.dp)
                             .rotationEffect(),
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }

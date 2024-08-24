@@ -15,6 +15,7 @@ object Constants {
     const val COMMAND_SCHEDULE_EVENT = "SCHEDULE_EVENT"
     const val PREVIEW_LEAD_TIME = 3000
     const val PREVIEW_POST_TIME = 4000
+    const val MAX_RETRY_COUNT = 3
 
     object Dimensions{
         val EXTRA_LARGE = 80.dp
