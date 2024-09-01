@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AvTimer
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Square
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,23 +34,83 @@ import de.devbeyer.podcast_sponsorskipper.util.Constants
 @Composable
 fun ControllerButtons(
     onEvent: (NavigationEvent) -> Unit,
-    state: NavigationState
+    state: NavigationState,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
-        IconButton(onClick = { onEvent(NavigationEvent.SkipBack) }) {
+        DropdownMenu(
+            expanded = state.isSpeedOpen,
+            onDismissRequest = { onEvent(NavigationEvent.OpenChangePlaybackSpeed) }
+        ) {
+            DropdownMenuItem(
+                onClick = {
+                    onEvent(NavigationEvent.ChangePlaybackSpeed(0.5f))
+                },
+                text = { Text(text = "0.5x") }
+            )
+            DropdownMenuItem(
+                onClick = {
+                    onEvent(NavigationEvent.ChangePlaybackSpeed(0.75f))
+                },
+                text = { Text(text = "0.75x") }
+            )
+            DropdownMenuItem(
+                onClick = {
+                    onEvent(NavigationEvent.ChangePlaybackSpeed(1f))
+                },
+                text = { Text(text = "1x") }
+            )
+            DropdownMenuItem(
+                onClick = {
+                    onEvent(NavigationEvent.ChangePlaybackSpeed(1.25f))
+                },
+                text = { Text(text = "1.25x") }
+            )
+            DropdownMenuItem(
+                onClick = {
+                    onEvent(NavigationEvent.ChangePlaybackSpeed(1.5f))
+                },
+                text = { Text(text = "1.5x") }
+            )
+            DropdownMenuItem(
+                onClick = {
+                    onEvent(NavigationEvent.ChangePlaybackSpeed(1.75f))
+                },
+                text = { Text(text = "1.75x") }
+            )
+            DropdownMenuItem(
+                onClick = {
+                    onEvent(NavigationEvent.ChangePlaybackSpeed(2f))
+                },
+                text = { Text(text = "2x") }
+            )
+        }
+        IconButton(
+            onClick = { onEvent(NavigationEvent.OpenChangePlaybackSpeed) },
+            modifier = Modifier.size(68.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.AvTimer,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+            )
+        }
+        IconButton(
+            onClick = { onEvent(NavigationEvent.SkipBack) },
+            modifier = Modifier.padding(Constants.Dimensions.MEDIUM),
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.rewind_media),
                 contentDescription = "rewind",
                 modifier = Modifier.size(Constants.Dimensions.EXTRA_LARGE)
             )
             Text(
-                text = if(state.settings.rewindTime in 1..99){
+                text = if (state.settings.rewindTime in 1..99) {
                     state.settings.rewindTime.toString()
-                } else{
+                } else {
                     ""
                 },
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
@@ -91,9 +154,9 @@ fun ControllerButtons(
                 modifier = Modifier.size(Constants.Dimensions.EXTRA_LARGE)
             )
             Text(
-                text = if(state.settings.forwardTime in 1..99){
+                text = if (state.settings.forwardTime in 1..99) {
                     state.settings.forwardTime.toString()
-                } else{
+                } else {
                     ""
                 },
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),

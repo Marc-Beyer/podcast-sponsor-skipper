@@ -176,6 +176,20 @@ class NavigationViewModel @Inject constructor(
                 }
             }
 
+            is NavigationEvent.OpenChangePlaybackSpeed -> {
+                _state.value = state.value.copy(
+                    isSpeedOpen = !state.value.isSpeedOpen,
+                )
+            }
+
+            is NavigationEvent.ChangePlaybackSpeed -> {
+                _state.value.mediaController?.setPlaybackSpeed(event.value)
+                _state.value = state.value.copy(
+                    isSpeedOpen = !state.value.isSpeedOpen,
+                    currentPlaybackSpeed = event.value,
+                )
+            }
+
             is NavigationEvent.Play -> {
                 state.value.mediaController?.play()
             }

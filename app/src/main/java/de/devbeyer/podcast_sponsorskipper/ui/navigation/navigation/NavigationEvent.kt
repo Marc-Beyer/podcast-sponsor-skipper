@@ -17,11 +17,11 @@ sealed class NavigationEvent {
     ) : NavigationEvent()
 
     data class Unsubscribe(
-        val podcastWithRelations: PodcastWithRelations?
+        val podcastWithRelations: PodcastWithRelations?,
     ) : NavigationEvent()
 
     data class UpdatePodcast(
-        val podcast: Podcast
+        val podcast: Podcast,
     ) : NavigationEvent()
 
     data class RateSponsorSection(
@@ -57,6 +57,11 @@ sealed class NavigationEvent {
         val navigateUp: () -> Unit,
     ) : NavigationEvent()
 
+    data class ChangePlaybackSpeed(
+        val value: Float,
+    ) : NavigationEvent()
+
+    object OpenChangePlaybackSpeed : NavigationEvent()
     object Play : NavigationEvent()
     object Stop : NavigationEvent()
     object SkipForward : NavigationEvent()

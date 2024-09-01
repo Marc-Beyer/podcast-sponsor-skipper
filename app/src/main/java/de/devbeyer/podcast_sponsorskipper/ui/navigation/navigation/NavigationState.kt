@@ -23,9 +23,11 @@ data class NavigationState (
     val settings: Settings = Settings(),
     val selectedPodcastForUnsubscribe: Podcast? = null,
     val navigateUp: () -> Unit = {},
+    val isSpeedOpen: Boolean = false,
 
     val currentNavEpisode: Episode? = null,
     val currentNavPodcast: PodcastWithRelations? = null,
+    val currentPlaybackSpeed: Float = 1.0f,
 )
 
 enum class PreviewState{
