@@ -234,7 +234,7 @@ class NavigationViewModel @Inject constructor(
                     setIsPreviewing(PreviewState.NONE)
                     state.value.sponsorSectionStart?.let {
                         var startPositionMs = it
-                        var endPositionMs =  mediaController.currentPosition
+                        var endPositionMs = mediaController.currentPosition
                         if (startPositionMs > endPositionMs) {
                             val tmp = startPositionMs
                             startPositionMs = endPositionMs
@@ -402,7 +402,7 @@ class NavigationViewModel @Inject constructor(
                     setSponsorSections(sponsorSections)
                     if (schedulePlaybackAction) {
                         sponsorSections.forEach { sponsorSection ->
-                            if (!sponsorSection.isProvisional && sponsorSection.rated != -1) {
+                            if (sponsorSection.rated == 1 || (!sponsorSection.isProvisional && sponsorSection.rated != -1)) {
                                 schedulePlaybackAction(
                                     startPositionMs = sponsorSection.startPosition,
                                     endPositionMs = sponsorSection.endPosition,

@@ -61,7 +61,7 @@ fun CustomSlider(
                     val sectionWidth = sectionEnd - sectionStart
 
                     drawRect(
-                        color = if (sponsorSection.isProvisional) sponsorProvisionalColor else sponsorColor,
+                        color = if (sponsorSection.isProvisional && sponsorSection.rated != 1) sponsorProvisionalColor else sponsorColor,
                         topLeft = Offset(x = sectionStart, y = 0f),
                         size = Size(width = sectionWidth, height = height)
                     )
@@ -108,7 +108,7 @@ fun determineThumbColor(
 ): Color {
     if (sponsorSectionStart != null) return MaterialTheme.colorScheme.error
     if (sponsorSectionAtPosition != null && sponsorSectionAtPosition.rated != -1) {
-        if (sponsorSectionAtPosition.isProvisional) {
+        if (sponsorSectionAtPosition.isProvisional && sponsorSectionAtPosition.rated != 1) {
             return MaterialTheme.colorScheme.tertiary
         } else {
             return MaterialTheme.colorScheme.error
