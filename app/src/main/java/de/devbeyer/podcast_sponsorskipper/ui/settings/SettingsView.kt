@@ -41,7 +41,7 @@ fun SettingsView(
     ) {
         item {
             Text(
-                text = "Playback Settings",
+                text = "Display Settings",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(Constants.Dimensions.EXTRA_SMALL),
