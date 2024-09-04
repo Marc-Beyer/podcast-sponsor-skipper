@@ -9,6 +9,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.CommandButton
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSession.ConnectionResult
 import androidx.media3.session.MediaSession.ConnectionResult.AcceptedResultBuilder
@@ -16,9 +17,11 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import androidx.media3.ui.PlayerNotificationManager
+import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
+import de.devbeyer.podcast_sponsorskipper.R
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.episode.EpisodeUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast.PodcastsUseCases
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.settings.SettingsUseCases
@@ -44,6 +47,9 @@ class PlaybackService : MediaSessionService() {
     lateinit var settingsUseCases: SettingsUseCases
 
     private val serviceScope = CoroutineScope(Dispatchers.IO)
+    private val customCommandRewind = SessionCommand(Constants.COMMAND_REWIND, Bundle.EMPTY)
+    private val customCommandForward = SessionCommand(Constants.COMMAND_FORWARD, Bundle.EMPTY)
+    private val customCommandClose = SessionCommand(Constants.COMMAND_CLOSE, Bundle.EMPTY)
 
     private var mediaSession: MediaSession? = null
 
@@ -53,6 +59,27 @@ class PlaybackService : MediaSessionService() {
     override fun onCreate() {
         Log.i("AAA", "onCreate: PlaybackService")
         super.onCreate()
+
+        val rewindButton =
+            CommandButton.Builder()
+                .setDisplayName("Rewind")
+                .setIconResId(R.drawable.rewind_media)
+                .setSessionCommand(customCommandRewind)
+                .build()
+        val forwardButton =
+            CommandButton.Builder()
+                .setDisplayName("Forward")
+                .setIconResId(R.drawable.forward_media)
+                .setSessionCommand(customCommandForward)
+                .build()
+        val closeButton =
+            CommandButton.Builder()
+                .setDisplayName("Close")
+                .setIconResId(R.drawable.close)
+                .setSessionCommand(customCommandClose)
+                .build()
+
+
         player = ExoPlayer.Builder(this).build()
 
         val intent = Intent(this, MainActivity::class.java)
@@ -66,6 +93,7 @@ class PlaybackService : MediaSessionService() {
         mediaSession = MediaSession.Builder(this, player)
             .setCallback(MediaSessionCallback())
             .setSessionActivity(pendingIntent)
+            .setCustomLayout(ImmutableList.of(rewindButton, forwardButton, closeButton))
             .build()
 
         player.addListener(object : Player.Listener {
@@ -89,8 +117,19 @@ class PlaybackService : MediaSessionService() {
         ): MediaSession.ConnectionResult {
             val sessionCommands = ConnectionResult.DEFAULT_SESSION_COMMANDS.buildUpon()
                 .add(SessionCommand(Constants.COMMAND_SCHEDULE_EVENT, Bundle.EMPTY))
+                .add(customCommandRewind)
+                .add(customCommandForward)
+                .add(customCommandClose)
                 .build()
             return AcceptedResultBuilder(session)
+                .setAvailablePlayerCommands(
+                    ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
+                        .remove(Player.COMMAND_SEEK_TO_NEXT)
+                        .remove(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+                        .remove(Player.COMMAND_SEEK_TO_PREVIOUS)
+                        .remove(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+                        .build()
+                )
                 .setAvailableSessionCommands(sessionCommands)
                 .build()
         }
@@ -102,16 +141,30 @@ class PlaybackService : MediaSessionService() {
             args: Bundle,
         ): ListenableFuture<SessionResult> {
             Log.i("AAA", "customCommand.customAction ${customCommand.customAction}")
-            if (customCommand.customAction == Constants.COMMAND_SCHEDULE_EVENT) {
-                val startPositionMs = args.getLong("START_POSITION_MS") ?: 0L
-                val endPositionMs = args.getLong("END_POSITION_MS") ?: 0L
-                scheduleEventAtPosition(
-                    positionMs = startPositionMs,
-                    action = {
-                        Log.i("AAA", "REACHED POSITION LLLLLLLLLLLLLLLLL")
-                        player.seekTo(endPositionMs)
-                    },
-                )
+
+            when (customCommand.customAction) {
+                Constants.COMMAND_SCHEDULE_EVENT -> {
+                    val startPositionMs = args.getLong("START_POSITION_MS") ?: 0L
+                    val endPositionMs = args.getLong("END_POSITION_MS") ?: 0L
+                    scheduleEventAtPosition(
+                        positionMs = startPositionMs,
+                        action = {
+                            Log.i("AAA", "REACHED POSITION LLLLLLLLLLLLLLLLL")
+                            player.seekTo(endPositionMs)
+                        },
+                    )
+                }
+                Constants.COMMAND_REWIND -> {
+                    player.seekBack()
+                }
+                Constants.COMMAND_FORWARD -> {
+                    player.seekForward()
+                }
+                Constants.COMMAND_CLOSE -> {
+                    while (player.mediaItemCount > 0){
+                        player.removeMediaItem(0)
+                    }
+                }
             }
             return Futures.immediateFuture(
                 SessionResult(SessionResult.RESULT_SUCCESS)
