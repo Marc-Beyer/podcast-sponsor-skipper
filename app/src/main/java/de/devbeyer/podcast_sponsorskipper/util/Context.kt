@@ -5,10 +5,8 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
-import android.util.Log
 
 fun Context.openLink(url: String, addFlags: Boolean = false) {
-    Log.i("Link", url)
     val intent = Intent(Intent.ACTION_VIEW).apply {
         data = Uri.parse(url)
         if (addFlags) {

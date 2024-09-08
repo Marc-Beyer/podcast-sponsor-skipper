@@ -2,7 +2,6 @@ package de.devbeyer.podcast_sponsorskipper.data.worker
 
 import android.app.NotificationManager
 import android.content.Context
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
@@ -29,7 +28,6 @@ class UpdateWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val url = inputData.getString("url") ?: return Result.failure()
         val title = inputData.getString("title") ?: return Result.failure()
-        Log.i("AAA", "WORKER $title $url")
 
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -50,7 +48,6 @@ class UpdateWorker @AssistedInject constructor(
                     updateNotification(notificationManager, title)
                 })
                 val currentUrl = currentUpdate?.first
-                Log.i("Work", "currentUrl $currentUrl")
                 if (currentUpdate == null || currentUrl == null) {
                     break
                 }
@@ -157,7 +154,6 @@ object UpdateManager {
             //activeUpdateTitles.add(title)
             //activeUpdateUrls.add(url)
             activeUpdates.add(newUpdate)
-            Log.i("AAA", "activeDownloadTitles.size ${activeUpdates.size}")
             updateActiveUpdateUrls()
             return activeUpdates.size == 1
         }

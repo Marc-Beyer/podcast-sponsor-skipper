@@ -5,7 +5,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -365,7 +364,6 @@ class NavigationViewModel @Inject constructor(
     private fun getSettings() {
         viewModelScope.launch {
             settingsUseCases.getSettingsUseCase().firstOrNull()?.let {
-                Log.i("SETTINGS", "getSettingsUseCase $it")
                 _state.value = state.value.copy(
                     settings = it
                 )
@@ -535,7 +533,6 @@ class NavigationViewModel @Inject constructor(
                 val mediaItem = mediaController.currentMediaItem
                 if (mediaItem != null) {
                     val extras = mediaItem.mediaMetadata.extras
-                    Log.i("AAA", "mediaItem $extras")
                     viewModelScope.launch {
                         extras?.getString("episodeUrl")?.let {
                             val episode =

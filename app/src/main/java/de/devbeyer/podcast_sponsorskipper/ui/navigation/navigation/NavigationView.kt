@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.ui.navigation.navigation
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -317,7 +316,6 @@ private fun navigateToEpisodes(
     onEvent: (NavigationEvent) -> Unit,
     popAll: Boolean = false,
 ) {
-    Log.i("AAA", NavRoute.Episodes.path)
     onEvent(NavigationEvent.ChangeCurNavPodcast(podcastWithRelations = podcastWithRelations))
     navController.navigate(route = NavRoute.Episodes.path) {
         if (popAll) {

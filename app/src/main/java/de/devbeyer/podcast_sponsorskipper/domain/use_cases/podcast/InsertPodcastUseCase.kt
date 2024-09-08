@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast
 
-import android.util.Log
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.CategoryDao
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.EpisodeDao
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.PodcastDao
@@ -20,7 +19,6 @@ class InsertPodcastUseCase(
         downloadImages: Boolean,
         coverImageSize: Int = 512,
     ): Int {
-        Log.i("AAA", "coverImageSize $coverImageSize")
         val podcastWithRelations =
             podcastDao.getPodcastFromUrl(podcastAndEpisodes.podcastWithRelations.podcast.url)
                 .firstOrNull()
@@ -29,7 +27,6 @@ class InsertPodcastUseCase(
         var newEpisodes = 0
 
         if (podcastWithRelations == null) {
-            Log.i("AAA", "Podcast does not exists!")
             podcastImagePath = fileUseCases.downloadImageUseCase.invoke(
                 extension = "jpg",
                 url = podcastAndEpisodes.podcastWithRelations.podcast.imageUrl,
@@ -59,7 +56,6 @@ class InsertPodcastUseCase(
                 )
             }
         } else {
-            Log.i("AAA", "Podcast already exists!")
             podcastId = podcastWithRelations.podcast.id
             podcastImagePath = podcastWithRelations.podcast.imagePath ?: ""
         }
@@ -67,7 +63,6 @@ class InsertPodcastUseCase(
         val imageCache = mutableMapOf<String, String?>()
 
         for (episode in podcastAndEpisodes.episodes) {
-            Log.i("AAA", "ADD episode ${episode.title}")
 
             val foundEpisode = episodeDao.getEpisodeByUrl(episode.episodeUrl).firstOrNull()
             if (foundEpisode == null) {
@@ -96,7 +91,6 @@ class InsertPodcastUseCase(
                     )
                     imageCache[episode.imageUrl] = episodeImagePath
                 } catch (e: Exception) {
-                    Log.i("AAA", "Could not insert episode deleting image")
                     fileUseCases.deleteFileUseCase(episodeImagePath).firstOrNull()
                     throw e
                 }

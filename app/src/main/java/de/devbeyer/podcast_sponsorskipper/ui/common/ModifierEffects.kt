@@ -28,7 +28,7 @@ fun Modifier.loadingEffect() = composed {
             repeatMode = RepeatMode.Reverse
         ), label = ""
     ).value
-    background(
+    this.background(
         color = MaterialTheme.colorScheme.primary.copy(alpha),
     )
 }

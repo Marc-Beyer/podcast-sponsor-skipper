@@ -21,10 +21,10 @@ Users can tag unwanted sponsor segments and advertisements. These tagged segment
 # Screenshots
 
 <p align="center">
-    <img src="docs/imgs/screen-4.png" width="200">
-    <img src="docs/imgs/screen-3.png" width="200">
-    <img src="docs/imgs/screen-2.png" width="200">
-    <img src="docs/imgs/screen-1.png" width="200">
+    <img src="docs/imgs/screen-4.png" width="150">
+    <img src="docs/imgs/screen-3.png" width="150">
+    <img src="docs/imgs/screen-2.png" width="150">
+    <img src="docs/imgs/screen-1.png" width="150">
 </p>
 
 # Getting Started

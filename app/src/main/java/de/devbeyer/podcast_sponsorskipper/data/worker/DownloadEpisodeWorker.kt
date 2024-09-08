@@ -27,8 +27,6 @@ class DownloadEpisodeWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val url = inputData.getString("url") ?: return Result.failure()
         val title = inputData.getString("title") ?: return Result.failure()
-        Log.i("AAA", "EPISODE WORKER $url $title")
-
 
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -45,7 +43,6 @@ class DownloadEpisodeWorker @AssistedInject constructor(
                 }
 
                 val wifi = applicationContext.isWifiOrNotMetered()
-                Log.i("AAA", "Not metered wifi $wifi")
 
                 val settings = settingsUseCases.getSettingsUseCase().firstOrNull() ?: Settings()
 
@@ -53,11 +50,11 @@ class DownloadEpisodeWorker @AssistedInject constructor(
                     if (DownloadManager.getRetryCount() >= Constants.MAX_RETRY_COUNT) {
                         DownloadManager.reset()
                         notificationManager.cancel(Constants.DOWNLOAD_EPISODE_NOTIFICATION_ID)
-                        Log.e("AAA", "Too many retry attempts (${DownloadManager.getRetryCount()}) stopping work.")
+                        Log.e("DownloadManager", "Too many retry attempts (${DownloadManager.getRetryCount()}) stopping work.")
                         return Result.failure()
                     }
                     DownloadManager.retryLater(currentUrl)
-                    Log.e("AAA", "Network not suitable for download. Retry Later. Retry ${DownloadManager.getRetryCount()}")
+                    Log.e("DownloadManager", "Network not suitable for download. Retry Later. Retry ${DownloadManager.getRetryCount()}")
 
                     return Result.retry()
                 }
@@ -131,7 +128,6 @@ object DownloadManager {
             if (!activeDownloadTitles.contains(title)) {
                 activeDownloadTitles.add(title)
             }
-            Log.i("AAA", "activeDownloadTitles.size ${activeDownloadTitles.size}")
             if(!hasWorker){
                 hasWorker = true
                 return true

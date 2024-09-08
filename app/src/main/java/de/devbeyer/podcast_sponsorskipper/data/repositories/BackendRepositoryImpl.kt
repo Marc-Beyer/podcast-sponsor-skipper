@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.data.repositories
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -65,13 +64,10 @@ class BackendRepositoryImpl(
                 url = url,
             )
         )
-        Log.i("AAA", "Added podcast ${response.title}")
     }
 
     override fun getRSSFeed(rssUrl: String): Flow<PodcastAndEpisodes?> = flow {
         val response = rssAPI.getRSSFeed(rssUrl)
-
-        Log.i("Update", "response.isSuccessful ${response.isSuccessful}")
 
         if (response.isSuccessful) {
             val rawResponse = response.body()
@@ -103,10 +99,6 @@ class BackendRepositoryImpl(
             )
         )
         val sponsorSectionId = response.body()
-        Log.i(
-            "AAA",
-            "submitSponsorSection REPO $episodeUrl $username $token isSuccessful ${response.isSuccessful} $sponsorSectionId"
-        )
         emit(sponsorSectionId)
     }
 
@@ -127,14 +119,6 @@ class BackendRepositoryImpl(
             )
         )
         val returnedSponsorSectionId = response.body()
-        Log.i(
-            "AAA",
-            "rated SponsorSection REPO $sponsorSectionId $isPositive $username $token isSuccessful ${response.isSuccessful} $sponsorSectionId"
-        )
-        Log.i(
-            "AAA",
-            "rated SponsorSection returnedSponsorSectionId $returnedSponsorSectionId"
-        )
         emit(sponsorSectionId)
     }
 
@@ -224,8 +208,6 @@ class BackendRepositoryImpl(
                 }
             }
         }
-
-        Log.i("AAA", categories.joinToString(", "))
 
         return PodcastAndEpisodes(
             podcastWithRelations = PodcastWithRelations(

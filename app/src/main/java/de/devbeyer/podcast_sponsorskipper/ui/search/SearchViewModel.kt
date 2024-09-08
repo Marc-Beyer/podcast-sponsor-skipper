@@ -74,7 +74,11 @@ class SearchViewModel @Inject constructor(
             .build()
         workManager.enqueue(updateWorkRequest)
         viewModelScope.launch {
-            podcastsUseCases.registerPodcastUseCase(url = state.value.rssFeedUrl)
+            try {
+                podcastsUseCases.registerPodcastUseCase(url = state.value.rssFeedUrl)
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
         }
     }
 }

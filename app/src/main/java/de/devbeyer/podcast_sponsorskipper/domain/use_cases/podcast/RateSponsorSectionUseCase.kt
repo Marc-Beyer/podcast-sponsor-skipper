@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast
 
-import android.util.Log
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.SponsorSectionDao
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
 import de.devbeyer.podcast_sponsorskipper.domain.use_cases.user.UserUseCases
@@ -15,7 +14,6 @@ class RateSponsorSectionUseCase(
 ) {
     operator fun invoke(sponsorSectionId: Long, duration: Long, isPositive: Boolean): Flow<Long?> =
         flow {
-            Log.i("AAA", "RateSponsorSectionUseCase")
             userUseCases.getUserUseCase().firstOrNull()?.let { userData ->
                 backendRepository.rateSponsorSection(
                     sponsorSectionId = sponsorSectionId,
@@ -25,7 +23,6 @@ class RateSponsorSectionUseCase(
                     token = userData.token,
                 ).firstOrNull()
 
-                Log.i("AAA", "RATE $sponsorSectionId $isPositive")
                 sponsorSectionDao.markAsRated(
                     sponsorSectionId = sponsorSectionId,
                     rating = if (isPositive) 1 else -1

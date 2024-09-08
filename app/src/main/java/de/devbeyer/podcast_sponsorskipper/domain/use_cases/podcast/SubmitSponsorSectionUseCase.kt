@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.domain.use_cases.podcast
 
-import android.util.Log
 import de.devbeyer.podcast_sponsorskipper.data.local.dao.SponsorSectionDao
 import de.devbeyer.podcast_sponsorskipper.domain.models.db.SponsorSection
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
@@ -21,7 +20,6 @@ class SubmitSponsorSectionUseCase(
         endPosition: Long,
         duration: Long,
     ): Flow<SponsorSection?> = flow {
-        Log.i("AAA", "SubmitSponsorSectionUseCase")
         userUseCases.getUserUseCase().firstOrNull()?.let { userData ->
             backendRepository.submitSponsorSection(
                 episodeUrl = episodeUrl,

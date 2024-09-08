@@ -40,7 +40,7 @@ fun SearchView(
         onEvent = onEvent,
         state = state
     )
-    Column() {
+    Column {
         SearchBar(
             query = state.search,
             onQueryChange = { onEvent(SearchEvent.ChangeSearch(it)) },

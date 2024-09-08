@@ -1,6 +1,5 @@
 package de.devbeyer.podcast_sponsorskipper.domain.use_cases.user
 
-import android.util.Log
 import de.devbeyer.podcast_sponsorskipper.domain.LocalDataManager
 import de.devbeyer.podcast_sponsorskipper.domain.models.UserData
 import de.devbeyer.podcast_sponsorskipper.domain.repositories.BackendRepository
@@ -16,7 +15,6 @@ class RegisterUseCase(
         backendRepository.register().firstOrNull()?.let {userData ->
             localDataManager.saveUsername(userData.username)
             localDataManager.saveToken(userData.token)
-            Log.i("AAA", "Registered userData $userData")
             emit(userData)
         }
     }

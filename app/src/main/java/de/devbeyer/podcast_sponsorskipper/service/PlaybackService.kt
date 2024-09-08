@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -57,7 +56,6 @@ class PlaybackService : MediaSessionService() {
     private lateinit var playerNotificationManager: PlayerNotificationManager
 
     override fun onCreate() {
-        Log.i("AAA", "onCreate: PlaybackService")
         super.onCreate()
 
         val rewindButton =
@@ -99,7 +97,6 @@ class PlaybackService : MediaSessionService() {
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED) {
-                    Log.i("AAA", "Player.STATE_ENDED")
                     endPodcast()
                 } else {
                     updateEpisodesLastPosition()
@@ -114,7 +111,7 @@ class PlaybackService : MediaSessionService() {
         override fun onConnect(
             session: MediaSession,
             controller: MediaSession.ControllerInfo,
-        ): MediaSession.ConnectionResult {
+        ): ConnectionResult {
             val sessionCommands = ConnectionResult.DEFAULT_SESSION_COMMANDS.buildUpon()
                 .add(SessionCommand(Constants.COMMAND_SCHEDULE_EVENT, Bundle.EMPTY))
                 .add(customCommandRewind)
@@ -140,16 +137,14 @@ class PlaybackService : MediaSessionService() {
             customCommand: SessionCommand,
             args: Bundle,
         ): ListenableFuture<SessionResult> {
-            Log.i("AAA", "customCommand.customAction ${customCommand.customAction}")
 
             when (customCommand.customAction) {
                 Constants.COMMAND_SCHEDULE_EVENT -> {
-                    val startPositionMs = args.getLong("START_POSITION_MS") ?: 0L
-                    val endPositionMs = args.getLong("END_POSITION_MS") ?: 0L
+                    val startPositionMs = args.getLong("START_POSITION_MS")
+                    val endPositionMs = args.getLong("END_POSITION_MS")
                     scheduleEventAtPosition(
                         positionMs = startPositionMs,
                         action = {
-                            Log.i("AAA", "REACHED POSITION LLLLLLLLLLLLLLLLL")
                             player.seekTo(endPositionMs)
                         },
                     )
@@ -174,7 +169,6 @@ class PlaybackService : MediaSessionService() {
 
 
     fun scheduleEventAtPosition(positionMs: Long, action: () -> Unit) {
-        Log.i("AAA", "scheduleEventAtPosition $positionMs")
         player.createMessage { _, _ ->
             action()
             scheduleEventAtPosition(positionMs = positionMs, action = action)
@@ -186,13 +180,11 @@ class PlaybackService : MediaSessionService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Log.i("AAA", "onStartCommand")
         player.play()
         return START_STICKY
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
-        Log.i("AAA", "onGetSession")
         return mediaSession
     }
 
@@ -211,7 +203,6 @@ class PlaybackService : MediaSessionService() {
 
 
     override fun onDestroy() {
-        Log.i("AAA", "onDestroy")
         mediaSession?.run {
             player.release()
             release()
@@ -245,7 +236,6 @@ class PlaybackService : MediaSessionService() {
             player.removeMediaItem(0)
 
             if (player.mediaItemCount == 0) {
-                Log.i("AAA", "No more MediaItems, stopping player.")
                 stopSelf()
             }
         } catch (e: Exception) {
@@ -262,7 +252,6 @@ class PlaybackService : MediaSessionService() {
                             ?.let { podcastWithRelations ->
                                 settingsUseCases.getSettingsUseCase().firstOrNull()
                                     ?.let { settings ->
-                                        Log.i("AAA", "END PODCAST")
                                         episodeUseCases.completeEpisodeUseCase(
                                             episode = episode,
                                             podcast = podcastWithRelations.podcast,
