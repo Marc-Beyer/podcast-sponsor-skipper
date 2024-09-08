@@ -90,12 +90,13 @@ fun ControllerButtons(
         }
         IconButton(
             onClick = { onEvent(NavigationEvent.OpenChangePlaybackSpeed) },
-            modifier = Modifier.size(68.dp)
+            modifier = Modifier.size(68.dp),
         ) {
             Icon(
                 imageVector = Icons.Default.AvTimer,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(32.dp),
             )
         }
         IconButton(
