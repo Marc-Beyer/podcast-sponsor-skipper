@@ -1,6 +1,6 @@
 <p align="center"><img src="docs/imgs/Icon_512.png" width="150"></p>
 
-<h2 align="center"><b>Podcast App - Sponsor Skipper - Backend</b></h2>
+<h2 align="center"><b>Podcast App - Sponsor Skipper</b></h2>
 
 **Podcast App - Sponsor Skipper** is an Android App, designed to enhance your podcast listening experience by allowing you to skip
 over sponsor segments effortlessly. With community-driven contributions, you can enjoy uninterrupted
@@ -15,9 +15,7 @@ Users can tag unwanted sponsor segments and advertisements. These tagged segment
 1. [Screenshots](#screenshots)
 2. [Getting Started](#getting-started)
     1. [Prerequisites](#prerequisites)
-    2. [Setup the Project](#setup-the-project)
-    3. [Start the Backend](#start-the-backend)
-    4. [Manage Users and Data](#manage-users-and-data)
+    2. [Start the App](#start-the-app)
 3. [Project Overview](#project-overview)
 
 # Screenshots
