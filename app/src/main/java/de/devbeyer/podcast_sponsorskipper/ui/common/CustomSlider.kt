@@ -29,6 +29,10 @@ fun CustomSlider(
     val primaryColor = MaterialTheme.colorScheme.primary
     val sponsorColor = MaterialTheme.colorScheme.error
     val sponsorProvisionalColor = MaterialTheme.colorScheme.tertiary
+    val backgroundColor = MaterialTheme.colorScheme.inverseOnSurface
+
+    val sectionSpacer = 4.0f;
+    val sectionHeight = 1.0f;
 
 
     Box(
@@ -61,9 +65,20 @@ fun CustomSlider(
                     val sectionWidth = sectionEnd - sectionStart
 
                     drawRect(
+                        color = backgroundColor,
+                        topLeft = Offset(x = sectionStart - sectionSpacer, y = 0f),
+                        size = Size(width = sectionSpacer, height = height)
+                    )
+                    drawRect(
                         color = if (sponsorSection.isProvisional && sponsorSection.rated != 1) sponsorProvisionalColor else sponsorColor,
-                        topLeft = Offset(x = sectionStart, y = 0f),
-                        size = Size(width = sectionWidth, height = height)
+                        topLeft = Offset(x = sectionStart, y = -sectionHeight),
+                        size = Size(width = sectionWidth, height = height + sectionHeight * 2)
+                    )
+
+                    drawRect(
+                        color = backgroundColor,
+                        topLeft = Offset(x = sectionEnd, y = 0f),
+                        size = Size(width = sectionSpacer, height = height)
                     )
                 }
             }
